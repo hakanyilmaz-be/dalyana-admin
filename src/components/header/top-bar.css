@@ -1,0 +1,45 @@
+.topbar-wrapper{
+    display: flex;
+    align-items: center;
+    right: 5%;
+    top: 3%;
+    position: absolute;
+}
+
+.topbar-wrapper .profile{
+    display: flex;
+    align-items: center;
+
+
+
+}
+.topbar-wrapper .profile img{
+    height: 50px;
+    border-radius: 5px;
+    cursor: pointer;
+   
+}
+
+.topbar-wrapper .profile p{
+    transform: translateY(25%);
+}
+
+.topbar-wrapper svg{
+    font-size: 1.5rem;
+    color: var(--color2);
+    margin-right: 15px;
+    cursor: pointer;
+
+}
+
+@media(max-width: 991px){
+    .topbar-wrapper{
+        top: 40%;
+    }
+}
+
+@media(max-width: 991px){
+    .topbar-wrapper{
+        visibility: hidden;
+    }
+}
