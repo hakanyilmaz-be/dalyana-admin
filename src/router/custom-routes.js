@@ -25,6 +25,14 @@ import ProtectedRoute from "./protected-route"; */
 
 import AdminTemplate from "../template/admin-template";
 import AdminDashboardPage from "../pages/AdminDashboardPage";
+import DevisCommandes from "../pages/DevisCommandes";
+import Clients from "../pages/Clients";
+import ElementsProduits from "../pages/ElementsProduits";
+import Factures from "../pages/Factures";
+import Employees from "../pages/Employees";
+import Calendrier from "../pages/Calendrier";
+import Missions from "../pages/Missions";
+import Statistiques from "../pages/Statistiques";
 
 const CustomRoutes = () => {
   return (
@@ -55,7 +63,18 @@ const CustomRoutes = () => {
 
 
           {/* USER ROUTES */}
+          
           <Route index element={<AdminTemplate><AdminDashboardPage /></AdminTemplate>} />
+          <Route path="devis-commandes" element={<AdminTemplate><DevisCommandes /></AdminTemplate>} />
+          <Route path="clients" element={<AdminTemplate><Clients /></AdminTemplate>} />
+          <Route path="elements-produits" element={<AdminTemplate><ElementsProduits /></AdminTemplate>} />
+          <Route path="factures" element={<AdminTemplate><Factures /></AdminTemplate>} />
+          <Route path="employees" element={<AdminTemplate><Employees /></AdminTemplate>} />
+          <Route path="calendrier" element={<AdminTemplate><Calendrier /></AdminTemplate>} />
+          <Route path="missions" element={<AdminTemplate><Missions /></AdminTemplate>} />
+          <Route path="statistiques" element={<AdminTemplate><Statistiques /></AdminTemplate>} />
+
+
          {/*  <Route path="about" element={<UserTemplate><AboutPage /></UserTemplate>} />
           <Route path="contact" element={<UserTemplate><ContactPage /></UserTemplate>} />
           <Route path="auth" element={<AuthPage />} />

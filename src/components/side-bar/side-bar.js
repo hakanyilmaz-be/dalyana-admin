@@ -8,7 +8,7 @@ import {
   RiDashboardLine,
   RiContactsLine
 } from "react-icons/ri";
-import { AiOutlineCalendar, AiFillEdit, AiFillFolderOpen, AiFillHome } from 'react-icons/ai';
+import { AiOutlineCalendar, AiFillEdit, AiFillFolderOpen } from 'react-icons/ai';
 import { IoMdContacts } from 'react-icons/io';
 import { BsKanban, BsBarChartFill } from 'react-icons/bs';
 
@@ -43,37 +43,37 @@ const SideBar = () => {
   return (
     <Navbar expand="lg" className="admin-navbar" variant="dark">
       <Container>
-        <Navbar.Brand as={Link} to="/admin">
+        <Navbar.Brand as={Link} to="/">
           <img src={logo} className="img-fluid " />
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse className="navbar-menu" id="basic-navbar-nav">
           <Nav className="me-auto">
-            <Nav.Link as={Link} to="/admin" className={currentPath === "/" ? "active" : ""}>
-              <AiFillHome /> Accueil
+            <Nav.Link as={Link} to="/" className={currentPath === "/" ? "active" : ""}>
+              <RiHome3Line /> Accueil
             </Nav.Link>
-            <Nav.Link as={Link} to="/admin/devis-commandes" className={currentPath === "/admin/devis-commandes" ? "active" : ""}>
-              <AiFillFolderOpen /> Devis&Commandes
+            <Nav.Link as={Link} to="/devis-commandes" className={currentPath === "/devis-commandes" ? "active" : ""}>
+              <AiFillFolderOpen /> Devis & Commandes
             </Nav.Link>
-            <Nav.Link as={Link} to="/admin/clients" className={currentPath === "/admin/clients" ? "active" : ""}>
+            <Nav.Link as={Link} to="/clients" className={currentPath === "/clients" ? "active" : ""}>
               <RiContactsLine /> Clients
             </Nav.Link>
-            <Nav.Link as={Link} to="/admin/elements-produits" className={currentPath === "/admin/elements-produits" ? "active" : ""}>
-              <RiDashboardLine /> Elements&Produits
+            <Nav.Link as={Link} to="/elements-produits" className={currentPath === "/elements-produits" ? "active" : ""}>
+              <RiDashboardLine /> Elements & Produits
             </Nav.Link>
-            <Nav.Link as={Link} to="/admin/factures" className={currentPath === "/admin/factures" ? "active" : ""}>
+            <Nav.Link as={Link} to="/factures" className={currentPath === "/factures" ? "active" : ""}>
               <AiFillEdit /> Factures
             </Nav.Link>
-            <Nav.Link as={Link} to="/admin/employees" className={currentPath === "/admin/employees" ? "active" : ""}>
+            <Nav.Link as={Link} to="/employees" className={currentPath === "/employees" ? "active" : ""}>
               <IoMdContacts /> Employees
             </Nav.Link>
-            <Nav.Link as={Link} to="/admin/calender" className={currentPath === "/admin/calender" ? "active" : ""}>
-              <AiOutlineCalendar /> Calendar
+            <Nav.Link as={Link} to="/calendrier" className={currentPath === "/calendrier" ? "active" : ""}>
+              <AiOutlineCalendar /> Calendrier
             </Nav.Link>
-            <Nav.Link as={Link} to="/admin/missions" className={currentPath === "/admin/missions" ? "active" : ""}>
+            <Nav.Link as={Link} to="/missions" className={currentPath === "/missions" ? "active" : ""}>
               <BsKanban /> Missions
             </Nav.Link>
-            <Nav.Link as={Link} to="/admin/statistiques" className={currentPath === "/admin/statistiques" ? "active" : ""}>
+            <Nav.Link as={Link} to="/statistiques" className={currentPath === "/statistiques" ? "active" : ""}>
               <BsBarChartFill /> Statistiques
             </Nav.Link>
             {/* <Nav.Link onClick={handleLogout}> ALTTAKI YOKTU, SADECE HATA VERMEMESI ICIN BUNUN YERINE KOYDUM ,BIR ALTTAKI SILINECEK */}
