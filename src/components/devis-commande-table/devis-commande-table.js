@@ -84,14 +84,14 @@ const DevisCommandeTable = () => {
         pagination
         fixedHeader
         customStyles={customStyles}
+        highlightOnHover
+		    pointerOnHover
         //  progressPending={loadingUsers}
         onRowClicked={handleEdit}
       /> :
       <p className="filtered-message">Il n'y a aucun enregistrement à afficher</p>
       }
       
-      
-
     </div>
   );
 };
