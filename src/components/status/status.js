@@ -34,7 +34,7 @@ const Status = () => {
           <MdOutlineArrowForwardIos />
 
           <Dropdown as={ButtonGroup}>
-            <Button variant="success">À l'usine</Button>
+            <Button variant="success">Usine</Button>
 
             <Dropdown.Toggle
               split
@@ -56,7 +56,7 @@ const Status = () => {
           <MdOutlineArrowForwardIos />
 
           <Dropdown as={ButtonGroup}>
-            <Button variant="success">Au dépôt</Button>
+            <Button variant="success">Dépôt</Button>
 
             <Dropdown.Toggle
               split

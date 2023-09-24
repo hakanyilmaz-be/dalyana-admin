@@ -33,6 +33,8 @@ import Employees from "../pages/Employees";
 import Calendrier from "../pages/Calendrier";
 import Missions from "../pages/Missions";
 import Statistiques from "../pages/Statistiques";
+import ClientsEditPage from "../pages/ClientsEditPage";
+import CreateClient from "../pages/CreateClient";
 
 const CustomRoutes = () => {
   return (
@@ -66,7 +68,11 @@ const CustomRoutes = () => {
           
           <Route index element={<AdminTemplate><AdminDashboardPage /></AdminTemplate>} />
           <Route path="devis-commandes" element={<AdminTemplate><DevisCommandes /></AdminTemplate>} />
-          <Route path="clients" element={<AdminTemplate><Clients /></AdminTemplate>} />
+            <Route path="clients">
+              <Route index element={<AdminTemplate><Clients /></AdminTemplate>}/>
+              <Route path=":clientId" element={<AdminTemplate><ClientsEditPage/></AdminTemplate>}/>
+              <Route path="new" element={<AdminTemplate><CreateClient/></AdminTemplate>}/>
+            </Route>
           <Route path="elements-produits" element={<AdminTemplate><ElementsProduits /></AdminTemplate>} />
           <Route path="factures" element={<AdminTemplate><Factures /></AdminTemplate>} />
           <Route path="employees" element={<AdminTemplate><Employees /></AdminTemplate>} />
