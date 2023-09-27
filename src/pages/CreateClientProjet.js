@@ -32,6 +32,9 @@ const CreateClientProjet = () => {
     appointmentDate: "",
     appointmentTime: "",
     note: "",
+    model: "",
+    furnitureListPrice: "",
+    furnitureSalePrice: "",
   };
 
   const validationSchema = Yup.object({
@@ -55,6 +58,11 @@ const CreateClientProjet = () => {
     appointmentDate: Yup.string(),
     appointmentTime: Yup.string(),
     note: Yup.string(),
+    model: Yup.string(),
+    furnitureListPrice: Yup.string(),
+    furnitureSalePrice: Yup.string(),
+
+
   });
 
   /* const onSubmit = async (values) => {
@@ -213,7 +221,7 @@ const CreateClientProjet = () => {
           </Row>
         </Card.Body>
       </Card>
-      <Card>
+      <Card className="mb-5">
         <Card.Header
           as="h3"
           style={{ color: "white", backgroundColor: "var(--color2)" }}
@@ -240,7 +248,7 @@ const CreateClientProjet = () => {
             </Form.Group>
 
             <Form.Group as={Col} md={2} lg={2} className="mb-3">
-              <Form.Label>Rendez-vous ? (*si fait)</Form.Label>
+              <Form.Label>Rendez-vous ?</Form.Label>
               <Form.Control
                 type="date"
                 placeholder="Rendez-vous?"
@@ -289,6 +297,69 @@ const CreateClientProjet = () => {
           </Row>
         </Card.Body>
       </Card>
+
+      <Card className="mb-5">
+        <Card.Header
+          as="h3"
+          style={{ color: "white", backgroundColor: "#9f0f0f" }}
+        >
+          Projet
+        </Card.Header>
+        <Card.Body>
+          <Row>
+            <Form.Group as={Col} md={4} lg={4} className="mb-3">
+              <Form.Label>Modèle</Form.Label>
+              <Form.Select
+                {...formik.getFieldProps("model")}
+                isInvalid={!!formik.errors.model}
+              >
+                <option value="" disabled selected>
+                  --Sélectionnez--
+                </option>
+                <option value="modele:Nolte">Nolte</option>
+                <option value="modele:Express">Express</option>
+                <option value="modele:Eco">Eco</option>
+              </Form.Select>
+              <Form.Control.Feedback type="invalid">
+                {formik.errors.model}
+              </Form.Control.Feedback>
+            </Form.Group>
+
+            <Form.Group as={Col} md={3} lg={3} className="mb-3">
+              <Form.Label>Tarif Catalogue € - HTVA</Form.Label>
+              <Form.Control
+                type="text"
+                // as={MaskedInput}
+                // mask="(111) 111-1111"
+                placeholder="Entrez tarif catalogue"
+                {...formik.getFieldProps("furnitureListPrice")}
+                isInvalid={!!formik.errors.furnitureListPrice}
+              />
+              <Form.Control.Feedback type="invalid">
+                {formik.errors.furnitureListPrice}
+              </Form.Control.Feedback>
+            </Form.Group>
+
+            <Form.Group as={Col} md={5} lg={5} className="mb-3">
+              <Form.Label as="h4" style={{ color: "#9f0f0f" }}>Tarif Mobilier € - HTVA</Form.Label>
+              <Form.Control
+                type="text"
+                style={{ height: "60px", color: "#9f0f0f", borderColor: "#9f0f0f" }}
+                // as={MaskedInput}
+                // mask="(111) 111-1111"
+                placeholder="Entrez Tarif Mobilier"
+                {...formik.getFieldProps("furnitureSalePrice")}
+                isInvalid={!!formik.errors.furnitureSalePrice}
+              />
+              <Form.Control.Feedback type="invalid">
+                {formik.errors.furnitureSalePrice}
+              </Form.Control.Feedback>
+            </Form.Group>
+
+          </Row>
+        </Card.Body>
+      </Card>
+
     </Form>
   );
 };
