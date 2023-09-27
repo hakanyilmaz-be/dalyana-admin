@@ -1,20 +1,6 @@
 .sidebar{
     background-color: var(--color2);
     height: 100vh; 
- 
-}
-
-@media(max-width: 2800px){
-    .admin-template .sidebar{
-        height: 100%; 
-    }
-}
-
-
-@media(max-width: 2028px){
-    .admin-template .sidebar{
-        height: 100vh; 
-    }
 }
 
 @media(max-width: 991px){

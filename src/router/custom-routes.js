@@ -25,16 +25,15 @@ import ProtectedRoute from "./protected-route"; */
 
 import AdminTemplate from "../template/admin-template";
 import AdminDashboardPage from "../pages/AdminDashboardPage";
-import DevisCommandes from "../pages/DevisCommandes";
-import Clients from "../pages/Clients";
+import ProjetsClients from "../pages/ProjetsClients";
 import ElementsProduits from "../pages/ElementsProduits";
 import Factures from "../pages/Factures";
-import Employees from "../pages/Employees";
+import Employees from "../pages/Employees"; 
 import Calendrier from "../pages/Calendrier";
 import Missions from "../pages/Missions";
 import Statistiques from "../pages/Statistiques";
 import ClientsEditPage from "../pages/ClientsEditPage";
-import CreateClient from "../pages/CreateClient";
+import CreateClientProjet from "../pages/CreateClientProjet";
 
 const CustomRoutes = () => {
   return (
@@ -67,11 +66,11 @@ const CustomRoutes = () => {
           {/* USER ROUTES */}
           
           <Route index element={<AdminTemplate><AdminDashboardPage /></AdminTemplate>} />
-          <Route path="devis-commandes" element={<AdminTemplate><DevisCommandes /></AdminTemplate>} />
-            <Route path="clients">
-              <Route index element={<AdminTemplate><Clients /></AdminTemplate>}/>
+         
+            <Route path="projets-clients">
+              <Route index element={<AdminTemplate><ProjetsClients /></AdminTemplate>}/>
               <Route path=":clientId" element={<AdminTemplate><ClientsEditPage/></AdminTemplate>}/>
-              <Route path="new" element={<AdminTemplate><CreateClient/></AdminTemplate>}/>
+              <Route path="new" element={<AdminTemplate><CreateClientProjet/></AdminTemplate>}/>
             </Route>
           <Route path="elements-produits" element={<AdminTemplate><ElementsProduits /></AdminTemplate>} />
           <Route path="factures" element={<AdminTemplate><Factures /></AdminTemplate>} />

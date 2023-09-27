@@ -5,7 +5,7 @@ import Status from '../components/status/status'
 import DevisCommandeTable from '../components/devis-commande-table/devis-commande-table'
 
 
-const DevisCommandes = () => {
+const ProjetsClients = () => {
   return (
 
     <Container>
@@ -18,4 +18,4 @@ const DevisCommandes = () => {
   )
 }
 
-export default DevisCommandes
+export default ProjetsClients

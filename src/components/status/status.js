@@ -44,11 +44,11 @@ const Status = () => {
 
             <Dropdown.Menu>
               <Dropdown.Item href="#/action-1">
-                Commande envoyée à l'usine
+                Envoyée à l'usine
               </Dropdown.Item>
               <Dropdown.Item href="#/action-2">Commande Contrôle</Dropdown.Item>
               <Dropdown.Item href="#/action-3">
-                Commande Confirmée à l'usine
+                Confirmée à l'usine
               </Dropdown.Item>
             </Dropdown.Menu>
           </Dropdown>
@@ -66,7 +66,7 @@ const Status = () => {
 
             <Dropdown.Menu>
               <Dropdown.Item href="#/action-1">
-                Commandes en dépôt
+                En dépôt
               </Dropdown.Item>
               <Dropdown.Item href="#/action-2">Soldes réussie</Dropdown.Item>
             </Dropdown.Menu>

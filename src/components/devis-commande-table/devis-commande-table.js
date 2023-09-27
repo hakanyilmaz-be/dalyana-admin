@@ -13,10 +13,19 @@ const DevisCommandeTable = () => {
     {
       name: "ID",
       selector: (row) => row.id,
+      width: "80px",
     },
     {
       name: "Nom",
       selector: (row) => row.name,
+    },
+    {
+      name: "Téléphone",
+      selector: (row) => row.phoneNumber,
+    },
+    {
+      name: "Email",
+      selector: (row) => row.email,
     },
     {
       name: "Emplacement",
@@ -36,27 +45,25 @@ const DevisCommandeTable = () => {
   const customStyles = {
     rows: {
       style: {
-        minHeight: "72px", // override the row height
+        minHeight: "60px", // override the row height
       },
     },
     headCells: {
       style: {
-        paddingLeft: "8px", // override the cell padding for head cells
-        paddingRight: "8px",
-        backgroundColor: "gray",
+        backgroundColor: "var(--color2)",
         color: "white",
       },
     },
     cells: {
       style: {
-        paddingLeft: "8px", // override the cell padding for data cells
-        paddingRight: "8px",
+       // paddingLeft: "8px", // override the cell padding for data cells
+       // paddingRight: "8px",
       },
     },
   };
 
   const handleEdit = (row) => {
-    navigate(`/clients/${row.id}`);
+    navigate(`/projets-clients/${row.id}`);
   };
 
   const handleFilter = (e) => { 
@@ -64,6 +71,8 @@ const DevisCommandeTable = () => {
         return (
         row.id.toLocaleLowerCase().includes(e.target.value.toLocaleLowerCase()) ||
         row.name.toLocaleLowerCase().includes(e.target.value.toLocaleLowerCase()) ||
+        row.phoneNumber.toLocaleLowerCase().includes(e.target.value.toLocaleLowerCase()) ||
+        row.email.toLocaleLowerCase().includes(e.target.value.toLocaleLowerCase()) ||
         row.location.toLocaleLowerCase().includes(e.target.value.toLocaleLowerCase()) ||
         row.status.toLocaleLowerCase().includes(e.target.value.toLocaleLowerCase()) ||
         row.firstDate.toLocaleLowerCase().includes(e.target.value.toLocaleLowerCase()) )

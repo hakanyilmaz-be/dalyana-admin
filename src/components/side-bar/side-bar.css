@@ -37,6 +37,12 @@
     color: var(--color2)!important;
 }
 
+
+.dropdown-divider{
+    background-color: #fff!important;
+    height: 2px!important;
+}
+
 @media(min-width: 992px){
 
     .admin-navbar .navbar-nav{

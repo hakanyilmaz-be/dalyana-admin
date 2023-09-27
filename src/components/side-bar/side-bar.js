@@ -6,7 +6,6 @@ import {
   RiHome3Line,
   RiLogoutCircleRLine,
   RiDashboardLine,
-  RiContactsLine
 } from "react-icons/ri";
 import { AiOutlineCalendar, AiFillEdit, AiFillFolderOpen } from 'react-icons/ai';
 import { IoMdContacts } from 'react-icons/io';
@@ -16,7 +15,7 @@ import { BsKanban, BsBarChartFill } from 'react-icons/bs';
 /* import { useStore } from "../../../store";
 import alertify from "alertifyjs";
 import { logout } from "../../../store/user/userActions"; */
-import { Container, Nav, Navbar } from "react-bootstrap";
+import { Container, Dropdown, Nav, Navbar } from "react-bootstrap";
 
 const SideBar = () => {
   /* const { userState, dispatchUser } = useStore();
@@ -46,17 +45,15 @@ const SideBar = () => {
         <Navbar.Brand as={Link} to="/">
           <img src={logo} className="img-fluid " />
         </Navbar.Brand>
+        <Dropdown.Divider />
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse className="navbar-menu" id="basic-navbar-nav">
           <Nav className="me-auto">
             <Nav.Link as={Link} to="/" className={currentPath === "/" ? "active" : ""}>
               <RiHome3Line /> Accueil
             </Nav.Link>
-            <Nav.Link as={Link} to="/devis-commandes" className={currentPath === "/devis-commandes" ? "active" : ""}>
-              <AiFillFolderOpen /> Devis & Commandes
-            </Nav.Link>
-            <Nav.Link as={Link} to="/clients" className={currentPath === "/clients" ? "active" : ""}>
-              <RiContactsLine /> Clients
+            <Nav.Link as={Link} to="/projets-clients" className={currentPath === "/projets-clients" ? "active" : ""}>
+              <AiFillFolderOpen /> Projets & Clients
             </Nav.Link>
             <Nav.Link as={Link} to="/elements-produits" className={currentPath === "/elements-produits" ? "active" : ""}>
               <RiDashboardLine /> Elements & Produits
