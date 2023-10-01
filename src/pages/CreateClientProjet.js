@@ -12,8 +12,11 @@ import {
   Col,
   ButtonGroup,
   Card,
+  Accordion,
 } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import Select from "react-select";
+import accessoires from "../assets/data/accessoires.json";
 //import { createUser } from "../../../api/admin-user-service";
 const CreateClientProjet = () => {
   const [loading, setLoading] = useState(false);
@@ -35,6 +38,7 @@ const CreateClientProjet = () => {
     model: "",
     furnitureListPrice: "",
     furnitureSalePrice: "",
+    selectedAccessoires: "",
   };
 
   const validationSchema = Yup.object({
@@ -61,8 +65,6 @@ const CreateClientProjet = () => {
     model: Yup.string(),
     furnitureListPrice: Yup.string(),
     furnitureSalePrice: Yup.string(),
-
-
   });
 
   /* const onSubmit = async (values) => {
@@ -94,7 +96,7 @@ const CreateClientProjet = () => {
       <Card className="mb-5">
         <Card.Header
           as="h3"
-          style={{ color: "white", backgroundColor: "var(--color2)" }}
+          style={{ color: "white", backgroundColor: "#9f0f0f" }}
         >
           Informations Client
         </Card.Header>
@@ -187,7 +189,7 @@ const CreateClientProjet = () => {
                 {...formik.getFieldProps("floor")}
                 isInvalid={!!formik.errors.floor}
               >
-                <option value="" disabled selected>
+                <option value="" disabled>
                   --Sélectionnez l'étage--
                 </option>
                 <option value="étage:Rez-de-chaussée">Rez-de-chaussée</option>
@@ -208,7 +210,7 @@ const CreateClientProjet = () => {
                 {...formik.getFieldProps("elevator")}
                 isInvalid={!!formik.errors.elevator}
               >
-                <option value="" disabled selected>
+                <option value="" disabled>
                   --Sélectionnez--
                 </option>
                 <option value="ascenseur:oui">Oui</option>
@@ -224,7 +226,7 @@ const CreateClientProjet = () => {
       <Card className="mb-5">
         <Card.Header
           as="h3"
-          style={{ color: "white", backgroundColor: "var(--color2)" }}
+          style={{ color: "white", backgroundColor: "#9f0f0f" }}
         >
           Statut
         </Card.Header>
@@ -236,7 +238,7 @@ const CreateClientProjet = () => {
                 {...formik.getFieldProps("status")}
                 isInvalid={!!formik.errors.status}
               >
-                <option value="" disabled selected>
+                <option value="" disabled>
                   --Devis ou Bon de commande--
                 </option>
                 <option value="type:Devis">Devis</option>
@@ -301,65 +303,95 @@ const CreateClientProjet = () => {
       <Card className="mb-5">
         <Card.Header
           as="h3"
-          style={{ color: "white", backgroundColor: "#9f0f0f" }}
+          style={{ color: "white", backgroundColor: "var(--color2)" }}
         >
           Projet
         </Card.Header>
         <Card.Body>
-          <Row>
-            <Form.Group as={Col} md={4} lg={4} className="mb-3">
-              <Form.Label>Modèle</Form.Label>
-              <Form.Select
-                {...formik.getFieldProps("model")}
-                isInvalid={!!formik.errors.model}
-              >
-                <option value="" disabled selected>
-                  --Sélectionnez--
-                </option>
-                <option value="modele:Nolte">Nolte</option>
-                <option value="modele:Express">Express</option>
-                <option value="modele:Eco">Eco</option>
-              </Form.Select>
-              <Form.Control.Feedback type="invalid">
-                {formik.errors.model}
-              </Form.Control.Feedback>
-            </Form.Group>
+          <Accordion defaultActiveKey={["0"]} alwaysOpen>
+            <Accordion.Item eventKey="0">
+              <Accordion.Header>MOBILIER CUISINE</Accordion.Header>
+              <Accordion.Body>
+                <Row>
+                  <Form.Group as={Col} md={4} lg={4} className="mb-3">
+                    <Form.Label>Modèle</Form.Label>
+                    <Form.Select
+                      {...formik.getFieldProps("model")}
+                      isInvalid={!!formik.errors.model}
+                    >
+                      <option value="" disabled>
+                        --Sélectionnez--
+                      </option>
+                      <option value="modele:Nolte">Nolte</option>
+                      <option value="modele:Express">Express</option>
+                      <option value="modele:Eco">Eco</option>
+                    </Form.Select>
+                    <Form.Control.Feedback type="invalid">
+                      {formik.errors.model}
+                    </Form.Control.Feedback>
+                  </Form.Group>
 
-            <Form.Group as={Col} md={3} lg={3} className="mb-3">
-              <Form.Label>Tarif Catalogue € - HTVA</Form.Label>
-              <Form.Control
-                type="text"
-                // as={MaskedInput}
-                // mask="(111) 111-1111"
-                placeholder="Entrez tarif catalogue"
-                {...formik.getFieldProps("furnitureListPrice")}
-                isInvalid={!!formik.errors.furnitureListPrice}
-              />
-              <Form.Control.Feedback type="invalid">
-                {formik.errors.furnitureListPrice}
-              </Form.Control.Feedback>
-            </Form.Group>
+                  <Form.Group as={Col} md={3} lg={3} className="mb-3">
+                    <Form.Label>Tarif Catalogue € - HTVA</Form.Label>
+                    <Form.Control
+                      type="text"
+                      // as={MaskedInput}
+                      // mask="(111) 111-1111"
+                      placeholder="Entrez tarif catalogue"
+                      {...formik.getFieldProps("furnitureListPrice")}
+                      isInvalid={!!formik.errors.furnitureListPrice}
+                    />
+                    <Form.Control.Feedback type="invalid">
+                      {formik.errors.furnitureListPrice}
+                    </Form.Control.Feedback>
+                  </Form.Group>
 
-            <Form.Group as={Col} md={5} lg={5} className="mb-3">
-              <Form.Label as="h4" style={{ color: "#9f0f0f" }}>Tarif Mobilier € - HTVA</Form.Label>
-              <Form.Control
-                type="text"
-                style={{ height: "60px", color: "#9f0f0f", borderColor: "#9f0f0f" }}
-                // as={MaskedInput}
-                // mask="(111) 111-1111"
-                placeholder="Entrez Tarif Mobilier"
-                {...formik.getFieldProps("furnitureSalePrice")}
-                isInvalid={!!formik.errors.furnitureSalePrice}
-              />
-              <Form.Control.Feedback type="invalid">
-                {formik.errors.furnitureSalePrice}
-              </Form.Control.Feedback>
-            </Form.Group>
-
-          </Row>
+                  <Form.Group as={Col} md={5} lg={5} className="mb-3">
+                    <Form.Label as="h4" style={{ color: "#9f0f0f" }}>
+                      Tarif Mobilier € - HTVA
+                    </Form.Label>
+                    <Form.Control
+                      type="text"
+                      style={{
+                        height: "60px",
+                        color: "#9f0f0f",
+                        borderColor: "#9f0f0f",
+                      }}
+                      // as={MaskedInput}
+                      // mask="(111) 111-1111"
+                      placeholder="Entrez Tarif Mobilier"
+                      {...formik.getFieldProps("furnitureSalePrice")}
+                      isInvalid={!!formik.errors.furnitureSalePrice}
+                    />
+                    <Form.Control.Feedback type="invalid">
+                      {formik.errors.furnitureSalePrice}
+                    </Form.Control.Feedback>
+                  </Form.Group>
+                </Row>
+              </Accordion.Body>
+            </Accordion.Item>
+            <Accordion.Item eventKey="1">
+              <Accordion.Header>ACCESSOIRES</Accordion.Header>
+              <Accordion.Body>
+                <Select
+                  name="selectedAccessoires"
+                  value={formik.values.selectedAccessoires}
+                  onChange={(selectedAccessoires) => {
+                    formik.setFieldValue(
+                      "selectedAccessoires",
+                      selectedAccessoires
+                    );
+                  }}
+                  options={accessoires}
+                  isSearchable={true}
+                  placeholder="Recherche..."
+                />
+              </Accordion.Body>
+            </Accordion.Item>
+          </Accordion>
         </Card.Body>
       </Card>
-
+      <Button type="submit">Submit</Button>
     </Form>
   );
 };
