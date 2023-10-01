@@ -38,7 +38,7 @@ const CreateClientProjet = () => {
     model: "",
     furnitureListPrice: "",
     furnitureSalePrice: "",
-    selectedAccessoires: "",
+    selectedAccessoires: [],
   };
 
   const validationSchema = Yup.object({
@@ -374,18 +374,57 @@ const CreateClientProjet = () => {
               <Accordion.Header>ACCESSOIRES</Accordion.Header>
               <Accordion.Body>
                 <Select
-                  name="selectedAccessoires"
+                  name="selectedProducts"
                   value={formik.values.selectedAccessoires}
                   onChange={(selectedAccessoires) => {
-                    formik.setFieldValue(
-                      "selectedAccessoires",
-                      selectedAccessoires
-                    );
+                    formik.setFieldValue("selectedAccessoires", selectedAccessoires);
                   }}
-                  options={accessoires}
+                  options={accessoires.map((accessoire) => ({
+                    value: accessoire.id,
+                    label: accessoire.label,
+                    description: accessoire.description,
+                    price: accessoire.price,
+                  }))}
                   isSearchable={true}
+                  isMulti
                   placeholder="Recherche..."
+
+                  //Asagidaki 2 satir eger search barda tum degerler ornegin label, description ve fiyat birlikte gosterilmek istenirse kullanilabilir, yoksa sart degil
+                  // getOptionLabel={(option) =>`${option.label} - ${option.description} - $${option.price}`}
+                  // getOptionValue={(option) => option.value}
                 />
+                {/* Display selected products */}
+                <div className="mt-2">
+                <br></br>
+                  <strong>Accessoires Sélectionnés:</strong>
+                  {formik.values.selectedAccessoires.map((product, index) => (
+                    <div key={product.value} className="mb-2">
+                      <Row>
+                        <Col>{product.label}</Col>
+                        <Col>{product.description}</Col>
+                        <Col>${product.price}</Col>
+                        <Col>
+                          <Button
+                            variant="danger"
+                            size="sm"
+                            onClick={() => {
+                              const updatedProducts =
+                                formik.values.selectedAccessoires.filter(
+                                  (product, i) => i !== index
+                                );
+                              formik.setFieldValue(
+                                "selectedAccessoires",
+                                updatedProducts
+                              );
+                            }}
+                          >
+                            X
+                          </Button>
+                        </Col>
+                      </Row>
+                    </div>
+                  ))}
+                </div>
               </Accordion.Body>
             </Accordion.Item>
           </Accordion>

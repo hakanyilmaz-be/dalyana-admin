@@ -1,13 +1,22 @@
 [
   {
+    "id": "id1",
+    "description":"desc1",
+    "price":"10euro",
     "value": "accessoire1",
     "label": "Accessoire 1"
   },
   {
+    "id": "id2",
+    "description":"desc2",
+    "price":"12euro",
     "value": "accessoire2",
     "label": "Accessoire 2"
   },
   {
+    "id": "id3",
+    "description":"desc3",
+    "price":"13euro",
     "value": "accessoire3",
     "label": "Accessoire 3"
   }
