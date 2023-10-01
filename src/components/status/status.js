@@ -6,7 +6,7 @@ import "./status.css";
 
 const Status = () => {
   return (
-    <>
+    <> 
       <div className="status-wrapper">
         <h2 className="status-title">Tous Les Statuts</h2>
         <div className="status-options">

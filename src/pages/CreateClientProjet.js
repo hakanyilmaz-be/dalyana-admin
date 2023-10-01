@@ -310,7 +310,7 @@ const CreateClientProjet = () => {
         <Card.Body>
           <Accordion defaultActiveKey={["0"]} alwaysOpen>
             <Accordion.Item eventKey="0">
-              <Accordion.Header>MOBILIER CUISINE</Accordion.Header>
+              <Accordion.Header style={{    backgroundColor: "var(--bs-accordion-active-bg)"}}>MOBILIER CUISINE</Accordion.Header>
               <Accordion.Body>
                 <Row>
                   <Form.Group as={Col} md={4} lg={4} className="mb-3">
@@ -356,6 +356,7 @@ const CreateClientProjet = () => {
                         height: "60px",
                         color: "#9f0f0f",
                         borderColor: "#9f0f0f",
+                        fontSize: "20px"
                       }}
                       // as={MaskedInput}
                       // mask="(111) 111-1111"
@@ -394,16 +395,15 @@ const CreateClientProjet = () => {
                   // getOptionValue={(option) => option.value}
                 />
                 {/* Display selected products */}
-                <div className="mt-2">
-                <br></br>
-                  <strong>Accessoires Sélectionnés:</strong>
+                <div className="mt-4">
+                  <h6 className="mb-3">Accessoires Sélectionnés:</h6>
                   {formik.values.selectedAccessoires.map((product, index) => (
                     <div key={product.value} className="mb-2">
                       <Row>
-                        <Col>{product.label}</Col>
-                        <Col>{product.description}</Col>
-                        <Col>${product.price}</Col>
-                        <Col>
+                        <Col md={3}>{product.label}</Col>
+                        <Col md={5} style={{fontSize: "12px"}}>{product.description}</Col>
+                        <Col md={2} as="h5" style={{ color: "#9f0f0f" }}>€{product.price}</Col>
+                        <Col className="d-grid" md={2}>
                           <Button
                             variant="danger"
                             size="sm"
@@ -418,7 +418,7 @@ const CreateClientProjet = () => {
                               );
                             }}
                           >
-                            X
+                            Annuler
                           </Button>
                         </Col>
                       </Row>
