@@ -735,7 +735,7 @@ const CreateClientProjet = () => {
               </Accordion.Body>
             </Accordion.Item>
 
-            <Accordion.Item eventKey="4">
+            <Accordion.Item eventKey="5">
               <Accordion.Header>Divers</Accordion.Header>
               <Accordion.Body>
                 <Select
