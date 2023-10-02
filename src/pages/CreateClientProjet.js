@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import * as Yup from "yup";
 import moment from "moment";
 //import { toast } from "react-toastify";
@@ -17,10 +17,65 @@ import {
 import { useNavigate } from "react-router-dom";
 import Select from "react-select";
 import accessoires from "../assets/data/accessoires.json";
+import electromenagers from "../assets/data/electromenagers.json";
+import sanitaires from "../assets/data/sanitaires.json";
+import divers from "../assets/data/divers.json";
+import surfaces from "../assets/data/surfaces.json"
+
 //import { createUser } from "../../../api/admin-user-service";
 const CreateClientProjet = () => {
   const [loading, setLoading] = useState(false);
+  const [totalAccessoriesPrice, setTotalAccessoriesPrice] = useState(0);
+  const [totalElectromenagersPrice, setTotalElectromenagersPrice] = useState(0);
+  const [totalSanitairesPrice, setTotalSanitairesPrice] = useState(0);
+  const [totalDiversPrice, setTotalDiversPrice] = useState(0);
+  const [totalSurfacesPrice, setTotalSurfacesPrice] = useState(0);
+
+
   const navigate = useNavigate();
+
+  const calculateTotalAccessoriesPrice = (selectedAccessoires) => {
+    let totalPrice = 0;
+    selectedAccessoires.forEach((product) => {
+      totalPrice += parseFloat(product.price);
+    });
+    return totalPrice.toFixed(2); // Round to 2 decimal places
+  };
+
+  const calculateTotalElectromenagersPrice = (selectedElectromenagers) => {
+    let totalPrice = 0;
+    selectedElectromenagers.forEach((product) => {
+      totalPrice += parseFloat(product.price);
+    });
+    return totalPrice.toFixed(2); // Round to 2 decimal places
+  };
+
+  const calculateTotalSanitairesPrice = (selectedSanitaires) => {
+    let totalPrice = 0;
+    selectedSanitaires.forEach((product) => {
+      totalPrice += parseFloat(product.price);
+    });
+    return totalPrice.toFixed(2); // Round to 2 decimal places
+  };
+
+  const calculateTotalDiversPrice = (selectedDivers) => {
+    let totalPrice = 0;
+    selectedDivers.forEach((product) => {
+      totalPrice += parseFloat(product.price);
+    });
+    return totalPrice.toFixed(2); // Round to 2 decimal places
+  };
+
+  const calculateTotalSurfacesPrice = (selectedSurfaces) => {
+    let totalPrice = 0;
+    selectedSurfaces.forEach((product) => {
+      totalPrice += parseFloat(product.price);
+    });
+    return totalPrice.toFixed(2); // Round to 2 decimal places
+  };
+
+
+
 
   const initialValues = {
     name: "",
@@ -39,6 +94,11 @@ const CreateClientProjet = () => {
     furnitureListPrice: "",
     furnitureSalePrice: "",
     selectedAccessoires: [],
+    selectedElectromenagers: [],
+    selectedSanitaires: [],
+    selectedDivers: [],
+    selectedSurfaces: [],
+
   };
 
   const validationSchema = Yup.object({
@@ -90,6 +150,45 @@ const CreateClientProjet = () => {
     validationSchema,
     onSubmit,
   });
+
+  useEffect(() => {
+    const totalPrice = calculateTotalAccessoriesPrice(
+      formik.values.selectedAccessoires
+    );
+    setTotalAccessoriesPrice(totalPrice);
+  }, [formik.values.selectedAccessoires]);
+
+
+  useEffect(() => {
+    const totalPrice = calculateTotalElectromenagersPrice(
+      formik.values.selectedElectromenagers
+    );
+    setTotalElectromenagersPrice(totalPrice);
+  }, [formik.values.selectedElectromenagers]);
+
+
+  useEffect(() => {
+    const totalPrice = calculateTotalSanitairesPrice(
+      formik.values.selectedSanitaires
+    );
+    setTotalSanitairesPrice(totalPrice);
+  }, [formik.values.selectedSanitaires]);
+
+  useEffect(() => {
+    const totalPrice = calculateTotalDiversPrice(
+      formik.values.selectedDivers
+    );
+    setTotalDiversPrice(totalPrice);
+  }, [formik.values.selectedDivers]);
+
+  useEffect(() => {
+    const totalPrice = calculateTotalSurfacesPrice(
+      formik.values.selectedSurfaces
+    );
+    setTotalSurfacesPrice(totalPrice);
+  }, [formik.values.selectedSurfaces]);
+
+
 
   return (
     <Form noValidate onSubmit={formik.handleSubmit}>
@@ -310,7 +409,11 @@ const CreateClientProjet = () => {
         <Card.Body>
           <Accordion defaultActiveKey={["0"]} alwaysOpen>
             <Accordion.Item eventKey="0">
-              <Accordion.Header style={{    backgroundColor: "var(--bs-accordion-active-bg)"}}>MOBILIER CUISINE</Accordion.Header>
+              <Accordion.Header
+                style={{ backgroundColor: "var(--bs-accordion-active-bg)" }}
+              >
+                MOBILIER CUISINE
+              </Accordion.Header>
               <Accordion.Body>
                 <Row>
                   <Form.Group as={Col} md={4} lg={4} className="mb-3">
@@ -356,7 +459,7 @@ const CreateClientProjet = () => {
                         height: "60px",
                         color: "#9f0f0f",
                         borderColor: "#9f0f0f",
-                        fontSize: "20px"
+                        fontSize: "20px",
                       }}
                       // as={MaskedInput}
                       // mask="(111) 111-1111"
@@ -378,7 +481,10 @@ const CreateClientProjet = () => {
                   name="selectedProducts"
                   value={formik.values.selectedAccessoires}
                   onChange={(selectedAccessoires) => {
-                    formik.setFieldValue("selectedAccessoires", selectedAccessoires);
+                    formik.setFieldValue(
+                      "selectedAccessoires",
+                      selectedAccessoires
+                    );
                   }}
                   options={accessoires.map((accessoire) => ({
                     value: accessoire.id,
@@ -401,8 +507,12 @@ const CreateClientProjet = () => {
                     <div key={product.value} className="mb-2">
                       <Row>
                         <Col md={3}>{product.label}</Col>
-                        <Col md={5} style={{fontSize: "12px"}}>{product.description}</Col>
-                        <Col md={2} as="h5" style={{ color: "#9f0f0f" }}>€{product.price}</Col>
+                        <Col md={5} style={{ fontSize: "12px" }}>
+                          {product.description}
+                        </Col>
+                        <Col md={2} as="h5" >
+                          €{product.price}
+                        </Col>
                         <Col className="d-grid" md={2}>
                           <Button
                             variant="danger"
@@ -424,6 +534,267 @@ const CreateClientProjet = () => {
                       </Row>
                     </div>
                   ))}
+                  <div className="mt-2" style={{ color: "#9f0f0f" }}>
+                    <h5>Total des Accessoires: €{totalAccessoriesPrice}</h5>
+                  </div>
+                </div>
+              </Accordion.Body>
+            </Accordion.Item>
+
+            <Accordion.Item eventKey="2">
+              <Accordion.Header>Électroménagers</Accordion.Header>
+              <Accordion.Body>
+                <Select
+                  name="selectedProducts"
+                  value={formik.values.selectedElectromenagers}
+                  onChange={(selectedElectromenagers) => {
+                    formik.setFieldValue(
+                      "selectedElectromenagers",
+                      selectedElectromenagers
+                    );
+                  }}
+                  options={electromenagers.map((electromenager) => ({
+                    value: electromenager.id,
+                    label: electromenager.label,
+                    description: electromenager.description,
+                    price: electromenager.price,
+                  }))}
+                  isSearchable={true}
+                  isMulti
+                  placeholder="Recherche..."
+
+               
+                />
+                {/* Display selected products */}
+                <div className="mt-4">
+                  <h6 className="mb-3">Électroménagers Sélectionnés:</h6>
+                  {formik.values.selectedElectromenagers.map((product, index) => (
+                    <div key={product.value} className="mb-2">
+                      <Row>
+                        <Col md={3}>{product.label}</Col>
+                        <Col md={5} style={{ fontSize: "12px" }}>
+                          {product.description}
+                        </Col>
+                        <Col md={2} as="h5" >
+                          €{product.price}
+                        </Col>
+                        <Col className="d-grid" md={2}>
+                          <Button
+                            variant="danger"
+                            size="sm"
+                            onClick={() => {
+                              const updatedProducts =
+                                formik.values.selectedElectromenagers.filter(
+                                  (product, i) => i !== index
+                                );
+                              formik.setFieldValue(
+                                "selectedElectromenagers",
+                                updatedProducts
+                              );
+                            }}
+                          >
+                            Annuler
+                          </Button>
+                        </Col>
+                      </Row>
+                    </div>
+                  ))}
+                  <div className="mt-2" style={{ color: "#9f0f0f" }}>
+                    <h5>Total des Électroménagers: €{totalElectromenagersPrice}</h5>
+                  </div>
+                </div>
+              </Accordion.Body>
+            </Accordion.Item>
+
+
+            <Accordion.Item eventKey="3">
+              <Accordion.Header>Sanitaires</Accordion.Header>
+              <Accordion.Body>
+                <Select
+                  name="selectedProducts"
+                  value={formik.values.selectedSanitaires}
+                  onChange={(selectedSanitaires) => {
+                    formik.setFieldValue(
+                      "selectedSanitaires",
+                      selectedSanitaires
+                    );
+                  }}
+                  options={sanitaires.map((sanitaire) => ({
+                    value: sanitaire.id,
+                    label: sanitaire.label,
+                    description: sanitaire.description,
+                    price: sanitaire.price,
+                  }))}
+                  isSearchable={true}
+                  isMulti
+                  placeholder="Recherche..."
+
+                />
+                {/* Display selected products */}
+                <div className="mt-4">
+                  <h6 className="mb-3">Sanitaires Sélectionnés:</h6>
+                  {formik.values.selectedSanitaires.map((product, index) => (
+                    <div key={product.value} className="mb-2">
+                      <Row>
+                        <Col md={3}>{product.label}</Col>
+                        <Col md={5} style={{ fontSize: "12px" }}>
+                          {product.description}
+                        </Col>
+                        <Col md={2} as="h5" >
+                          €{product.price}
+                        </Col>
+                        <Col className="d-grid" md={2}>
+                          <Button
+                            variant="danger"
+                            size="sm"
+                            onClick={() => {
+                              const updatedProducts =
+                                formik.values.selectedSanitaires.filter(
+                                  (product, i) => i !== index
+                                );
+                              formik.setFieldValue(
+                                "selectedSanitaires",
+                                updatedProducts
+                              );
+                            }}
+                          >
+                            Annuler
+                          </Button>
+                        </Col>
+                      </Row>
+                    </div>
+                  ))}
+                  <div className="mt-2" style={{ color: "#9f0f0f" }}>
+                    <h5>Total des Sanitaires: €{totalSanitairesPrice}</h5>
+                  </div>
+                </div>
+              </Accordion.Body>
+            </Accordion.Item>
+
+            <Accordion.Item eventKey="4">
+              <Accordion.Header>PDT Solid Surface</Accordion.Header>
+              <Accordion.Body>
+                <Select
+                  name="selectedProducts"
+                  value={formik.values.selectedSurfaces}
+                  onChange={(selectedSurfaces) => {
+                    formik.setFieldValue(
+                      "selectedSurfaces",
+                      selectedSurfaces
+                    );
+                  }}
+                  options={surfaces.map((surface) => ({
+                    value: surface.id,
+                    label: surface.label,
+                    description: surface.description,
+                    price: surface.price,
+                  }))}
+                  isSearchable={true}
+                  isMulti
+                  placeholder="Recherche..."
+
+                />
+                {/* Display selected products */}
+                <div className="mt-4">
+                  <h6 className="mb-3">PDT Solid Surface Sélectionnés:</h6>
+                  {formik.values.selectedSurfaces.map((product, index) => (
+                    <div key={product.value} className="mb-2">
+                      <Row>
+                        <Col md={3}>{product.label}</Col>
+                        <Col md={5} style={{ fontSize: "12px" }}>
+                          {product.description}
+                        </Col>
+                        <Col md={2} as="h5" >
+                          €{product.price}
+                        </Col>
+                        <Col className="d-grid" md={2}>
+                          <Button
+                            variant="danger"
+                            size="sm"
+                            onClick={() => {
+                              const updatedProducts =
+                                formik.values.selectedSurfaces.filter(
+                                  (product, i) => i !== index
+                                );
+                              formik.setFieldValue(
+                                "selectedSurfaces",
+                                updatedProducts
+                              );
+                            }}
+                          >
+                            Annuler
+                          </Button>
+                        </Col>
+                      </Row>
+                    </div>
+                  ))}
+                  <div className="mt-2" style={{ color: "#9f0f0f" }}>
+                    <h5>Total des PDT Solid Surfaces: €{totalSurfacesPrice}</h5>
+                  </div>
+                </div>
+              </Accordion.Body>
+            </Accordion.Item>
+
+            <Accordion.Item eventKey="4">
+              <Accordion.Header>Divers</Accordion.Header>
+              <Accordion.Body>
+                <Select
+                  name="selectedDivers"
+                  value={formik.values.selectedDivers}
+                  onChange={(selectedDivers) => {
+                    formik.setFieldValue(
+                      "selectedDivers",
+                      selectedDivers
+                    );
+                  }}
+                  options={divers.map((diver) => ({
+                    value: diver.id,
+                    label: diver.label,
+                    description: diver.description,
+                    price: diver.price,
+                  }))}
+                  isSearchable={true}
+                  isMulti
+                  placeholder="Recherche..."
+
+                />
+                {/* Display selected products */}
+                <div className="mt-4">
+                  <h6 className="mb-3">Divers Sélectionnés:</h6>
+                  {formik.values.selectedDivers.map((product, index) => (
+                    <div key={product.value} className="mb-2">
+                      <Row>
+                        <Col md={3}>{product.label}</Col>
+                        <Col md={5} style={{ fontSize: "12px" }}>
+                          {product.description}
+                        </Col>
+                        <Col md={2} as="h5" >
+                          €{product.price}
+                        </Col>
+                        <Col className="d-grid" md={2}>
+                          <Button
+                            variant="danger"
+                            size="sm"
+                            onClick={() => {
+                              const updatedProducts =
+                                formik.values.selectedDivers.filter(
+                                  (product, i) => i !== index
+                                );
+                              formik.setFieldValue(
+                                "selectedDivers",
+                                updatedProducts
+                              );
+                            }}
+                          >
+                            Annuler
+                          </Button>
+                        </Col>
+                      </Row>
+                    </div>
+                  ))}
+                  <div className="mt-2" style={{ color: "#9f0f0f" }}>
+                    <h5>Total des Divers: €{totalDiversPrice}</h5>
+                  </div>
                 </div>
               </Accordion.Body>
             </Accordion.Item>
