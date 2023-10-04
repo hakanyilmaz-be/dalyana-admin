@@ -20,7 +20,7 @@ import accessoires from "../assets/data/accessoires.json";
 import electromenagers from "../assets/data/electromenagers.json";
 import sanitaires from "../assets/data/sanitaires.json";
 import divers from "../assets/data/divers.json";
-import surfaces from "../assets/data/surfaces.json"
+import surfaces from "../assets/data/surfaces.json";
 
 //import { createUser } from "../../../api/admin-user-service";
 const CreateClientProjet = () => {
@@ -30,7 +30,6 @@ const CreateClientProjet = () => {
   const [totalSanitairesPrice, setTotalSanitairesPrice] = useState(0);
   const [totalDiversPrice, setTotalDiversPrice] = useState(0);
   const [totalSurfacesPrice, setTotalSurfacesPrice] = useState(0);
-
 
   const navigate = useNavigate();
 
@@ -74,9 +73,6 @@ const CreateClientProjet = () => {
     return totalPrice.toFixed(2); // Round to 2 decimal places
   };
 
-
-
-
   const initialValues = {
     name: "",
     phoneNumber: "",
@@ -98,7 +94,8 @@ const CreateClientProjet = () => {
     selectedSanitaires: [],
     selectedDivers: [],
     selectedSurfaces: [],
-
+    deliveryFee: "",
+    montageFee: "",
   };
 
   const validationSchema = Yup.object({
@@ -125,6 +122,8 @@ const CreateClientProjet = () => {
     model: Yup.string(),
     furnitureListPrice: Yup.string(),
     furnitureSalePrice: Yup.string(),
+    deliveryFee: Yup.string(),
+    montageFee: Yup.string(),
   });
 
   /* const onSubmit = async (values) => {
@@ -158,14 +157,12 @@ const CreateClientProjet = () => {
     setTotalAccessoriesPrice(totalPrice);
   }, [formik.values.selectedAccessoires]);
 
-
   useEffect(() => {
     const totalPrice = calculateTotalElectromenagersPrice(
       formik.values.selectedElectromenagers
     );
     setTotalElectromenagersPrice(totalPrice);
   }, [formik.values.selectedElectromenagers]);
-
 
   useEffect(() => {
     const totalPrice = calculateTotalSanitairesPrice(
@@ -175,9 +172,7 @@ const CreateClientProjet = () => {
   }, [formik.values.selectedSanitaires]);
 
   useEffect(() => {
-    const totalPrice = calculateTotalDiversPrice(
-      formik.values.selectedDivers
-    );
+    const totalPrice = calculateTotalDiversPrice(formik.values.selectedDivers);
     setTotalDiversPrice(totalPrice);
   }, [formik.values.selectedDivers]);
 
@@ -187,8 +182,6 @@ const CreateClientProjet = () => {
     );
     setTotalSurfacesPrice(totalPrice);
   }, [formik.values.selectedSurfaces]);
-
-
 
   return (
     <Form noValidate onSubmit={formik.handleSubmit}>
@@ -510,7 +503,7 @@ const CreateClientProjet = () => {
                         <Col md={5} style={{ fontSize: "12px" }}>
                           {product.description}
                         </Col>
-                        <Col md={2} as="h5" >
+                        <Col md={2} as="h5">
                           €{product.price}
                         </Col>
                         <Col className="d-grid" md={2}>
@@ -562,50 +555,51 @@ const CreateClientProjet = () => {
                   isSearchable={true}
                   isMulti
                   placeholder="Recherche..."
-
-               
                 />
                 {/* Display selected products */}
                 <div className="mt-4">
                   <h6 className="mb-3">Électroménagers Sélectionnés:</h6>
-                  {formik.values.selectedElectromenagers.map((product, index) => (
-                    <div key={product.value} className="mb-2">
-                      <Row>
-                        <Col md={3}>{product.label}</Col>
-                        <Col md={5} style={{ fontSize: "12px" }}>
-                          {product.description}
-                        </Col>
-                        <Col md={2} as="h5" >
-                          €{product.price}
-                        </Col>
-                        <Col className="d-grid" md={2}>
-                          <Button
-                            variant="danger"
-                            size="sm"
-                            onClick={() => {
-                              const updatedProducts =
-                                formik.values.selectedElectromenagers.filter(
-                                  (product, i) => i !== index
+                  {formik.values.selectedElectromenagers.map(
+                    (product, index) => (
+                      <div key={product.value} className="mb-2">
+                        <Row>
+                          <Col md={3}>{product.label}</Col>
+                          <Col md={5} style={{ fontSize: "12px" }}>
+                            {product.description}
+                          </Col>
+                          <Col md={2} as="h5">
+                            €{product.price}
+                          </Col>
+                          <Col className="d-grid" md={2}>
+                            <Button
+                              variant="danger"
+                              size="sm"
+                              onClick={() => {
+                                const updatedProducts =
+                                  formik.values.selectedElectromenagers.filter(
+                                    (product, i) => i !== index
+                                  );
+                                formik.setFieldValue(
+                                  "selectedElectromenagers",
+                                  updatedProducts
                                 );
-                              formik.setFieldValue(
-                                "selectedElectromenagers",
-                                updatedProducts
-                              );
-                            }}
-                          >
-                            Annuler
-                          </Button>
-                        </Col>
-                      </Row>
-                    </div>
-                  ))}
+                              }}
+                            >
+                              Annuler
+                            </Button>
+                          </Col>
+                        </Row>
+                      </div>
+                    )
+                  )}
                   <div className="mt-2" style={{ color: "#9f0f0f" }}>
-                    <h5>Total des Électroménagers: €{totalElectromenagersPrice}</h5>
+                    <h5>
+                      Total des Électroménagers: €{totalElectromenagersPrice}
+                    </h5>
                   </div>
                 </div>
               </Accordion.Body>
             </Accordion.Item>
-
 
             <Accordion.Item eventKey="3">
               <Accordion.Header>Sanitaires</Accordion.Header>
@@ -628,7 +622,6 @@ const CreateClientProjet = () => {
                   isSearchable={true}
                   isMulti
                   placeholder="Recherche..."
-
                 />
                 {/* Display selected products */}
                 <div className="mt-4">
@@ -640,7 +633,7 @@ const CreateClientProjet = () => {
                         <Col md={5} style={{ fontSize: "12px" }}>
                           {product.description}
                         </Col>
-                        <Col md={2} as="h5" >
+                        <Col md={2} as="h5">
                           €{product.price}
                         </Col>
                         <Col className="d-grid" md={2}>
@@ -678,10 +671,7 @@ const CreateClientProjet = () => {
                   name="selectedProducts"
                   value={formik.values.selectedSurfaces}
                   onChange={(selectedSurfaces) => {
-                    formik.setFieldValue(
-                      "selectedSurfaces",
-                      selectedSurfaces
-                    );
+                    formik.setFieldValue("selectedSurfaces", selectedSurfaces);
                   }}
                   options={surfaces.map((surface) => ({
                     value: surface.id,
@@ -692,7 +682,6 @@ const CreateClientProjet = () => {
                   isSearchable={true}
                   isMulti
                   placeholder="Recherche..."
-
                 />
                 {/* Display selected products */}
                 <div className="mt-4">
@@ -704,7 +693,7 @@ const CreateClientProjet = () => {
                         <Col md={5} style={{ fontSize: "12px" }}>
                           {product.description}
                         </Col>
-                        <Col md={2} as="h5" >
+                        <Col md={2} as="h5">
                           €{product.price}
                         </Col>
                         <Col className="d-grid" md={2}>
@@ -742,10 +731,7 @@ const CreateClientProjet = () => {
                   name="selectedDivers"
                   value={formik.values.selectedDivers}
                   onChange={(selectedDivers) => {
-                    formik.setFieldValue(
-                      "selectedDivers",
-                      selectedDivers
-                    );
+                    formik.setFieldValue("selectedDivers", selectedDivers);
                   }}
                   options={divers.map((diver) => ({
                     value: diver.id,
@@ -756,7 +742,6 @@ const CreateClientProjet = () => {
                   isSearchable={true}
                   isMulti
                   placeholder="Recherche..."
-
                 />
                 {/* Display selected products */}
                 <div className="mt-4">
@@ -768,7 +753,7 @@ const CreateClientProjet = () => {
                         <Col md={5} style={{ fontSize: "12px" }}>
                           {product.description}
                         </Col>
-                        <Col md={2} as="h5" >
+                        <Col md={2} as="h5">
                           €{product.price}
                         </Col>
                         <Col className="d-grid" md={2}>
@@ -801,6 +786,128 @@ const CreateClientProjet = () => {
           </Accordion>
         </Card.Body>
       </Card>
+
+      <Form.Group
+        className="livraison mb-3"
+        style={{ display: "flex", gap: "15px" }}
+      >
+        <Form.Label as="h3">Livraison:</Form.Label>
+
+        <Form.Control
+          type="text"
+          style={{
+            color: "#9f0f0f",
+            borderColor: "#9f0f0f",
+            width: "200px",
+          }}
+          // as={MaskedInput}
+          // mask="(111) 111-1111"
+          placeholder="Frais de livraison"
+          {...formik.getFieldProps("deliveryFee")}
+          isInvalid={!!formik.errors.deliveryFee}
+        />
+        <Form.Control.Feedback type="invalid">
+          {formik.errors.deliveryFee}
+        </Form.Control.Feedback>
+      </Form.Group>
+
+      <Form.Group
+        className="pose mb-5"
+        style={{ display: "flex", gap: "65px" }}
+      >
+        <Form.Label as="h3">Pose:</Form.Label>
+
+        <Form.Control
+          type="text"
+          style={{
+            color: "#9f0f0f",
+            borderColor: "#9f0f0f",
+            width: "200px",
+          }}
+          // as={MaskedInput}
+          // mask="(111) 111-1111"
+          placeholder="Frais de pose"
+          {...formik.getFieldProps("montageFee")}
+          isInvalid={!!formik.errors.montageFee}
+        />
+        <Form.Control.Feedback type="invalid">
+          {formik.errors.montageFee}
+        </Form.Control.Feedback>
+      </Form.Group>
+
+      <div className="tva mb-5" style={{ fontSize: "22px" }}>
+        <h3 style={{ color: "#9f0f0f" }}>Taux de TVA</h3>
+        <Form.Check
+          inline
+          label="0%"
+          name="group1"
+          type="radio"
+          id="1"
+          style={{
+            fontSize: "22px",
+            marginRight: "60px",
+          }}
+        />
+        <Form.Check
+          inline
+          label="6%"
+          name="group1"
+          type="radio"
+          id="2"
+          style={{ fontSize: "22px", marginRight: "60px" }}
+        />
+        <Form.Check
+          inline
+          label="10%"
+          name="group1"
+          type="radio"
+          id="3"
+          style={{ fontSize: "22px", marginRight: "60px" }}
+        />
+        <Form.Check
+          inline
+          label="20%"
+          name="group1"
+          type="radio"
+          id="4"
+          style={{ fontSize: "22px", marginRight: "60px" }}
+        />
+        <Form.Check
+          inline
+          label="21%"
+          name="group1"
+          type="radio"
+          id="5"
+          style={{ fontSize: "22px" }}
+        />
+      </div>
+
+      <Form.Group
+        className="total mb-5"
+        style={{ display: "flex", gap: "15px" }}
+      >
+        <Form.Label as="h2" style={{
+            color: "#9f0f0f",
+          }}>TOTAL TVAC:</Form.Label>
+
+        <Form.Control
+          type="text"
+          style={{
+            color: "#9f0f0f",
+            borderColor: "#9f0f0f",
+            width: "170px",
+          }}
+          // as={MaskedInput}
+          // mask="(111) 111-1111"
+          placeholder="Total TVAC"
+          {...formik.getFieldProps("montageFee")}
+          isInvalid={!!formik.errors.montageFee}
+        />
+        <Form.Control.Feedback type="invalid">
+          {formik.errors.montageFee}
+        </Form.Control.Feedback>
+      </Form.Group>
+
       <Button type="submit">Submit</Button>
     </Form>
   );
