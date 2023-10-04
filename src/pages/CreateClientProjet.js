@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import "./create-client-project.css";
 import * as Yup from "yup";
 import moment from "moment";
 //import { toast } from "react-toastify";
@@ -96,6 +97,8 @@ const CreateClientProjet = () => {
     selectedSurfaces: [],
     deliveryFee: "",
     montageFee: "",
+    selectedTaxRate:"",
+    totalFee: "",
   };
 
   const validationSchema = Yup.object({
@@ -124,6 +127,7 @@ const CreateClientProjet = () => {
     furnitureSalePrice: Yup.string(),
     deliveryFee: Yup.string(),
     montageFee: Yup.string(),
+    totalFee: Yup.string(),
   });
 
   /* const onSubmit = async (values) => {
@@ -141,7 +145,9 @@ const CreateClientProjet = () => {
   }; */
 
   //ASAGIDAKI BOS FONK GEREK YOK, HATA VERMEMESI ICIN YAZDIM
-  const onSubmit = () => {};
+  const onSubmit = (values) => {
+    console.log("Selected TVA Rate:", values.selectedTaxRate);
+  };
 
   const formik = useFormik({
     enableReinitialize: true,
@@ -182,6 +188,7 @@ const CreateClientProjet = () => {
     );
     setTotalSurfacesPrice(totalPrice);
   }, [formik.values.selectedSurfaces]);
+
 
   return (
     <Form noValidate onSubmit={formik.handleSubmit}>
@@ -835,60 +842,75 @@ const CreateClientProjet = () => {
         </Form.Control.Feedback>
       </Form.Group>
 
-      <div className="tva mb-5" style={{ fontSize: "22px" }}>
+      <Form.Group className="tva mb-5" style={{ fontSize: "22px" }}>
         <h3 style={{ color: "#9f0f0f" }}>Taux de TVA</h3>
         <Form.Check
           inline
           label="0%"
-          name="group1"
+          value="1"
+          name="selectedTaxRate"
           type="radio"
-          id="1"
+          checked={formik.values.selectedTaxRate==="1"}
+          onChange={formik.handleChange}
           style={{
             fontSize: "22px",
-            marginRight: "60px",
+            marginRight: "70px",
           }}
         />
         <Form.Check
           inline
           label="6%"
-          name="group1"
+          value="6"
+          name="selectedTaxRate"
           type="radio"
-          id="2"
-          style={{ fontSize: "22px", marginRight: "60px" }}
+          checked={formik.values.selectedTaxRate==="6"}
+          onChange={formik.handleChange}
+          style={{ fontSize: "22px", marginRight: "70px" }}
         />
         <Form.Check
           inline
           label="10%"
-          name="group1"
+          value="10"
+          name="selectedTaxRate"
           type="radio"
-          id="3"
-          style={{ fontSize: "22px", marginRight: "60px" }}
+          checked={formik.values.selectedTaxRate==="10"}
+          onChange={formik.handleChange}
+          style={{ fontSize: "22px", marginRight: "70px" }}
         />
         <Form.Check
           inline
           label="20%"
-          name="group1"
+          value="20"
+          name="selectedTaxRate"
           type="radio"
-          id="4"
-          style={{ fontSize: "22px", marginRight: "60px" }}
+          checked={formik.values.selectedTaxRate==="20"}
+          onChange={formik.handleChange}
+          style={{ fontSize: "22px", marginRight: "70px" }}
         />
         <Form.Check
           inline
           label="21%"
-          name="group1"
+          value="21"
+          name="selectedTaxRate"
           type="radio"
-          id="5"
+          checked={formik.values.selectedTaxRate==="21"}
+          onChange={formik.handleChange}
           style={{ fontSize: "22px" }}
         />
-      </div>
+      </Form.Group>
 
       <Form.Group
         className="total mb-5"
         style={{ display: "flex", gap: "15px" }}
       >
-        <Form.Label as="h2" style={{
+        <Form.Label
+          as="h2"
+          style={{
             color: "#9f0f0f",
-          }}>TOTAL TVAC:</Form.Label>
+          }}
+        >
+          TOTAL TVAC:
+        </Form.Label>
 
         <Form.Control
           type="text"
@@ -900,11 +922,11 @@ const CreateClientProjet = () => {
           // as={MaskedInput}
           // mask="(111) 111-1111"
           placeholder="Total TVAC"
-          {...formik.getFieldProps("montageFee")}
-          isInvalid={!!formik.errors.montageFee}
+          {...formik.getFieldProps("totalFee")}
+          isInvalid={!!formik.errors.totalFee}
         />
         <Form.Control.Feedback type="invalid">
-          {formik.errors.montageFee}
+          {formik.errors.totalFee}
         </Form.Control.Feedback>
       </Form.Group>
 
