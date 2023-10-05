@@ -31,6 +31,8 @@ const CreateClientProjet = () => {
   const [totalSanitairesPrice, setTotalSanitairesPrice] = useState(0);
   const [totalDiversPrice, setTotalDiversPrice] = useState(0);
   const [totalSurfacesPrice, setTotalSurfacesPrice] = useState(0);
+  
+
 
   const navigate = useNavigate();
 
@@ -39,7 +41,7 @@ const CreateClientProjet = () => {
     selectedAccessoires.forEach((product) => {
       totalPrice += parseFloat(product.price);
     });
-    return totalPrice.toFixed(2); // Round to 2 decimal places
+    return totalPrice.toFixed(0); // Round to 2 decimal places
   };
 
   const calculateTotalElectromenagersPrice = (selectedElectromenagers) => {
@@ -47,7 +49,7 @@ const CreateClientProjet = () => {
     selectedElectromenagers.forEach((product) => {
       totalPrice += parseFloat(product.price);
     });
-    return totalPrice.toFixed(2); // Round to 2 decimal places
+    return totalPrice.toFixed(0); // Round to 2 decimal places
   };
 
   const calculateTotalSanitairesPrice = (selectedSanitaires) => {
@@ -55,7 +57,7 @@ const CreateClientProjet = () => {
     selectedSanitaires.forEach((product) => {
       totalPrice += parseFloat(product.price);
     });
-    return totalPrice.toFixed(2); // Round to 2 decimal places
+    return totalPrice.toFixed(0); // Round to 2 decimal places
   };
 
   const calculateTotalDiversPrice = (selectedDivers) => {
@@ -63,7 +65,7 @@ const CreateClientProjet = () => {
     selectedDivers.forEach((product) => {
       totalPrice += parseFloat(product.price);
     });
-    return totalPrice.toFixed(2); // Round to 2 decimal places
+    return totalPrice.toFixed(0); // Round to 2 decimal places
   };
 
   const calculateTotalSurfacesPrice = (selectedSurfaces) => {
@@ -71,8 +73,10 @@ const CreateClientProjet = () => {
     selectedSurfaces.forEach((product) => {
       totalPrice += parseFloat(product.price);
     });
-    return totalPrice.toFixed(2); // Round to 2 decimal places
+    return totalPrice.toFixed(0); // Round to 2 decimal places
   };
+
+ 
 
   const initialValues = {
     name: "",
@@ -157,6 +161,48 @@ const CreateClientProjet = () => {
   });
 
   useEffect(() => {
+    // Destructure the values from formik
+    const {
+      furnitureSalePrice,
+      deliveryFee,
+      montageFee,
+      selectedTaxRate,
+    } = formik.values;
+
+    // Calculate the sum of the fields
+    const sum =
+      parseFloat(furnitureSalePrice) +
+      parseFloat(totalAccessoriesPrice) +
+      parseFloat(totalElectromenagersPrice) +
+      parseFloat(totalSanitairesPrice) +
+      parseFloat(totalDiversPrice) +
+      parseFloat(totalSurfacesPrice) +
+      (formik.values.deliveryFee ? parseFloat(formik.values.deliveryFee) : 0) +
+  (formik.values.montageFee ? parseFloat(formik.values.montageFee) : 0);
+
+    // Calculate the totalFee by multiplying the sum with the selectedTaxRate
+    const totalFee = sum * (1 + parseFloat(selectedTaxRate) / 100);
+
+    // Update the totalFee field in the formik values
+    formik.setFieldValue('totalFee', totalFee.toFixed(0)); // Display totalFee with 2 decimal places
+  }, [
+    formik.values.furnitureSalePrice,
+    formik.values.selectedAccessoires,
+    formik.values.selectedElectromenagers,
+    formik.values.selectedSanitaires,
+    formik.values.selectedDivers,
+    formik.values.selectedSurfaces,
+    formik.values.deliveryFee,
+    formik.values.montageFee,
+    formik.values.selectedTaxRate,
+    totalAccessoriesPrice,
+    totalElectromenagersPrice,
+    totalSanitairesPrice,
+    totalDiversPrice,
+    totalSurfacesPrice,
+  ]);
+
+  useEffect(() => {
     const totalPrice = calculateTotalAccessoriesPrice(
       formik.values.selectedAccessoires
     );
@@ -188,6 +234,9 @@ const CreateClientProjet = () => {
     );
     setTotalSurfacesPrice(totalPrice);
   }, [formik.values.selectedSurfaces]);
+
+  
+
 
 
   return (
@@ -847,10 +896,10 @@ const CreateClientProjet = () => {
         <Form.Check
           inline
           label="0%"
-          value="1"
+          value="0"
           name="selectedTaxRate"
           type="radio"
-          checked={formik.values.selectedTaxRate==="1"}
+          checked={formik.values.selectedTaxRate==="0"}
           onChange={formik.handleChange}
           style={{
             fontSize: "22px",
@@ -922,8 +971,8 @@ const CreateClientProjet = () => {
           // as={MaskedInput}
           // mask="(111) 111-1111"
           placeholder="Total TVAC"
-          {...formik.getFieldProps("totalFee")}
-          isInvalid={!!formik.errors.totalFee}
+          value={formik.values.totalFee}
+          readOnly 
         />
         <Form.Control.Feedback type="invalid">
           {formik.errors.totalFee}
