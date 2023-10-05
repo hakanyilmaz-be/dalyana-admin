@@ -102,7 +102,7 @@ const CreateClientProjet = () => {
     deliveryFee: "",
     montageFee: "",
     selectedTaxRate:"",
-    totalFee: "",
+    totalFee: "Please select tax rate",
   };
 
   const validationSchema = Yup.object({
@@ -169,22 +169,28 @@ const CreateClientProjet = () => {
       selectedTaxRate,
     } = formik.values;
 
-    // Calculate the sum of the fields
-    const sum =
-      parseFloat(furnitureSalePrice) +
-      parseFloat(totalAccessoriesPrice) +
-      parseFloat(totalElectromenagersPrice) +
-      parseFloat(totalSanitairesPrice) +
-      parseFloat(totalDiversPrice) +
-      parseFloat(totalSurfacesPrice) +
-      (formik.values.deliveryFee ? parseFloat(formik.values.deliveryFee) : 0) +
-  (formik.values.montageFee ? parseFloat(formik.values.montageFee) : 0);
+    // Check if a tax rate is selected
+    if (selectedTaxRate !== "") {
+      // Calculate the sum of the fields
+      const sum =
+        (formik.values.furnitureSalePrice ? parseFloat(formik.values.furnitureSalePrice) : 0) +
+        parseFloat(totalAccessoriesPrice) +
+        parseFloat(totalElectromenagersPrice) +
+        parseFloat(totalSanitairesPrice) +
+        parseFloat(totalDiversPrice) +
+        parseFloat(totalSurfacesPrice) +
+        (formik.values.deliveryFee ? parseFloat(formik.values.deliveryFee) : 0) +
+        (formik.values.montageFee ? parseFloat(formik.values.montageFee) : 0);
 
-    // Calculate the totalFee by multiplying the sum with the selectedTaxRate
-    const totalFee = sum * (1 + parseFloat(selectedTaxRate) / 100);
+      // Calculate the totalFee by multiplying the sum with the selectedTaxRate
+      const totalFee = sum * (1 + parseFloat(selectedTaxRate) / 100);
 
-    // Update the totalFee field in the formik values
-    formik.setFieldValue('totalFee', totalFee.toFixed(0)); // Display totalFee with 2 decimal places
+      // Update the totalFee field in the formik values
+      formik.setFieldValue('totalFee', totalFee.toFixed(0)); // Display totalFee with 0 decimal places
+    } else {
+      // If no tax rate is selected, show a placeholder
+      formik.setFieldValue('totalFee', 'Sélectionnez TVA');
+    }
   }, [
     formik.values.furnitureSalePrice,
     formik.values.selectedAccessoires,
@@ -201,6 +207,7 @@ const CreateClientProjet = () => {
     totalDiversPrice,
     totalSurfacesPrice,
   ]);
+
 
   useEffect(() => {
     const totalPrice = calculateTotalAccessoriesPrice(
