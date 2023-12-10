@@ -243,9 +243,6 @@ const CreateClientProjet = () => {
   }, [formik.values.selectedSurfaces]);
 
   
-
-
-
   return (
     <Form noValidate onSubmit={formik.handleSubmit}>
       <Card className="mb-5">

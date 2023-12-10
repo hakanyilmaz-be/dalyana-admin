@@ -1,0 +1,102 @@
+[
+    {
+        "image": "./employee-photos/001.jpg",
+        "id" : "E-001",
+        "name":"Hasan Nadir",
+        "location":"Quartier général",
+        "status": "Business Manager",
+        "firstDate": "01 Mai 2023",
+        "phoneNumber": "0489332172",
+        "email": "hasan@dalyana.com"
+    },
+    {
+        "image": "./employee-photos/002.jpg",
+        "id" : "E-002",
+        "name":"Robin Kylan",
+        "location":"Mons",
+        "status": "Vendeuse",
+        "firstDate": "22 Février 2023",
+        "phoneNumber": "04783633541",
+        "email": "robin@dalyana.com"
+    },
+    {
+        "image": "./employee-photos/003.jpg",
+        "id" : "E-003",
+        "name":"Lanny Auston",
+        "location":"Liege",
+        "status": "Vendeur",
+        "firstDate": "14 Mars 2023",
+        "phoneNumber": "0488898821",
+        "email": "lanny@dalyana.com"
+    },
+    {
+        "image": "./employee-photos/004.jpg",
+        "id" : "E-004",
+        "name":"Michel Loiseau",
+        "location":"Liege",
+        "status": "Gérant de magasin",
+        "firstDate": "25 Juillet 2022",
+        "phoneNumber": "0478112566",
+        "email": "michel@dalyana.com"
+    },
+    {
+        "image": "./employee-photos/005.jpg",
+        "id" : "E-005",
+        "name":"Carson Darrin",
+        "location":"Paris",
+        "status": "Vendeuse",
+        "firstDate": "25 Aout 2023",
+        "phoneNumber": "0488678512",
+        "email": "carson@dalyana.com"
+    },
+    {
+        "image": "./employee-photos/006.jpg",
+        "id" : "E-006",
+        "name":"Fran Perez",
+        "location":"Mons",
+        "status": "Vendeuse",
+        "firstDate": "01 Mai",
+        "phoneNumber": "0489102177",
+        "email": "fran@dalyana.com"
+    },
+    {
+        "image": "./employee-photos/007.jpg",
+        "id" : "E-007",
+        "name":"Anika Viseer",
+        "location":"Bruxelles",
+        "status": "Gérant de magasin",
+        "firstDate": "13 Avril 2023",
+        "phoneNumber": "0478712283",
+        "email": "anika@dalyana.com"
+    },
+    {
+        "image": "./employee-photos/008.jpg",
+        "id" : "E-008",
+        "name":"Miron Vitold",
+        "location":"Mons",
+        "status": "Ouvrier d'entrepôt",
+        "firstDate": "05 Décembre 2023",
+        "phoneNumber": "0479906612",
+        "email": "miron@dalyana.com"
+    },
+    {
+        "image": "./employee-photos/009.jpg",
+        "id" : "E-009",
+        "name":"Lulia albu",
+        "location":"Bruxelles",
+        "status": "Vendeur",
+        "firstDate": "03 Septembre 2023",
+        "phoneNumber": "0489386621",
+        "email": "lulia@dalyana.com"
+    },
+    {
+        "image": "./employee-photos/010.jpg",
+        "id" : "E-010",
+        "name":"Frank Auston",
+        "location":"Charleroi",
+        "status": "Vendeur",
+        "firstDate": "01 Novembre 2023",
+        "phoneNumber": "0489332172",
+        "email": "frank@dalyana.com"
+    }
+]

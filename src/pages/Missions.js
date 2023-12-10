@@ -1,11 +1,22 @@
 import React from 'react'
 import { Container } from 'react-bootstrap'
+import Kanban from '../components/kanban/kanban'
 
 
 const Missions = () => {
   return (
 
-    <Container>Missions</Container>
+    <Container>
+    
+
+
+    <Kanban/>
+    
+    
+    
+    
+    
+    </Container>
 
    
   )

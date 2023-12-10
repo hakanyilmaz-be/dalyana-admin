@@ -1,9 +1,12 @@
 import React from 'react'
 import { Container } from 'react-bootstrap'
+import Calender from '../components/calender/calender'
 
 const Calendrier = () => {
   return (
-    <Container>Calendrier</Container>
+    <Container>
+      <Calender/>
+    </Container>
   )
 }
 

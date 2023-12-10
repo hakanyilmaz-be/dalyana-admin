@@ -34,7 +34,6 @@ const DevisCommandeTable = () => {
     {
       name: "Statut",
       selector: (row) => row.status,
-      sortable: true,
     },
     {
       name: "Date",
