@@ -234,42 +234,30 @@ const InvoiceCreationForm = () => {
     <>
       {values.accessoires.map((accessoire, index) => (
         <Row key={index} className="mb-3 align-items-center">
-          {/* Accessoire Name Input */}
+          {/* Accessoire Selection */}
           <Col md={2}>
             <Form.Group>
-              <Form.Label>Accessoire Name</Form.Label>
-              <Field 
-                name={`accessoires[${index}].name`} 
-                as={Form.Control}
-                placeholder="Enter Accessoire Name"
+              <Form.Label>Accessoire</Form.Label>
+              <SearchableSelect
+                name={`accessoires[${index}].accessoireId`}
+                data={accessoires}
+                setFieldValue={setFieldValue}
+                value={accessoire.accessoireId}
+                placeholder="Select Accessoire"
+                isProduct={false}
+                index={index}
+                setPrice={(idx, price, quantity) => {
+                  setFieldValue(`accessoires[${idx}].price`, price);
+                  setFieldValue(`accessoires[${idx}].vatIncludedPrice`, calculateVATIncludedPrice(price, accessoire.taxRate, quantity));
+                  setFieldValue(`accessoires[${idx}].subtotal`, calculateSubtotal(price, quantity));
+                }}
+                values={values}
+                calculateVATIncludedPrice={calculateVATIncludedPrice}
+                calculateSubtotal={calculateSubtotal}
               />
-              <ErrorMessage name={`accessoires[${index}].name`} component="div" className="error-message" />
+              <ErrorMessage name={`accessoires[${index}].accessoireId`} component="div" className="error-message" />
             </Form.Group>
           </Col>
-
-           {/* Unit Price Input */}
-<Col md={2}>
-  <Form.Group>
-    <Form.Label>Unit Price</Form.Label>
-    <Field 
-      type="number"
-      name={`accessoires[${index}].price`} 
-      as={Form.Control}
-      placeholder="Enter Unit Price"
-      onChange={(e) => {
-        const value = e.target.value;
-        // Check if the value is a number
-        if (!isNaN(value) && value.trim() !== '') {
-          const newPrice = parseFloat(value); // Convert to float for decimal support
-          setFieldValue(`accessoires[${index}].price`, newPrice);
-          setFieldValue(`accessoires[${index}].vatIncludedPrice`, calculateVATIncludedPrice(newPrice, accessoire.taxRate, accessoire.quantity));
-          setFieldValue(`accessoires[${index}].subtotal`, calculateSubtotal(newPrice, accessoire.quantity));
-        }
-      }}
-    />
-    <ErrorMessage name={`accessoires[${index}].price`} component="div" className="error-message" />
-  </Form.Group>
-</Col>
 
        {/* Quantity Input */}
 <Col md={1}>
@@ -293,10 +281,18 @@ const InvoiceCreationForm = () => {
   </Form.Group>
 </Col>
 
+         {/* Unit Price Display */}
+<Col md={2}>
+  <Form.Group>
+    <Form.Label>Unit Price</Form.Label>
+    <p className="price-text">{`${typeof accessoire.price === 'number' ? accessoire.price.toFixed(2) : '0.00'} €`}</p>
+  </Form.Group>
+</Col>
+
 {/* Subtotal Price Display */}
 <Col md={2}>
   <Form.Group>
-    <Form.Label className='parent-text'>Subtotal</Form.Label>
+    <Form.Label>Subtotal</Form.Label>
     <p className="price-text">{`${typeof accessoire.subtotal === 'number' ? accessoire.subtotal.toFixed(2) : '0.00'} €`}</p>
   </Form.Group>
 </Col>
@@ -320,8 +316,9 @@ const InvoiceCreationForm = () => {
 {/* VAT Included Price Display */}
 <Col md={2}>
   <Form.Group>
-    <Form.Label className='parent-text'>VAT Included</Form.Label>
+    <Form.Label>VAT Included</Form.Label>
     <p className="price-text">{accessoire.taxRate ?`${accessoire.vatIncludedPrice.toFixed(2)}€` :'Select tax'}</p>
+   
   </Form.Group>
 </Col>
 
@@ -331,20 +328,23 @@ const InvoiceCreationForm = () => {
     <AiTwotoneDelete />
   </Button>
 </Col>
+
         </Row>
       ))}
-      <Button variant="outline-primary" onClick={() => push({ accessoireId: '', quantity: 1, price: '', taxRate: '', vatIncludedPrice: 0, subtotal: 0 })}>
-  <AiOutlinePlus /> Add Accessoire
-</Button>
-
+      <Button variant="outline-primary" onClick={() => push({ accessoireId: '', quantity: 1, price: 0, taxRate: '', vatIncludedPrice: 0, subtotal: 0 })}>
+        <AiOutlinePlus /> Add Accessoire
+      </Button>
     </>
   )}
 </FieldArray>
+
 
 {/* Submit Button */}
 <div className="mt-4">
   <Button type="submit" variant="primary">Create Invoice</Button>
 </div>
+
+
           </Form>
         )}
       </Formik>
