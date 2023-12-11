@@ -4,12 +4,12 @@ import * as Yup from 'yup';
 import { Container, Row, Col, Form, Button, InputGroup, Dropdown, FormControl } from 'react-bootstrap';
 import { AiOutlinePlus, AiTwotoneDelete } from 'react-icons/ai';
 import './InvoiceForm.css';
-import customers from './customers.json'; // Ensure this file exists and is properly formatted
-import products from './products.json'; // Ensure this file exists and is properly formatted
+import customers from './customers.json';
+import products from './products.json'; 
 
 const taxRates = [0, 6, 10, 20, 21];
 
-const SearchableSelect = ({ name, data, setFieldValue, value, placeholder, isProduct, index, setPrice }) => {
+const SearchableSelect = ({ name, data, setFieldValue, value, placeholder, isProduct, index, setPrice, values, calculateVATIncludedPrice, calculateSubtotal }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [showDropdown, setShowDropdown] = useState(false);
   const selectedItem = data.find(item => item.id === value);
@@ -25,19 +25,28 @@ const SearchableSelect = ({ name, data, setFieldValue, value, placeholder, isPro
       />
       {showDropdown && (
         <Dropdown.Menu show>
-          {data.filter(item => item.name.toLowerCase().includes(searchTerm.toLowerCase())).map((item) => (
-            <Dropdown.Item key={item.id} onClick={() => {
-              setFieldValue(name, item.id);
-              setSearchTerm('');
-              if (isProduct) {
-                const selectedProduct = products.find(p => p.id === item.id);
-                setPrice(index, selectedProduct ? selectedProduct.price : 0, 1); // Reset quantity to 1
-              }
-            }}>
-              {item.name}
-            </Dropdown.Item>
-          ))}
-        </Dropdown.Menu>
+  {data.filter(item => item.name.toLowerCase().includes(searchTerm.toLowerCase())).map((item) => (
+    <Dropdown.Item key={item.id} onClick={() => {
+      setFieldValue(name, item.id);
+      setSearchTerm('');
+
+      if (isProduct) {
+        // Retrieve the current quantity
+        const currentQuantity = values.items[index].quantity || 1;
+
+        const selectedProduct = products.find(p => p.id === item.id);
+        const price = selectedProduct ? selectedProduct.price : 0;
+
+        // Update the price based on the selected product and current quantity
+        setPrice(index, price, currentQuantity);
+        setFieldValue(`items[${index}].vatIncludedPrice`, calculateVATIncludedPrice(price, values.items[index].taxRate, currentQuantity));
+        setFieldValue(`items[${index}].subtotal`, calculateSubtotal(price, currentQuantity));
+      }
+    }}>
+      {item.name}
+    </Dropdown.Item>
+  ))}
+</Dropdown.Menu>
       )}
     </div>
   );
@@ -46,7 +55,7 @@ const SearchableSelect = ({ name, data, setFieldValue, value, placeholder, isPro
 const InvoiceCreationForm = () => {
   const initialValues = {
     customerId: '',
-    items: [{ productId: '', quantity: 1, price: 0, taxRate: '', vatIncludedPrice: 0, subtotal: 0 }],
+    items: [],
   };
 
   const handleSubmit = (values) => {
@@ -104,25 +113,28 @@ const InvoiceCreationForm = () => {
                     <Row key={index} className="mb-3 align-items-center">
                       {/* Product Selection */}
                       <Col md={2}>
-                        <Form.Group>
-                          <Form.Label>Product</Form.Label>
-                          <SearchableSelect 
-                            name={`items[${index}].productId`} 
-                            data={products} 
-                            setFieldValue={setFieldValue}
-                            value={item.productId}
-                            placeholder="Sélectionnez" 
-                            isProduct={true}
-                            index={index}
-                            setPrice={(idx, price, quantity) => {
-                              setFieldValue(`items[${idx}].price`, price);
-                              setFieldValue(`items[${idx}].vatIncludedPrice`, calculateVATIncludedPrice(price, item.taxRate, quantity));
-                              setFieldValue(`items[${idx}].subtotal`, calculateSubtotal(price, quantity));
-                            }}
-                          />
-                          <ErrorMessage name={`items[${index}].productId`} component="div" className="error-message" />
-                        </Form.Group>
-                      </Col>
+    <Form.Group>
+      <Form.Label>Product</Form.Label>
+      <SearchableSelect 
+        name={`items[${index}].productId`} 
+        data={products} 
+        setFieldValue={setFieldValue}
+        value={item.productId}
+        placeholder="Sélectionnez" 
+        isProduct={true}
+        index={index}
+        setPrice={(idx, price, quantity) => {
+          setFieldValue(`items[${idx}].price`, price);
+          setFieldValue(`items[${idx}].vatIncludedPrice`, calculateVATIncludedPrice(price, item.taxRate, quantity));
+          setFieldValue(`items[${idx}].subtotal`, calculateSubtotal(price, quantity));
+        }}
+        values={values} // pass the 'values'
+        calculateVATIncludedPrice={calculateVATIncludedPrice} // pass the function
+        calculateSubtotal={calculateSubtotal} // pass the function
+      />
+      <ErrorMessage name={`items[${index}].productId`} component="div" className="error-message" />
+    </Form.Group>
+  </Col>
                       {/* Quantity Input */}
                       <Col md={1}>
                         <Form.Group>

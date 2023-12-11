@@ -10,12 +10,14 @@
     font-size: 0.8rem;
   }
   .parent-text{
-    padding-top: 5px;
+    padding-top: 9px;
+    margin-bottom: 12px!important;
   }
   .price-text {
     font-weight: bold;
     display: flex;
     align-items: center;
+    margin-left: 10px!important;
    
   }
 
