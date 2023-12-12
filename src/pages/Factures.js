@@ -1,13 +1,19 @@
 import React from 'react'
 import { Container } from 'react-bootstrap'
-import InvoiceCreationForm from '../components/invoice/invoice-creation-form'
+import InvoiceTable from '../components/invoice/invoice-table/invoice-table'
+import CreateNew from '../components/create-new/create-new'
+import { Link } from 'react-router-dom'
 
 
 const Factures = () => {
   return (
 
     <Container>
-    <InvoiceCreationForm/>
+     <Link to="/factures/new">
+        <CreateNew title="Créer une facture" />
+      </Link>
+    <h1 className='mt-5' style={{ textAlign: 'center', color: '#112e3b' }}>Factures</h1>
+    <InvoiceTable/>
     </Container>
 
   )

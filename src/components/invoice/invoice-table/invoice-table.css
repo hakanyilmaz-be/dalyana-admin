@@ -1,0 +1,26 @@
+.data-filter{
+    margin-bottom: 10px;
+}
+
+.filtered-message{
+   margin-top: 3rem;
+    text-align: center;
+}
+
+.rdt_TableRow:hover {
+    color: rgba(0, 0, 0, 0.87);
+    background-color: rgb(230, 238, 247)!important;
+    transition-duration: 0.15s;
+    transition-property: background-color;
+    border-bottom-color: rgb(255, 255, 255);
+    border-radius: 15px!important;
+    outline: rgb(255, 255, 255) solid 1px;
+}
+
+.rdt_TableHeadRow{
+    border-radius: 15px;
+}
+
+
+
+/* background-color: rgb(230, 244, 244)!important; */

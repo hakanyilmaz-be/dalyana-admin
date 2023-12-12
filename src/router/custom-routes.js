@@ -35,6 +35,8 @@ import Statistiques from "../pages/Statistiques";
 import ClientsEditPage from "../pages/ClientsEditPage";
 import CreateClientProjet from "../pages/CreateClientProjet";
 import EmployeeEditPage from "../pages/EmployeeEditPage";
+import CreateInvoice from "../pages/CreateInvoice";
+import InvoiceEditPage from "../pages/InvoiceEditPage";
 
 const CustomRoutes = () => {
   return (
@@ -74,10 +76,17 @@ const CustomRoutes = () => {
               <Route path="new" element={<AdminTemplate><CreateClientProjet/></AdminTemplate>}/>
             </Route>
           <Route path="elements-produits" element={<AdminTemplate><ElementsProduits /></AdminTemplate>} />
-          <Route path="factures" element={<AdminTemplate><Factures /></AdminTemplate>} />
+
+          <Route path="factures"> 
+            <Route index element={<AdminTemplate><Factures /></AdminTemplate>} />
+            <Route path="new" element={<AdminTemplate><CreateInvoice/></AdminTemplate>}/>
+            <Route path=":factureId" element={<AdminTemplate><InvoiceEditPage/></AdminTemplate>}/>
+
+            </Route> 
+         
           <Route path="employees">
               <Route index element={<AdminTemplate><Employees /></AdminTemplate>}/>
-              <Route path=":clientId" element={<AdminTemplate><EmployeeEditPage/></AdminTemplate>}/>
+              <Route path=":employeeId" element={<AdminTemplate><EmployeeEditPage/></AdminTemplate>}/>
           </Route> 
           <Route path="calendrier" element={<AdminTemplate><Calendrier /></AdminTemplate>} />
           <Route path="missions" element={<AdminTemplate><Missions /></AdminTemplate>} />

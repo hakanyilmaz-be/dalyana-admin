@@ -1,14 +1,14 @@
 import React from "react";
 import { Button, Col, Container, Row } from "react-bootstrap";
-import "./create-customer-command-button.css";
+import "./create-new.css";
 
-const CreateNewCustomerCommand = () => {
+const CreateNew = ({title}) => {
   return (
     <Container>
       <Row >
         <Col lg={9} className="d-grid gap-2 mx-auto">
           <Button className="create-button" size="lg">
-          Créer Nouveau Client en Devis
+          {title}
           </Button>
         </Col>
       </Row>
@@ -16,4 +16,4 @@ const CreateNewCustomerCommand = () => {
   );
 };
 
-export default CreateNewCustomerCommand;
+export default CreateNew;
