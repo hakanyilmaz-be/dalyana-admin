@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Formik, Field, ErrorMessage, FieldArray, Form as FormikForm } from 'formik';
 import * as Yup from 'yup';
 import { Container, Row, Col, Form, Button, InputGroup, Dropdown, FormControl } from 'react-bootstrap';
-import { AiOutlinePlus, AiTwotoneDelete } from 'react-icons/ai';
+import { AiOutlinePlus, AiTwotoneDelete, AiFillEdit } from 'react-icons/ai';
 import './InvoiceForm.css';
 import customers from './customers.json';
 import accessoires from '../../assets/data/accessoires.json';
@@ -92,24 +92,24 @@ const InvoiceCreationForm = () => {
             <Formik
                 initialValues={initialValues}
                 validationSchema={Yup.object().shape({
-                    customerId: Yup.string().required('Customer is required'),
+                    customerId: Yup.string().required('Le client est requis'),
                     items: Yup.array().of(
                         Yup.object().shape({
-                            productId: Yup.string().required('Product is required'),
-                            quantity: Yup.number().min(1, 'Quantity must be at least 1').required('Quantity is required'),
-                            taxRate: Yup.string().required('Tax rate is required'),
+                            productId: Yup.string().required('Le produit est requis'),
+                            quantity: Yup.number().min(1, 'La quantité doit être minimum 1').required('La quantité est requise'),
+                            taxRate: Yup.string().required('Obligatoire'),
                         })
                     ),
                     accessoires: Yup.array().of(
                       Yup.object().shape({
-                        name: Yup.string().required('Accessory name is required'),
-                        price: Yup.number().required('Price is required'),
-                        quantity: Yup.number().min(1, 'Quantity must be at least 1').required('Quantity is required'),
-                        taxRate: Yup.string().required('Tax rate is required'),
+                        name: Yup.string().required('Obligatoire'),
+                        price: Yup.number().required('Obligatoire'),
+                        quantity: Yup.number().min(1, 'La quantité doit être minimum 1').required('La quantité est requise'),
+                        taxRate: Yup.string().required('Obligatoire'),
                         })
                     ),
-                    invoiceDate: Yup.date().required('Invoice Date is required'),
-                    invoiceNumber: Yup.string().required('Invoice Number is required'),
+                    invoiceDate: Yup.date().required('La date de facture est requise'),
+                    invoiceNumber: Yup.string().required('Le numéro de facture est requis'),
                 })}
                 onSubmit={handleSubmit}
             >
@@ -131,7 +131,7 @@ const InvoiceCreationForm = () => {
                             {/* Invoice Date */}
                             <Col md={4}>
                                 <Form.Group>
-                                    <Form.Label>Invoice Date</Form.Label>
+                                    <Form.Label>Date de facture</Form.Label>
                                     <Field 
                                         name="invoiceDate" 
                                         type="date" 
@@ -144,11 +144,11 @@ const InvoiceCreationForm = () => {
                             {/* Invoice Number */}
                             <Col md={4}>
                                 <Form.Group>
-                                    <Form.Label>Invoice Number</Form.Label>
+                                    <Form.Label>Numéro de facture</Form.Label>
                                     <Field 
                                         name="invoiceNumber" 
                                         as={Form.Control} 
-                                        placeholder="Enter Invoice Number"
+                                        placeholder="Entrez le numéro de facture"
                                     />
                                     <ErrorMessage name="invoiceNumber" component="div" className="error-message" />
                                 </Form.Group>
@@ -157,7 +157,7 @@ const InvoiceCreationForm = () => {
                             {/* Invoice Type */}
                             <Col md={4}>
                                 <Form.Group>
-                                    <Form.Label>Invoice Type</Form.Label>
+                                    <Form.Label>Type de facture</Form.Label>
                                     <Field 
                                         name="invoiceType" 
                                         as="select" 
@@ -174,130 +174,18 @@ const InvoiceCreationForm = () => {
                         <Row className="mb-3">
                             <Col md={6}>
                                 <Form.Group>
-                                    <Form.Label>Customer</Form.Label>
+                                    <Form.Label>Client</Form.Label>
                                     <SearchableSelect
                                         name="customerId"
                                         data={customers}
                                         setFieldValue={setFieldValue}
                                         value={values.customerId}
-                                        placeholder="Select Customer"
+                                        placeholder="Sélectionnez un client"
                                     />
                                     <ErrorMessage name="customerId" component="div" className="error-message" />
                                 </Form.Group>
                             </Col>
                         </Row>
-
-                        {/* Product Items */}
-                        <FieldArray name="items">
-                            {({ remove, push }) => (
-                                <>
-                                    {values.items.map((item, index) => (
-                                        <Row key={index} className="mb-3 align-items-center">
-                                            {/* Product Selection */}
-                                            <Col md={2}>
-                                                <Form.Group>
-                                                    <Form.Label>Product</Form.Label>
-                                                    <SearchableSelect
-                                                        name={`items[${index}].productId`}
-                                                        data={products}
-                                                        setFieldValue={setFieldValue}
-                                                        value={item.productId}
-                                                        placeholder="Select Product"
-                                                        isProduct={true}
-                                                        index={index}
-                                                        setPrice={(idx, price, quantity) => {
-                                                            setFieldValue(`items[${idx}].price`, price);
-                                                            setFieldValue(`items[${idx}].vatIncludedPrice`, calculateVATIncludedPrice(price, item.taxRate, quantity));
-                                                            setFieldValue(`items[${idx}].subtotal`, calculateSubtotal(price, quantity));
-                                                        }}
-                                                        values={values}
-                                                        calculateVATIncludedPrice={calculateVATIncludedPrice}
-                                                        calculateSubtotal={calculateSubtotal}
-                                                    />
-                                                    <ErrorMessage name={`items[${index}].productId`} component="div" className="error-message" />
-                                                </Form.Group>
-                                            </Col>
-                                            {/* Quantity Input */}
-                                            <Col md={1}>
-                                                <Form.Group>
-                                                    <Form.Label>Quantity</Form.Label>
-                                                    <InputGroup>
-                                                        <Field
-                                                            type="number"
-                                                            name={`items[${index}].quantity`}
-                                                            as={Form.Control}
-                                                            onChange={(e) => {
-                                                                const quantity = e.target.value;
-                                                                setFieldValue(`items[${index}].quantity`, quantity);
-                                                                setFieldValue(`items[${index}].vatIncludedPrice`, calculateVATIncludedPrice(item.price, item.taxRate, quantity));
-                                                                setFieldValue(`items[${index}].subtotal`, calculateSubtotal(item.price, quantity));
-                                                            }}
-                                                        />
-                                                        <ErrorMessage name={`items[${index}].quantity`} component="div" className="error-message" />
-                                                    </InputGroup>
-                                                </Form.Group>
-                                            </Col>
-                                            {/* Price Display */}
-                                            <Col md={2}>
-                                                <Form.Group>
-                                                    <Form.Label className='parent-text'>Unit Price</Form.Label>
-                                                    <p className="price-text">{`${item.price}€`}</p>
-                                                </Form.Group>
-                                            </Col>
-                                            {/* Subtotal Price Display */}
-                                            <Col md={2}>
-                                                <Form.Group>
-                                                    <Form.Label className='parent-text'>Subtotal</Form.Label>
-                                                    <p className="price-text">{`${item.subtotal ? item.subtotal.toFixed(2) : '0.00'}€`}</p>
-                                                </Form.Group>
-                                            </Col>
-                                            {/* Tax Rate Selection */}
-                                            <Col md={2}>
-                                                <Form.Group>
-                                                    <Form.Label>Tax Rate</Form.Label>
-                                                    <Field as="select" name={`items[${index}].taxRate`} className="form-control" onChange={(e) => {
-                                                        const taxRate = e.target.value;
-                                                        setFieldValue(`items[${index}].taxRate`, taxRate);
-                                                        setFieldValue(`items[${index}].vatIncludedPrice`, calculateVATIncludedPrice(item.price, taxRate, item.quantity));
-                                                        setFieldValue(`items[${index}].subtotal`, calculateSubtotal(item.price, item.quantity));
-                                                    }}>
-                                                        <option value="">Select Tax Rate</option>
-                                                        {taxRates.map(rate => (
-                                                            <option key={rate} value={rate}>{`${rate}%`}</option>
-                                                        ))}
-                                                    </Field>
-                                                    <ErrorMessage name={`items[${index}].taxRate`} component="div" className="error-message" />
-                                                </Form.Group>
-                                            </Col>
-                                            {/* VAT Included Price Display */}
-                                            <Col md={2}>
-                                                <Form.Group>
-                                                    <Form.Label className='parent-text'>VAT Included</Form.Label>
-                                                    <p className="price-text">
-                                                        {item.taxRate ?
-                                                            `${item.vatIncludedPrice.toFixed(2)}€` :
-                                                            'Select tax'}
-                                                    </p>
-                                                </Form.Group>
-                                            </Col>
-                                            {/* Remove Item Button */}
-                                            <Col xs="auto">
-                                                <Button variant="outline-danger" onClick={() => remove(index)}>
-                                                    <AiTwotoneDelete />
-                                                </Button>
-                                            </Col>
-                                        </Row>
-                                    ))}
-                                    <Button variant="outline-primary"  onClick={() => {
-          push({ productId: '', quantity: 1, price: 0, taxRate: '', vatIncludedPrice: 0, subtotal: 0 });
-       //   console.log('Added new product item', values);
-        }}
-      >
-        <AiOutlinePlus /> Add Product
-      </Button>
-                                </>
-                            )}
-                        </FieldArray>
 
                         <FieldArray name="accessoires">
   {({ remove, push }) => (
@@ -305,13 +193,13 @@ const InvoiceCreationForm = () => {
       {values.accessoires.map((accessoire, index) => (
         <Row key={index} className="mb-3 align-items-center">
           {/* Accessoire Name Input */}
-          <Col md={2}>
+          <Col md={3}>
             <Form.Group>
-              <Form.Label>Accessoire Name</Form.Label>
+              <Form.Label>Article</Form.Label>
               <Field 
                 name={`accessoires[${index}].name`} 
                 as={Form.Control}
-                placeholder="Enter Accessoire Name"
+                placeholder="Entrez l'article"
                 onChange={(e) => {
     updateAccessory(index, { name: e.target.value });
 }}
@@ -323,12 +211,12 @@ const InvoiceCreationForm = () => {
            {/* Unit Price Input */}
            <Col md={2}>
   <Form.Group>
-    <Form.Label>Unit Price</Form.Label>
+    <Form.Label>Prix ​unitaire</Form.Label>
     <Field 
   type="number" 
   name={`accessoires[${index}].price`} 
   as={Form.Control}
-  placeholder="Enter Unit Price"
+  placeholder="Entrez le prix"
   onChange={(e) => {
     const newPrice = parseFloat(e.target.value) || 0;
     const { quantity = 1, taxRate = 0 } = values.accessoires[index];
@@ -348,7 +236,7 @@ const InvoiceCreationForm = () => {
        {/* Quantity Input */}
        <Col md={1}>
   <Form.Group>
-    <Form.Label>Quantity</Form.Label>
+    <Form.Label>Quantité</Form.Label>
     <InputGroup>
     <Field 
   type="number" 
@@ -375,15 +263,15 @@ const InvoiceCreationForm = () => {
 {/* Subtotal Price Display */}
 <Col md={2}>
   <Form.Group>
-    <Form.Label className='parent-text'>Subtotal</Form.Label>
+    <Form.Label className='parent-text'>SousTotal</Form.Label>
     <p className="price-text">{`${typeof accessoire.subtotal === 'number' ? accessoire.subtotal.toFixed(2) : '0.00'} €`}</p>
   </Form.Group>
 </Col>
 
 {/* Tax Rate Selection */}
-<Col md={2}>
+<Col md={1}>
   <Form.Group>
-    <Form.Label>Tax Rate</Form.Label>
+    <Form.Label>TVA</Form.Label>
     <Field as="select" name={`accessoires[${index}].taxRate`} className="form-control" 
       onChange={(e) => {
         const newTaxRate = parseInt(e.target.value, 10) || 0;
@@ -392,7 +280,7 @@ const InvoiceCreationForm = () => {
 
         updateAccessory(index, { taxRate: newTaxRate, vatIncludedPrice });
     }}>
-      <option value="">Select Tax Rate</option>
+      <option value="">Sélectionnez</option>
       {taxRates.map(rate => (
         <option key={rate} value={rate}>{`${rate}%`}</option>
       ))}
@@ -404,10 +292,10 @@ const InvoiceCreationForm = () => {
 {/* Display VAT Included Price */}
 <Col md={2}>
   <Form.Group>
-    <Form.Label className='parent-text'>VAT Included</Form.Label>
+    <Form.Label className='parent-text'>TVA incluse</Form.Label>
     <p className="price-text">
       {accessoire.taxRate === '' || accessoire.taxRate === undefined
-        ? 'Select tax'
+        ? 'Entrez taxe'
         : `${accessoire.vatIncludedPrice.toFixed(2)}€`}
     </p>
   </Form.Group>
@@ -422,14 +310,14 @@ const InvoiceCreationForm = () => {
         </Row>
       ))}
       
-      <Row className='mt-2'>
+      <Row className='mb-2'>
       <Col>
       <Button variant="outline-primary" onClick={() => {
           push({ name: '', price: '', quantity: 1, taxRate: '', vatIncludedPrice: 0, subtotal: 0 });
          // console.log('Added new accessoire item', values);
         }}
       >
-        <AiOutlinePlus /> Add Accessoire
+        <AiFillEdit /> Écrivez-vous
       </Button>
       </Col>
       </Row>
@@ -437,11 +325,125 @@ const InvoiceCreationForm = () => {
 
     </>
   )}
-</FieldArray>
+                        </FieldArray>
+
+                        {/* Product Items */}
+                        <FieldArray name="items">
+                            {({ remove, push }) => (
+                                <>
+                                    {values.items.map((item, index) => (
+                                        <Row key={index} className="mb-3 align-items-center">
+                                            {/* Product Selection */}
+                                            <Col md={2}>
+                                                <Form.Group>
+                                                    <Form.Label>Produit</Form.Label>
+                                                    <SearchableSelect
+                                                        name={`items[${index}].productId`}
+                                                        data={products}
+                                                        setFieldValue={setFieldValue}
+                                                        value={item.productId}
+                                                        placeholder="Sélectionnez"
+                                                        isProduct={true}
+                                                        index={index}
+                                                        setPrice={(idx, price, quantity) => {
+                                                            setFieldValue(`items[${idx}].price`, price);
+                                                            setFieldValue(`items[${idx}].vatIncludedPrice`, calculateVATIncludedPrice(price, item.taxRate, quantity));
+                                                            setFieldValue(`items[${idx}].subtotal`, calculateSubtotal(price, quantity));
+                                                        }}
+                                                        values={values}
+                                                        calculateVATIncludedPrice={calculateVATIncludedPrice}
+                                                        calculateSubtotal={calculateSubtotal}
+                                                    />
+                                                    <ErrorMessage name={`items[${index}].productId`} component="div" className="error-message" />
+                                                </Form.Group>
+                                            </Col>
+                                            {/* Quantity Input */}
+                                            <Col md={1}>
+                                                <Form.Group>
+                                                    <Form.Label>Quantité</Form.Label>
+                                                    <InputGroup>
+                                                        <Field
+                                                            type="number"
+                                                            name={`items[${index}].quantity`}
+                                                            as={Form.Control}
+                                                            onChange={(e) => {
+                                                                const quantity = e.target.value;
+                                                                setFieldValue(`items[${index}].quantity`, quantity);
+                                                                setFieldValue(`items[${index}].vatIncludedPrice`, calculateVATIncludedPrice(item.price, item.taxRate, quantity));
+                                                                setFieldValue(`items[${index}].subtotal`, calculateSubtotal(item.price, quantity));
+                                                            }}
+                                                        />
+                                                        <ErrorMessage name={`items[${index}].quantity`} component="div" className="error-message" />
+                                                    </InputGroup>
+                                                </Form.Group>
+                                            </Col>
+                                            {/* Price Display */}
+                                            <Col md={2}>
+                                                <Form.Group>
+                                                    <Form.Label className='parent-text'>Prix ​​unitaire</Form.Label>
+                                                    <p className="price-text">{`${item.price}€`}</p>
+                                                </Form.Group>
+                                            </Col>
+                                            {/* Subtotal Price Display */}
+                                            <Col md={2}>
+                                                <Form.Group>
+                                                    <Form.Label className='parent-text'>Sous total</Form.Label>
+                                                    <p className="price-text">{`${item.subtotal ? item.subtotal.toFixed(2) : '0.00'}€`}</p>
+                                                </Form.Group>
+                                            </Col>
+                                            {/* Tax Rate Selection */}
+                                            <Col md={2}>
+                                                <Form.Group>
+                                                    <Form.Label>TVA</Form.Label>
+                                                    <Field as="select" name={`items[${index}].taxRate`} className="form-control" onChange={(e) => {
+                                                        const taxRate = e.target.value;
+                                                        setFieldValue(`items[${index}].taxRate`, taxRate);
+                                                        setFieldValue(`items[${index}].vatIncludedPrice`, calculateVATIncludedPrice(item.price, taxRate, item.quantity));
+                                                        setFieldValue(`items[${index}].subtotal`, calculateSubtotal(item.price, item.quantity));
+                                                    }}>
+                                                        <option value="">Select Tax Rate</option>
+                                                        {taxRates.map(rate => (
+                                                            <option key={rate} value={rate}>{`${rate}%`}</option>
+                                                        ))}
+                                                    </Field>
+                                                    <ErrorMessage name={`items[${index}].taxRate`} component="div" className="error-message" />
+                                                </Form.Group>
+                                            </Col>
+                                            {/* VAT Included Price Display */}
+                                            <Col md={2}>
+                                                <Form.Group>
+                                                    <Form.Label className='parent-text'>TVA incluse</Form.Label>
+                                                    <p className="price-text">
+                                                        {item.taxRate ?
+                                                            `${item.vatIncludedPrice.toFixed(2)}€` :
+                                                            'Entrez taxe'}
+                                                    </p>
+                                                </Form.Group>
+                                            </Col>
+                                            {/* Remove Item Button */}
+                                            <Col xs="auto">
+                                                <Button variant="outline-danger" onClick={() => remove(index)}>
+                                                    <AiTwotoneDelete />
+                                                </Button>
+                                            </Col>
+                                        </Row>
+                                    ))}
+                                    <Button variant="outline-primary"  onClick={() => {
+          push({ productId: '', quantity: 1, price: 0, taxRate: '', vatIncludedPrice: 0, subtotal: 0 });
+       //   console.log('Added new product item', values);
+        }}
+      >
+        <AiOutlinePlus /> Ajouter un produit
+      </Button>
+                                </>
+                            )}
+                        </FieldArray>
+
+                      
 
 {/* Submit Button */}
 <div className="mt-4">
-  <Button type="submit" variant="success">Create Invoice</Button>
+  <Button type="submit" variant="success">Créer la facture</Button>
 </div>
           </FormikForm>
           );
