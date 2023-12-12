@@ -1,22 +1,26 @@
 import React, { useState } from 'react';
-import { Formik, Field, ErrorMessage, FieldArray } from 'formik';
+import { Formik, Field, ErrorMessage, FieldArray, Form as FormikForm } from 'formik';
 import * as Yup from 'yup';
 import { Container, Row, Col, Form, Button, InputGroup, Dropdown, FormControl } from 'react-bootstrap';
 import { AiOutlinePlus, AiTwotoneDelete } from 'react-icons/ai';
 import './InvoiceForm.css';
 import customers from './customers.json';
-import products from './products.json';
-import accessoires from './accessoires.json';
+import accessoires from '../../assets/data/accessoires.json';
+import divers from '../../assets/data/divers.json'
+import electromenagers from '../../assets/data/electromenagers.json'
+import sanitaires from '../../assets/data/sanitaires.json'
+import surfaces from '../../assets/data/surfaces.json'
 
+const products = [...accessoires, ...divers, ...electromenagers, ...sanitaires, ...surfaces];
 const taxRates = [0, 6, 10, 20, 21];
 
 const SearchableSelect = ({ name, data, setFieldValue, value, placeholder, isProduct, index, setPrice, values, calculateVATIncludedPrice, calculateSubtotal }) => {
-    const [searchTerm, setSearchTerm] = useState('');
-    const [showDropdown, setShowDropdown] = useState(false);
-    const selectedItem = data.find(item => item.id === value);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [showDropdown, setShowDropdown] = useState(false);
+  const selectedItem = data.find(item => item.id === value);
 
-    return (
-      <div>
+  return (
+    <div>
       <FormControl
           placeholder={placeholder}
           value={searchTerm || (selectedItem ? selectedItem.name : '')}
@@ -30,7 +34,7 @@ const SearchableSelect = ({ name, data, setFieldValue, value, placeholder, isPro
                   <Dropdown.Item key={item.id} onClick={() => {
                       setFieldValue(name, item.id);
                       setSearchTerm('');
-    
+                      
                       if (isProduct) {
                           const currentQuantity = values.items[index].quantity || 1;
                           const selectedProduct = products.find(p => p.id === item.id);
@@ -38,17 +42,6 @@ const SearchableSelect = ({ name, data, setFieldValue, value, placeholder, isPro
                           setPrice(index, price, currentQuantity);
                           setFieldValue(`items[${index}].vatIncludedPrice`, calculateVATIncludedPrice(price, values.items[index].taxRate, currentQuantity));
                           setFieldValue(`items[${index}].subtotal`, calculateSubtotal(price, currentQuantity));
-                      } else {
-                          // Handle accessory logic
-                          const selectedAccessoire = accessoires.find(a => a.id === item.id);
-                          if (selectedAccessoire) {
-                            const price = parseFloat(selectedAccessoire.price);
-                              const currentQuantity = values.accessoires[index].quantity || 1;
-    
-                              setFieldValue(`accessoires[${index}].price`, price);
-                              setFieldValue(`accessoires[${index}].vatIncludedPrice`, calculateVATIncludedPrice(price, values.accessoires[index].taxRate, currentQuantity));
-                              setFieldValue(`accessoires[${index}].subtotal`, calculateSubtotal(price, currentQuantity));
-                          }
                       }
                   }}>
                       {item.name}
@@ -57,29 +50,43 @@ const SearchableSelect = ({ name, data, setFieldValue, value, placeholder, isPro
           </Dropdown.Menu>
       )}
     </div>
-    
     );
 };
+
 
 const InvoiceCreationForm = () => {
     const initialValues = {
         customerId: '',
         items: [],
         accessoires: [],
+        invoiceDate: '', 
+        invoiceNumber: '', 
+        invoiceType: 'Facture',
     };
 
-    const handleSubmit = (values) => {
-        console.log('Form Values:', values);
-    };
+  
+    
 
+    const handleSubmit = (values, { setSubmitting, isValid, errors }) => {
+      console.log("All form values:", values);
+      if (isValid) {
+          console.log('Form Values:', values);
+      } else if (errors && Object.keys(errors).length > 0) {
+          console.error('Validation errors:', errors);
+      }
+      setSubmitting(false);
+    };
+    
+    
+    
+  
+  
     const calculateVATIncludedPrice = (price, taxRate, quantity) => {
         return price * quantity * (1 + taxRate / 100);
     };
-
     const calculateSubtotal = (price, quantity) => {
         return price * quantity;
     };
-
     return (
         <Container className="invoice-form-container">
             <Formik
@@ -94,17 +101,75 @@ const InvoiceCreationForm = () => {
                         })
                     ),
                     accessoires: Yup.array().of(
-                        Yup.object().shape({
-                            accessoryId: Yup.string().required('Accessory is required'),
-                            quantity: Yup.number().min(1, 'Quantity must be at least 1').required('Quantity is required'),
-                            // Additional validations for accessories
+                      Yup.object().shape({
+                        name: Yup.string().required('Accessory name is required'),
+                        price: Yup.number().required('Price is required'),
+                        quantity: Yup.number().min(1, 'Quantity must be at least 1').required('Quantity is required'),
+                        taxRate: Yup.string().required('Tax rate is required'),
                         })
                     ),
+                    invoiceDate: Yup.date().required('Invoice Date is required'),
+                    invoiceNumber: Yup.string().required('Invoice Number is required'),
                 })}
                 onSubmit={handleSubmit}
             >
-                {({ values, setFieldValue }) => (
-                    <Form>
+                {({ values, setFieldValue }) => {
+                  const updateAccessory = (index, updatedValues) => {
+  const newAccessoires = [...values.accessoires];
+  newAccessoires[index] = { ...newAccessoires[index], ...updatedValues };
+ // console.log(`Updating accessory at index ${index}: `, newAccessoires[index]);
+  setFieldValue('accessoires', newAccessoires);
+};
+
+
+                //  console.log('Current Form Values:', values); // Add this line
+                  return (
+                    <FormikForm>
+
+                    {/* New Fields */}
+                    <Row className="mb-3">
+                            {/* Invoice Date */}
+                            <Col md={4}>
+                                <Form.Group>
+                                    <Form.Label>Invoice Date</Form.Label>
+                                    <Field 
+                                        name="invoiceDate" 
+                                        type="date" 
+                                        as={Form.Control} 
+                                    />
+                                      <ErrorMessage name="invoiceDate" component="div" className="error-message" />
+                                </Form.Group>
+                            </Col>
+
+                            {/* Invoice Number */}
+                            <Col md={4}>
+                                <Form.Group>
+                                    <Form.Label>Invoice Number</Form.Label>
+                                    <Field 
+                                        name="invoiceNumber" 
+                                        as={Form.Control} 
+                                        placeholder="Enter Invoice Number"
+                                    />
+                                    <ErrorMessage name="invoiceNumber" component="div" className="error-message" />
+                                </Form.Group>
+                            </Col>
+
+                            {/* Invoice Type */}
+                            <Col md={4}>
+                                <Form.Group>
+                                    <Form.Label>Invoice Type</Form.Label>
+                                    <Field 
+                                        name="invoiceType" 
+                                        as="select" 
+                                        className="form-control"
+                                    >
+                                        <option value="Facture">Facture</option>
+                                        <option value="Note de crédit">Note de crédit</option>
+                                        <option value="Annulation de facture">Annulation de facture</option>
+                                    </Field>
+                                </Form.Group>
+                            </Col>
+                        </Row>
                         {/* Customer Selection */}
                         <Row className="mb-3">
                             <Col md={6}>
@@ -201,6 +266,7 @@ const InvoiceCreationForm = () => {
                                                             <option key={rate} value={rate}>{`${rate}%`}</option>
                                                         ))}
                                                     </Field>
+                                                    <ErrorMessage name={`items[${index}].taxRate`} component="div" className="error-message" />
                                                 </Form.Group>
                                             </Col>
                                             {/* VAT Included Price Display */}
@@ -222,9 +288,13 @@ const InvoiceCreationForm = () => {
                                             </Col>
                                         </Row>
                                     ))}
-                                    <Button variant="outline-primary" onClick={() => push({ productId: '', quantity: 1, price: 0, taxRate: '', vatIncludedPrice: 0, subtotal: 0 })}>
-                                        <AiOutlinePlus /> Add Product
-                                    </Button>
+                                    <Button variant="outline-primary"  onClick={() => {
+          push({ productId: '', quantity: 1, price: 0, taxRate: '', vatIncludedPrice: 0, subtotal: 0 });
+       //   console.log('Added new product item', values);
+        }}
+      >
+        <AiOutlinePlus /> Add Product
+      </Button>
                                 </>
                             )}
                         </FieldArray>
@@ -242,56 +312,65 @@ const InvoiceCreationForm = () => {
                 name={`accessoires[${index}].name`} 
                 as={Form.Control}
                 placeholder="Enter Accessoire Name"
+                onChange={(e) => {
+    updateAccessory(index, { name: e.target.value });
+}}
               />
               <ErrorMessage name={`accessoires[${index}].name`} component="div" className="error-message" />
             </Form.Group>
           </Col>
 
            {/* Unit Price Input */}
-<Col md={2}>
+           <Col md={2}>
   <Form.Group>
     <Form.Label>Unit Price</Form.Label>
     <Field 
-      type="number"
-      name={`accessoires[${index}].price`} 
-      as={Form.Control}
-      placeholder="Enter Unit Price"
-      onChange={(e) => {
-        const value = e.target.value;
-        // Check if the value is a number
-        if (!isNaN(value) && value.trim() !== '') {
-          const newPrice = parseFloat(value); // Convert to float for decimal support
-          setFieldValue(`accessoires[${index}].price`, newPrice);
-          setFieldValue(`accessoires[${index}].vatIncludedPrice`, calculateVATIncludedPrice(newPrice, accessoire.taxRate, accessoire.quantity));
-          setFieldValue(`accessoires[${index}].subtotal`, calculateSubtotal(newPrice, accessoire.quantity));
-        }
-      }}
-    />
+  type="number" 
+  name={`accessoires[${index}].price`} 
+  as={Form.Control}
+  placeholder="Enter Unit Price"
+  onChange={(e) => {
+    const newPrice = parseFloat(e.target.value) || 0;
+    const { quantity = 1, taxRate = 0 } = values.accessoires[index];
+    const vatIncludedPrice = calculateVATIncludedPrice(newPrice, taxRate, quantity);
+    const subtotal = calculateSubtotal(newPrice, quantity);
+
+    updateAccessory(index, { price: newPrice, vatIncludedPrice, subtotal });
+}}
+
+
+/>
     <ErrorMessage name={`accessoires[${index}].price`} component="div" className="error-message" />
   </Form.Group>
 </Col>
 
+
        {/* Quantity Input */}
-<Col md={1}>
+       <Col md={1}>
   <Form.Group>
     <Form.Label>Quantity</Form.Label>
     <InputGroup>
-      <Field 
-        type="number" 
-        name={`accessoires[${index}].quantity`} 
-        as={Form.Control}
-        value={accessoire.quantity}
-        onChange={(e) => {
-          const newQuantity = e.target.value;
-          setFieldValue(`accessoires[${index}].quantity`, newQuantity);
-          setFieldValue(`accessoires[${index}].vatIncludedPrice`, calculateVATIncludedPrice(accessoire.price, accessoire.taxRate, newQuantity));
-          setFieldValue(`accessoires[${index}].subtotal`, calculateSubtotal(accessoire.price, newQuantity));
-        }} 
-      />
+    <Field 
+  type="number" 
+  name={`accessoires[${index}].quantity`} 
+  as={Form.Control}
+  value={accessoire.quantity}
+  onChange={(e) => {
+    const newQuantity = parseInt(e.target.value, 10) || 0;
+    const { price = 0, taxRate = 0 } = values.accessoires[index];
+    const vatIncludedPrice = calculateVATIncludedPrice(price, taxRate, newQuantity);
+    const subtotal = calculateSubtotal(price, newQuantity);
+
+    updateAccessory(index, { quantity: newQuantity, vatIncludedPrice, subtotal });
+}}
+
+
+/>
       <ErrorMessage name={`accessoires[${index}].quantity`} component="div" className="error-message" />
     </InputGroup>
   </Form.Group>
 </Col>
+
 
 {/* Subtotal Price Display */}
 <Col md={2}>
@@ -305,23 +384,32 @@ const InvoiceCreationForm = () => {
 <Col md={2}>
   <Form.Group>
     <Form.Label>Tax Rate</Form.Label>
-    <Field as="select" name={`accessoires[${index}].taxRate`} className="form-control" onChange={(e) => {
-      const newTaxRate = e.target.value;
-      setFieldValue(`accessoires[${index}].taxRate`, newTaxRate);
-      setFieldValue(`accessoires[${index}].vatIncludedPrice`, calculateVATIncludedPrice(accessoire.price, newTaxRate, accessoire.quantity));
+    <Field as="select" name={`accessoires[${index}].taxRate`} className="form-control" 
+      onChange={(e) => {
+        const newTaxRate = parseInt(e.target.value, 10) || 0;
+        const { price = 0, quantity = 1 } = values.accessoires[index];
+        const vatIncludedPrice = calculateVATIncludedPrice(price, newTaxRate, quantity);
+
+        updateAccessory(index, { taxRate: newTaxRate, vatIncludedPrice });
     }}>
       <option value="">Select Tax Rate</option>
       {taxRates.map(rate => (
         <option key={rate} value={rate}>{`${rate}%`}</option>
       ))}
     </Field>
+    <ErrorMessage name={`accessoires[${index}].taxRate`} component="div" className="error-message" />
   </Form.Group>
 </Col>
-{/* VAT Included Price Display */}
+
+{/* Display VAT Included Price */}
 <Col md={2}>
   <Form.Group>
     <Form.Label className='parent-text'>VAT Included</Form.Label>
-    <p className="price-text">{accessoire.taxRate ?`${accessoire.vatIncludedPrice.toFixed(2)}€` :'Select tax'}</p>
+    <p className="price-text">
+      {accessoire.taxRate === '' || accessoire.taxRate === undefined
+        ? 'Select tax'
+        : `${accessoire.vatIncludedPrice.toFixed(2)}€`}
+    </p>
   </Form.Group>
 </Col>
 
@@ -333,9 +421,19 @@ const InvoiceCreationForm = () => {
 </Col>
         </Row>
       ))}
-      <Button variant="outline-primary" onClick={() => push({ accessoireId: '', quantity: 1, price: '', taxRate: '', vatIncludedPrice: 0, subtotal: 0 })}>
-  <AiOutlinePlus /> Add Accessoire
-</Button>
+      
+      <Row className='mt-2'>
+      <Col>
+      <Button variant="outline-primary" onClick={() => {
+          push({ name: '', price: '', quantity: 1, taxRate: '', vatIncludedPrice: 0, subtotal: 0 });
+         // console.log('Added new accessoire item', values);
+        }}
+      >
+        <AiOutlinePlus /> Add Accessoire
+      </Button>
+      </Col>
+      </Row>
+
 
     </>
   )}
@@ -343,10 +441,11 @@ const InvoiceCreationForm = () => {
 
 {/* Submit Button */}
 <div className="mt-4">
-  <Button type="submit" variant="primary">Create Invoice</Button>
+  <Button type="submit" variant="success">Create Invoice</Button>
 </div>
-          </Form>
-        )}
+          </FormikForm>
+          );
+                }}
       </Formik>
     </Container>
   );

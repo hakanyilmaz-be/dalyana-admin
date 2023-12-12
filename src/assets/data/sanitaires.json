@@ -4,20 +4,23 @@
     "description":"Une planche à découper avec un égouttoir intégré, des rangements pour les verres à pied", 
     "price":"520",
     "value": "sanitaire1",
-    "label": "Sanitaire 1"
+    "label": "Sanitaire 1",
+    "name" :  "Sanitaire 1"
   },
   {
     "id": "SA-002",
     "description":"Accessoire Ménager Et De Cuisine - Accessoires Et Matériel Ménagers (Acier Inoxydable, Métal, Cuisinière/Four)",
     "price":"300",
     "value": "sanitaire2",
-    "label": "Sanitaire 2"
+    "label": "Sanitaire 2",
+    "name" :  "Sanitaire 2"
   },
   {
     "id": "SA-003",
     "description":"Kit d’Extension Complet FlexiRunnersT ProCombi pour cuiseur Vapeur",
     "price":"235",
     "value": "sanitaire3",
-    "label": "Sanitaire 3"
+    "label": "Sanitaire 3",
+    "name" :  "Sanitaire 3"
   }
 ]
