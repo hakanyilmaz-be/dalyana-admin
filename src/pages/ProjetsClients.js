@@ -10,7 +10,7 @@ const ProjetsClients = () => {
   return (
 
     <Container>
-     <Link to="/projets-clients/new">
+     <Link to="/projets-clients/creer-client">
       <CreateNew
         title= "Créer Nouveau Client en Devis"
       />
