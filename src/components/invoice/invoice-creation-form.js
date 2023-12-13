@@ -114,10 +114,10 @@ const InvoiceCreationForm = () => {
                 onSubmit={handleSubmit}
             >
                 {({ values, setFieldValue }) => {
+                  
                   const updateAccessory = (index, updatedValues) => {
   const newAccessoires = [...values.accessoires];
   newAccessoires[index] = { ...newAccessoires[index], ...updatedValues };
- // console.log(`Updating accessory at index ${index}: `, newAccessoires[index]);
   setFieldValue('accessoires', newAccessoires);
 };
 
@@ -321,8 +321,6 @@ const InvoiceCreationForm = () => {
       </Button>
       </Col>
       </Row>
-
-
     </>
   )}
                         </FieldArray>
