@@ -30,6 +30,7 @@ const taxRates = [0, 6, 10, 20, 21];
 const calculateVATIncludedPrice = (price, taxRate, quantity) => {
   return price * quantity * (1 + taxRate / 100);
 };
+
 const calculateSubtotal = (price, quantity) => {
   return price * quantity;
 };
@@ -106,7 +107,7 @@ const CreateNewDevisCommande = () => {
     floor: Yup.string().required("Veuillez sélectionner l'étage"),
     elevator: Yup.string().required("Y a-t-il un ascenseur ?"),
     status: Yup.string().required("Veuillez sélectionner le type de document"),
-    furnitureListPrice: Yup.string(),
+    furnitureListPrice: Yup.string().required('Obligatoire'),
     furnitureSalePrice: Yup.string(),
     deliveryFee: Yup.string(),
     montageFee: Yup.string(),
@@ -354,65 +355,48 @@ const CreateNewDevisCommande = () => {
             </Form.Group>
           </Col>
 
-           {/* Unit Price Input */}
-           <Col md={2}>
-  <Form.Group>
-    <Form.Label>Prix ​unitaire</Form.Label>
-    <Field 
-  type="number" 
-  name={`articles[${index}].price`} 
-  as={Form.Control}
-  placeholder="Entrez le prix"
-  onChange={(e) => {
-    const newPrice = parseFloat(e.target.value) || 0;
-    const { quantity = 1, taxRate = 0 } = values.articles[index];
-    const vatIncludedPrice = calculateVATIncludedPrice(newPrice, taxRate, quantity);
-    const subtotal = calculateSubtotal(newPrice, quantity);
-
-    updateAccessory(index, { price: newPrice, vatIncludedPrice, subtotal });
-}}
-
-
-/>
-    <ErrorMessage name={`articles[${index}].price`} component="div" className="error-message" />
-  </Form.Group>
+<Col >
+<Form.Group>
+                    <Form.Label>T. Catalogue € - HTVA</Form.Label>
+                    <Form.Control
+                      type="text"
+                      // as={MaskedInput}
+                      // mask="(111) 111-1111"
+                      placeholder="Entrez tarif catalogue"
+                      {...formik.getFieldProps("furnitureListPrice")}
+                      isInvalid={formik.touched.furnitureListPrice && !!formik.errors.furnitureListPrice}
+                    />
+                    <Form.Control.Feedback type="invalid">
+                    {formik.touched.furnitureListPrice && formik.errors.furnitureListPrice}
+                    </Form.Control.Feedback>
+                  </Form.Group>
 </Col>
 
 
-       {/* Quantity Input */}
-       <Col md={1}>
-  <Form.Group>
-    <Form.Label>Quantité</Form.Label>
-    <InputGroup>
-    <Field 
-  type="number" 
-  name={`articles[${index}].quantity`} 
-  as={Form.Control}
-  value={article.quantity}
-  onChange={(e) => {
-    const newQuantity = parseInt(e.target.value, 10) || 0;
-    const { price = 0, taxRate = 0 } = values.articles[index];
-    const vatIncludedPrice = calculateVATIncludedPrice(price, taxRate, newQuantity);
-    const subtotal = calculateSubtotal(price, newQuantity);
+      {/* Tarif Mobilier € - HTVA Input */}
+  <Col>
+    <Form.Group>
+      <Form.Label style={{ color: "#9f0f0f", fontWeight: "bold" }}>T. Mobilier € - HTVA</Form.Label>
+      <Field 
+        type="number" 
+        style={{
+              color: "#9f0f0f",
+              borderColor: "#9f0f0f",
+                }}
+        name={`articles[${index}].price`} 
+        as={Form.Control}
+        placeholder="Entrez le prix"
+        onChange={(e) => {
+          const newPrice = parseFloat(e.target.value) || 0;
+          const { quantity = 1, taxRate = 0 } = values.articles[index];
+          const vatIncludedPrice = calculateVATIncludedPrice(newPrice, taxRate, quantity);
 
-    updateAccessory(index, { quantity: newQuantity, vatIncludedPrice, subtotal });
-}}
-
-
-/>
-      <ErrorMessage name={`articles[${index}].quantity`} component="div" className="error-message" />
-    </InputGroup>
-  </Form.Group>
-</Col>
-
-
-{/* Subtotal Price Display */}
-<Col md={2}>
-  <Form.Group>
-    <Form.Label className='parent-text'>SousTotal</Form.Label>
-    <p className="price-text">{`${typeof article.subtotal === 'number' ? article.subtotal.toFixed(2) : '0.00'} €`}</p>
-  </Form.Group>
-</Col>
+          updateAccessory(index, { price: newPrice, vatIncludedPrice });
+        }}
+      />
+      <ErrorMessage name={`articles[${index}].price`} component="div" className="error-message" />
+    </Form.Group>
+  </Col>
 
 {/* Tax Rate Selection */}
 <Col md={1}>
@@ -437,15 +421,15 @@ const CreateNewDevisCommande = () => {
 
 {/* Display VAT Included Price */}
 <Col md={2}>
-  <Form.Group>
-    <Form.Label className='parent-text'>TVA incluse</Form.Label>
-    <p className="price-text">
-      {article.taxRate === '' || article.taxRate === undefined
-        ? 'Entrez taxe'
-        : `${article.vatIncludedPrice.toFixed(2)}€`}
-    </p>
-  </Form.Group>
-</Col>
+    <Form.Group>
+      <Form.Label className='parent-text'>TVA incluse</Form.Label>
+      <p className="price-text">
+        {article.taxRate === '' || article.taxRate === undefined
+          ? 'Entrez taxe'
+          : `${article.vatIncludedPrice.toFixed(2)}€`}
+      </p>
+    </Form.Group>
+  </Col>
 
 {/* Remove Accessoire Button */}
 <Col xs="auto">
@@ -472,21 +456,7 @@ const CreateNewDevisCommande = () => {
                         </FieldArray>
                 </Row>
                 <Row>
-                  <Form.Group as={Col} md={3} className="mb-3">
-                    <Form.Label>Tarif Catalogue € - HTVA</Form.Label>
-                    <Form.Control
-                      type="text"
-                      // as={MaskedInput}
-                      // mask="(111) 111-1111"
-                      placeholder="Entrez tarif catalogue"
-                      {...formik.getFieldProps("furnitureListPrice")}
-                      isInvalid={!!formik.errors.furnitureListPrice}
-                    />
-                    <Form.Control.Feedback type="invalid">
-                      {formik.errors.furnitureListPrice}
-                    </Form.Control.Feedback>
-                  </Form.Group>
-
+           
                   <Form.Group as={Col} md={5} className="mb-3">
                     <Form.Label as="h4" style={{ color: "#9f0f0f" }}>
                       Tarif Mobilier € - HTVA
