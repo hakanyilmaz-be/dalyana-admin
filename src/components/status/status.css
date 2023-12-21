@@ -1,0 +1,24 @@
+.status-wrapper{
+    margin-top: 50px;
+    margin-bottom: 30px;
+}
+
+.status-title{
+    text-align: center;
+    color: var(--color2);
+}
+
+.status-options{
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.status-options .dropdown-menu{
+    transform: translate3d(0px, 40px, 0px)!important;
+}
+
+.status-options svg {
+    color: var(--color2);
+    font-size: 1.4rem;
+}

@@ -1,0 +1,29 @@
+.data-filter{
+    margin-bottom: 10px;
+}
+
+.filtered-message{
+   margin-top: 3rem;
+    text-align: center;
+}
+
+.element-list-table-wrapper .rdt_TableRow:hover {
+    color: rgba(0, 0, 0, 0.87);
+    background-color: rgb(250, 241, 241)!important;
+    transition-duration: 0.15s;
+    transition-property: background-color;
+    border-bottom-color: rgb(255, 255, 255);
+    border-radius: 15px!important;
+    outline: rgb(255, 255, 255) solid 1px;
+}
+
+.rdt_TableHeadRow{
+    border-radius: 15px;
+}
+
+.my-custom-table .bsgpsK div:first-child {
+    white-space: normal !important;
+    word-wrap: break-word !important;
+}
+
+

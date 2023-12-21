@@ -1,0 +1,26 @@
+[
+  {
+    "id": "DI-001",
+    "description":"Une planche à découper avec un égouttoir intégré, des rangements pour les verres à pied", 
+    "price":"520",
+    "value": "divers1",
+    "label": "Divers 1",
+    "name" :  "Divers 1"
+  },
+  {
+    "id": "DI-002",
+    "description":"Accessoire Ménager Et De Cuisine - Accessoires Et Matériel Ménagers (Acier Inoxydable, Métal, Cuisinière/Four)",
+    "price":"300",
+    "value": "divers2",
+    "label": "Divers 2",
+    "name" :  "Divers 2"
+  },
+  {
+    "id": "DI-003",
+    "description":"Kit d’Extension Complet FlexiRunnersT ProCombi pour cuiseur Vapeur",
+    "price":"235",
+    "value": "divers3",
+    "label": "Divers 3",
+    "name" :  "Divers 3"
+  }
+]

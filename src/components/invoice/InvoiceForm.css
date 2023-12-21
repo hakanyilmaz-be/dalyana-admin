@@ -1,0 +1,24 @@
+.invoice-form-container {
+    padding: 20px;
+    background-color: #f5f5f5;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    
+  }
+  
+  .error-message {
+    color: red;
+    font-size: 0.8rem;
+  }
+  .parent-text{
+    padding-top: 7px;
+    margin-bottom: 12px!important;
+  }
+  .price-text {
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    margin-left: 5px!important;
+   
+  }
+
