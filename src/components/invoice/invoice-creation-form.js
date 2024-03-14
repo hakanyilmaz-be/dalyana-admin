@@ -152,6 +152,7 @@ const InvoiceCreationForm = () => {
                                     />
                                     <ErrorMessage name="invoiceNumber" component="div" className="error-message" />
                                 </Form.Group>
+                                <p>Dernier facture N: 214</p>
                             </Col>
 
                             {/* Invoice Type */}

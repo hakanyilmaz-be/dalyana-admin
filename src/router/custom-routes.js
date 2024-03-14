@@ -33,12 +33,15 @@ import Calendrier from "../pages/Calendrier";
 import Missions from "../pages/Missions";
 import Statistiques from "../pages/Statistiques";
 import ClientsEditPage from "../pages/ClientsEditPage";
-import CreateClientProjet from "../pages/CreateClientProjet";
 import EmployeeEditPage from "../pages/EmployeeEditPage";
 import CreateInvoice from "../pages/CreateInvoice";
 import InvoiceEditPage from "../pages/InvoiceEditPage";
 import CreateCustomer from "../pages/CreateCustomer";
 import CreateDevisCommande from "../pages/CreateDevisCommande";
+import ProductFormTest from "../kodtesti";
+import Onlyacc from "../onlyacc";
+import Kodtestiekleniyordeneniyor from "../kodtestieklemedeneniyor";
+import Deneme from "../components/create-new-devis-commande/deneme";
 
 const CustomRoutes = () => {
   return (
@@ -76,10 +79,17 @@ const CustomRoutes = () => {
               <Route index element={<AdminTemplate><ProjetsClients /></AdminTemplate>}/>
               <Route path="creer-client" element={<AdminTemplate><CreateCustomer/></AdminTemplate>}/>
               <Route path="creer-devis-commande" element={<AdminTemplate><CreateDevisCommande/></AdminTemplate>}/>
+              <Route path="deneme" element={<AdminTemplate><Deneme/></AdminTemplate>}/>
+
               <Route path=":clientId" element={<AdminTemplate><ClientsEditPage/></AdminTemplate>}/>
-              <Route path="new" element={<AdminTemplate><CreateClientProjet/></AdminTemplate>}/>
             </Route>
           <Route path="elements-produits" element={<AdminTemplate><ElementsProduits /></AdminTemplate>} />
+          <Route path="test" element={<AdminTemplate><ProductFormTest /></AdminTemplate>} />
+          <Route path="onlyacc" element={<AdminTemplate><Onlyacc /></AdminTemplate>} />
+
+          <Route path="kodtestideneniyor" element={<AdminTemplate><Kodtestiekleniyordeneniyor /></AdminTemplate>} />
+
+
 
           <Route path="factures"> 
             <Route index element={<AdminTemplate><Factures /></AdminTemplate>} />

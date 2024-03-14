@@ -1,0 +1,50 @@
+[
+    {
+        "id" : "C-001",
+        "name":"Dona Emmie",
+        "tva": "BE100442189",
+        "phoneNumber": "0489332172",
+        "email": "dona@gmail.com",
+        "address" : "Av. Wilson 315",
+        "zipCode": "7012",
+        "city": "Mons",
+        "note": ""
+    },
+
+    {
+        "id" : "C-002",
+        "name":"Robin Kylan",
+        "tva": "BE100442189",
+        "phoneNumber": "0489332172",
+        "email": "robin@telenet.com",
+        "address" : "Av. Wilson 565",
+        "zipCode": "7012",
+        "city": "Mons",
+        "note": ""
+    },
+
+    {
+        "id" : "C-003",
+        "name":"Lanny Auston",
+        "tva": "BE100442189",
+        "phoneNumber": "0489332172",
+        "email": "hasan@dalyana.com",
+        "address" : "Av. Wilson 565",
+        "zipCode": "7012",
+        "city": "Mons",
+        "note": ""
+    },
+
+    {
+        "id" : "C-004",
+        "name":"Michel Loiseau",
+        "tva": "BE100442189",
+        "phoneNumber": "0489332172",
+        "email": "hasan@dalyana.com",
+        "address" : "Av. Wilson 565",
+        "zipCode": "7012",
+       " city": "Mons",
+        "note": ""
+    }
+
+]

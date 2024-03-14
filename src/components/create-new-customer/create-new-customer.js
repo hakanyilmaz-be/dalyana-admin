@@ -11,6 +11,7 @@ const CreateNewCustomer = () => {
   
   const initialValues = {
     name: "",
+    tva: "",
     phoneNumber: "",
     email: "",
     address: "",
@@ -21,6 +22,7 @@ const CreateNewCustomer = () => {
 
   const validationSchema = Yup.object({
     name: Yup.string().required("Veuillez entrer le nom"),
+    tva: Yup.string(),
     phoneNumber: Yup.string()
       .required("Veuillez entrer le numéro de téléphone"),
     email: Yup.string()
@@ -68,7 +70,7 @@ const CreateNewCustomer = () => {
     validationSchema,
     onSubmit,
   });
-
+ 
   return (
     <Form noValidate onSubmit={formik.handleSubmit}>
       <Card className="mb-5">
@@ -90,6 +92,18 @@ const CreateNewCustomer = () => {
               />
               <Form.Control.Feedback type="invalid">
               {formik.touched.name && formik.errors.name}
+              </Form.Control.Feedback>
+            </Form.Group>
+            <Form.Group as={Col} md={4} className="mb-3">
+              <Form.Label>TVA (pour les professionnels)</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Seulement pour les professionnels"
+                {...formik.getFieldProps("tva")}
+                isInvalid={formik.touched.tva && !!formik.errors.tva}
+              />
+              <Form.Control.Feedback type="invalid">
+              {formik.touched.tva && formik.errors.tva}
               </Form.Control.Feedback>
             </Form.Group>
 
@@ -126,7 +140,7 @@ const CreateNewCustomer = () => {
               <Form.Label>Address</Form.Label>
               <Form.Control
                 type="text"
-                placeholder="Enter address"
+                placeholder="Entrez l'adresse"
                 {...formik.getFieldProps("address")}
                 isInvalid={formik.touched.address && !!formik.errors.address}
               />

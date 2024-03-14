@@ -23,28 +23,7 @@ import divers from "../../assets/data/divers.json";
 import surfaces from "../../assets/data/surfaces.json";
 //import { createUser } from "../../../api/admin-user-service";
 
-// Utility function to calculate total for each group of items
-const calculateGroupTotal = (items) => {
-  return items.reduce((total, item) => total + parseFloat(item.vatIncludedPrice || 0), 0);
-};
 
-// Total fee calculation updated to include all items and additional fees
-const calculateTotalFee = (values) => {
-  let totalFee = 0;
-
-  // Adding up all individual fees for each group of items
-  totalFee += calculateGroupTotal(values.itemsAccessoires);
-  totalFee += calculateGroupTotal(values.itemsElectromenagers);
-  totalFee += calculateGroupTotal(values.itemsSanitaires);
-  totalFee += calculateGroupTotal(values.itemsDivers);
-  totalFee += calculateGroupTotal(values.itemsSurfaces);
-
-  // Adding delivery and montage fees
-  totalFee += parseFloat(values.deliveryFee || 0);
-  totalFee += parseFloat(values.montageFee || 0);
-
-  return totalFee.toFixed(2); // Ensure the total is a string with 2 decimal places
-};
 
 const taxRates = [0, 6, 10, 20, 21];
 const SearchableSelectAccessoires = ({ name, data, setFieldValue, value, placeholder, isProduct, index, setPrice, values, calculateVATIncludedPrice, calculateSubtotal }) => {
@@ -250,9 +229,12 @@ const calculateSubtotal = (price, quantity) => {
   return price * quantity;
 };
 
-const CreateNewDevisCommande = () => {
- 
+const calculateTotalVATIncludedPrice = (articles) => {
+  return articles.reduce((total, article) => total + (article.vatIncludedPrice || 0), 0);
+};
 
+const Deneme = () => {
+ 
   const initialValues = {
     floor: "",
     elevator: "",
@@ -351,20 +333,6 @@ itemsSurfaces: Yup.array().of(
     onSubmit,
   });
 
- // useEffect to update total fee whenever dependencies change
- useEffect(() => {
-  const total = calculateTotalFee(formik.values);
-  formik.setFieldValue("totalFee", total);
-}, [
-  formik.values.itemsAccessoires,
-  formik.values.itemsElectromenagers,
-  formik.values.itemsSanitaires,
-  formik.values.itemsDivers,
-  formik.values.itemsSurfaces,
-  formik.values.deliveryFee,
-  formik.values.montageFee,
-]);
-
   return (
     <Formik
       initialValues={initialValues}
@@ -373,6 +341,26 @@ itemsSurfaces: Yup.array().of(
     >
       {({ values, setFieldValue, handleSubmit }) => {
 
+      const calculateGrandTotal = () => {
+      const totalAccessoires = parseFloat(totalFeeAccessoires || 0);
+      const totalElectromenagers = parseFloat(totalFeeElectromenagers || 0);
+      const totalSanitaires = parseFloat(totalFeeSanitaires || 0);
+      const totalDivers = parseFloat(totalFeeDivers || 0);
+      const totalSurfaces = parseFloat(totalFeeSurfaces || 0);
+      const totalArticles = parseFloat(calculateTotalVATIncludedPrice(values.articles) || 0);
+      const deliveryFee = parseFloat(values.deliveryFee || 0); // deliveryFee değerini çek ve float'a çevir
+      const montageFee = parseFloat(values.montageFee || 0); // montageFee değerini çek ve float'a çevir
+
+      
+
+      // Formun altında gösterilecek genel toplamı hesapla
+      const grandTotal = totalAccessoires + totalElectromenagers + totalSanitaires + totalDivers + totalSurfaces + totalArticles + deliveryFee + montageFee;
+      return grandTotal.toFixed(2); // 2 ondalık basamağa yuvarla
+    };
+
+
+
+
 
         // Update articles function using setFieldValue from render props
         const updateArticleItem = (index, updatedValues) => {
@@ -380,6 +368,12 @@ itemsSurfaces: Yup.array().of(
           newArticles[index] = { ...newArticles[index], ...updatedValues };
           setFieldValue('articles', newArticles);
         };
+
+        const allArticlesHaveTaxRateSelected = (articles) => {
+  // taxRate'in tanımlı olup olmadığını kontrol et
+  return articles.every(article => article.taxRate !== undefined && article.taxRate !== "");
+};
+
 
         const calculateTotalFeeAccessoires = () => {
           return values.itemsAccessoires
@@ -444,6 +438,8 @@ itemsSurfaces: Yup.array().of(
         // Calculate the total fee only if tax rate is selected
         const totalFeeSurfaces = isTaxRateSelectedSurfaces ? calculateTotalFeeSurfaces() : null;
 
+
+       
 
         return (
           <Form noValidate onSubmit={formik.handleSubmit}>
@@ -580,20 +576,33 @@ itemsSurfaces: Yup.array().of(
                                       </Form.Label>
                                       <Form.Control
                                         type="number"
-                                        // as={MaskedInput}
-                                        // mask="(111) 111-1111"
                                         placeholder="Entrez tarif catalogue"
-                                        {...formik.getFieldProps(
-                                          "furnitureListPrice"
-                                        )}
+                                        value={article.furnitureListPrice || ""}
+                                        onChange={(e) => {
+                                          const newFurnitureListPrice =
+                                            parseFloat(e.target.value) || 0;
+                                          updateArticleItem(index, {
+                                            ...article,
+                                            furnitureListPrice:
+                                              newFurnitureListPrice,
+                                          });
+                                        }}
                                         isInvalid={
-                                          formik.touched.furnitureListPrice &&
-                                          !!formik.errors.furnitureListPrice
+                                          formik.touched[
+                                            `articles[${index}].furnitureListPrice`
+                                          ] &&
+                                          !!formik.errors[
+                                            `articles[${index}].furnitureListPrice`
+                                          ]
                                         }
                                       />
                                       <Form.Control.Feedback type="invalid">
-                                        {formik.touched.furnitureListPrice &&
-                                          formik.errors.furnitureListPrice}
+                                        {formik.touched[
+                                          `articles[${index}].furnitureListPrice`
+                                        ] &&
+                                          formik.errors[
+                                            `articles[${index}].furnitureListPrice`
+                                          ]}
                                       </Form.Control.Feedback>
                                     </Form.Group>
                                   </Col>
@@ -722,6 +731,7 @@ itemsSurfaces: Yup.array().of(
                                     onClick={() => {
                                       push({
                                         name: "",
+                                        furnitureListPrice: "",
                                         price: "",
                                         quantity: 1,
                                         taxRate: "",
@@ -735,10 +745,29 @@ itemsSurfaces: Yup.array().of(
                                   </Button>
                                 </Col>
                               </Row>
+                              {/* Toplam KDV Dahil Fiyatı Koşullu Olarak Göster */}
+                              {values.articles.length > 0 &&
+                                allArticlesHaveTaxRateSelected(
+                                  values.articles
+                                ) && (
+                                  <Row
+                                    className="mt-2"
+                                    style={{ color: "#9f0f0f" }}
+                                  >
+                                    <Col>
+                                      <h4>
+                                        Total Article Price:{" "}
+                                        {calculateTotalVATIncludedPrice(
+                                          values.articles
+                                        ).toFixed(2)}
+                                        €
+                                      </h4>
+                                    </Col>
+                                  </Row>
+                                )}
                             </>
                           )}
                         </FieldArray>
-                        
                       </Row>
                     </Accordion.Body>
                   </Accordion.Item>
@@ -949,10 +978,10 @@ itemsSurfaces: Yup.array().of(
                       </FieldArray>
 
                       {isTaxRateSelectedAccessoires && (
-                <div className="mt-2" style={{ color: "#9f0f0f" }}>
-                  <h5>Total des Accessoires: €{totalFeeAccessoires}</h5>
-                </div>
-              )}
+                        <div className="mt-2" style={{ color: "#9f0f0f" }}>
+                          <h5>Total des Accessoires: €{totalFeeAccessoires}</h5>
+                        </div>
+                      )}
                     </Accordion.Body>
                   </Accordion.Item>
 
@@ -1163,10 +1192,13 @@ itemsSurfaces: Yup.array().of(
                       </FieldArray>
 
                       {isTaxRateSelectedElectromenagers && (
-                <div className="mt-2" style={{ color: "#9f0f0f" }}>
-                  <h5>Total des Électroménagers: €{totalFeeElectromenagers}</h5>
-                </div>
-              )}
+                        <div className="mt-2" style={{ color: "#9f0f0f" }}>
+                          <h5>
+                            Total des Électroménagers: €
+                            {totalFeeElectromenagers}
+                          </h5>
+                        </div>
+                      )}
                     </Accordion.Body>
                   </Accordion.Item>
 
@@ -1378,9 +1410,9 @@ itemsSurfaces: Yup.array().of(
 
                       {isTaxRateSelectedSanitaires && (
                         <div className="mt-2" style={{ color: "#9f0f0f" }}>
-                        <h5>Total des Sanitaires: €{totalFeeSanitaires}</h5>
-                      </div>
-              )}
+                          <h5>Total des Sanitaires: €{totalFeeSanitaires}</h5>
+                        </div>
+                      )}
                     </Accordion.Body>
                   </Accordion.Item>
 
@@ -1592,9 +1624,11 @@ itemsSurfaces: Yup.array().of(
 
                       {isTaxRateSelectedSurfaces && (
                         <div className="mt-2" style={{ color: "#9f0f0f" }}>
-                        <h5>Total des PDT Solid Surfaces: €{totalFeeSurfaces}</h5>
-                      </div>
-              )}
+                          <h5>
+                            Total des PDT Solid Surfaces: €{totalFeeSurfaces}
+                          </h5>
+                        </div>
+                      )}
                     </Accordion.Body>
                   </Accordion.Item>
 
@@ -1806,9 +1840,9 @@ itemsSurfaces: Yup.array().of(
 
                       {isTaxRateSelectedDivers && (
                         <div className="mt-2" style={{ color: "#9f0f0f" }}>
-                        <h5>Total des Divers: €{totalFeeDivers}</h5>
-                      </div>
-              )}
+                          <h5>Total des Divers: €{totalFeeDivers}</h5>
+                        </div>
+                      )}
                     </Accordion.Body>
                   </Accordion.Item>
                 </Accordion>
@@ -1816,52 +1850,51 @@ itemsSurfaces: Yup.array().of(
             </Card>
 
             <Form.Group
-              className="livraison mb-3"
-              style={{ display: "flex", gap: "15px" }}
-            >
-              <Form.Label as="h3">Livraison:</Form.Label>
+  className="livraison mb-3"
+  style={{ display: "flex", gap: "15px" }}
+>
+  <Form.Label as="h3">Livraison:</Form.Label>
 
-              <Form.Control
-                type="number"
-                style={{
-                  color: "#9f0f0f",
-                  borderColor: "#9f0f0f",
-                  width: "200px",
-                }}
-                // as={MaskedInput}
-                // mask="(111) 111-1111"
-                placeholder="Frais de livraison"
-                {...formik.getFieldProps("deliveryFee")}
-                isInvalid={!!formik.errors.deliveryFee}
-              />
-              <Form.Control.Feedback type="invalid">
-                {formik.errors.deliveryFee}
-              </Form.Control.Feedback>
-            </Form.Group>
+  <Form.Control
+    type="number"
+    style={{
+      color: "#9f0f0f",
+      borderColor: "#9f0f0f",
+      width: "200px",
+    }}
+    placeholder="Frais de livraison"
+    value={values.deliveryFee}
+    onChange={(e) => setFieldValue("deliveryFee", e.target.value)}
+    isInvalid={!!formik.errors.deliveryFee}
+  />
+  <Form.Control.Feedback type="invalid">
+    {formik.errors.deliveryFee}
+  </Form.Control.Feedback>
+</Form.Group>
 
-            <Form.Group
-              className="pose mb-5"
-              style={{ display: "flex", gap: "65px" }}
-            >
-              <Form.Label as="h3">Pose:</Form.Label>
+<Form.Group
+  className="pose mb-5"
+  style={{ display: "flex", gap: "65px" }}
+>
+  <Form.Label as="h3">Pose:</Form.Label>
 
-              <Form.Control
-                type="number"
-                style={{
-                  color: "#9f0f0f",
-                  borderColor: "#9f0f0f",
-                  width: "200px",
-                }}
-                // as={MaskedInput}
-                // mask="(111) 111-1111"
-                placeholder="Frais de pose"
-                {...formik.getFieldProps("montageFee")}
-                isInvalid={!!formik.errors.montageFee}
-              />
-              <Form.Control.Feedback type="invalid">
-                {formik.errors.montageFee}
-              </Form.Control.Feedback>
-            </Form.Group>
+  <Form.Control
+    type="number"
+    style={{
+      color: "#9f0f0f",
+      borderColor: "#9f0f0f",
+      width: "200px",
+    }}
+    placeholder="Frais de pose"
+    value={values.montageFee}
+    onChange={(e) => setFieldValue("montageFee", e.target.value)}
+    isInvalid={!!formik.errors.montageFee}
+  />
+  <Form.Control.Feedback type="invalid">
+    {formik.errors.montageFee}
+  </Form.Control.Feedback>
+</Form.Group>
+
 
             <Form.Group
               className="total mb-5"
@@ -1873,7 +1906,7 @@ itemsSurfaces: Yup.array().of(
                   color: "#9f0f0f",
                 }}
               >
-                TOTAL TVAC:
+                TOTAL TVAC: {/* €{grandTotal} */}
               </Form.Label>
 
               <Form.Control
@@ -1884,11 +1917,11 @@ itemsSurfaces: Yup.array().of(
                   width: "170px",
                 }}
                 placeholder="Total TVAC"
-                value={formik.values.totalFee} // Display calculated total fee
+                value={`${calculateGrandTotal()}€`} // Genel toplamı hesapla ve göster
                 readOnly
               />
             </Form.Group>
-
+            
             <Button type="submit" variant="success">
               Submit
             </Button>
@@ -1900,4 +1933,4 @@ itemsSurfaces: Yup.array().of(
 };
 
 
-export default CreateNewDevisCommande;
+export default Deneme;
