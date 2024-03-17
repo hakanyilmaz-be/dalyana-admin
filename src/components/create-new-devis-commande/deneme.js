@@ -26,43 +26,58 @@ import surfaces from "../../assets/data/surfaces.json";
 
 
 const taxRates = [0, 6, 10, 20, 21];
-const SearchableSelectAccessoires = ({ name, data, setFieldValue, value, placeholder, isProduct, index, setPrice, values, calculateVATIncludedPrice, calculateSubtotal }) => {
+const SearchableSelectAccessoires = ({ name, data, setFieldValue, value, placeholder, index, values }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [showDropdown, setShowDropdown] = useState(false);
   const selectedItem = data.find(item => item.id === value);
 
+  const handleSelect = (item) => {
+    setFieldValue(`itemsAccessoires[${index}].productId`, item.id);
+    const currentQuantity = values.itemsAccessoires[index].quantity || 1;
+    const selectedProduct = accessoires.find(p => p.id === item.id);
+    const originalPrice = selectedProduct.price;
+    const discountRate = values.itemsAccessoires[index].discountRate || 0;
+    let taxRate = values.itemsAccessoires[index].taxRate || 0;
+  
+    // Convert taxRate to a number if it's not already
+    taxRate = Number(taxRate);
+  
+    const subtotalBeforeDiscount = originalPrice * currentQuantity;
+    const discountedPrice = subtotalBeforeDiscount * (1 - discountRate / 100);
+    // Adjusting the VAT included price calculation to accurately handle a 0% tax rate
+    const vatIncludedPrice = discountedPrice * (1 + taxRate / 100);
+  
+    setFieldValue(`itemsAccessoires[${index}].price`, originalPrice);
+    setFieldValue(`itemsAccessoires[${index}].discountedPrice`, discountedPrice);
+    setFieldValue(`itemsAccessoires[${index}].subtotal`, subtotalBeforeDiscount);
+    setFieldValue(`itemsAccessoires[${index}].vatIncludedPrice`, vatIncludedPrice);
+    setSearchTerm('');
+    setShowDropdown(false);
+  };
+  
+
+  
+
   return (
     <div>
       <FormControl
-          placeholder={placeholder}
-          value={searchTerm || (selectedItem ? selectedItem.name : '')}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          onFocus={() => setShowDropdown(true)}
-          onBlur={() => setTimeout(() => setShowDropdown(false), 300)}
+        placeholder={placeholder}
+        value={searchTerm || (selectedItem ? selectedItem.name : '')}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        onFocus={() => setShowDropdown(true)}
+        onBlur={() => setTimeout(() => setShowDropdown(false), 300)}
       />
       {showDropdown && (
-          <Dropdown.Menu show>
-              {data.filter(item => item.name.toLowerCase().includes(searchTerm.toLowerCase())).map((item) => (
-                  <Dropdown.Item key={item.id} onClick={() => {
-                      setFieldValue(name, item.id);
-                      setSearchTerm('');
-                      
-                      if (isProduct) {
-                          const currentQuantity = values.itemsAccessoires[index].quantity || 1;
-                          const selectedProduct = accessoires.find(p => p.id === item.id);
-                          const price = selectedProduct ? selectedProduct.price : 0;
-                          setPrice(index, price, currentQuantity);
-                          setFieldValue(`itemsAccessoires[${index}].vatIncludedPrice`, calculateVATIncludedPrice(price, values.itemsAccessoires[index].taxRate, currentQuantity));
-                          setFieldValue(`itemsAccessoires[${index}].subtotal`, calculateSubtotal(price, currentQuantity));
-                      }
-                  }}>
-                      {item.name}
-                  </Dropdown.Item>
-              ))}
-          </Dropdown.Menu>
+        <Dropdown.Menu show>
+          {data.filter(item => item.name.toLowerCase().includes(searchTerm.toLowerCase())).map((item) => (
+            <Dropdown.Item key={item.id} onClick={() => handleSelect(item)}>
+              {item.name}
+            </Dropdown.Item>
+          ))}
+        </Dropdown.Menu>
       )}
     </div>
-    );
+  );
 };
 
 const SearchableSelectElectromenagers = ({ name, data, setFieldValue, value, placeholder, isProduct, index, setPrice, values, calculateVATIncludedPrice, calculateSubtotal }) => {
@@ -233,7 +248,24 @@ const calculateTotalVATIncludedPrice = (articles) => {
   return articles.reduce((total, article) => total + (article.vatIncludedPrice || 0), 0);
 };
 
+
+const calculateDiscountedPrice = (price, discountRate) => {
+  // Her iki değerin de sayısal olduğundan emin ol
+  const numericPrice = Number(price);
+  const numericDiscountRate = Number(discountRate);
+
+  // Sayısal olmayan değerler için güvenlik kontrolü
+  if (isNaN(numericPrice) || isNaN(numericDiscountRate)) {
+    return 0; // Geçersiz değerler için 0 döndür
+  }
+
+  return numericPrice - (numericPrice * numericDiscountRate) / 100;
+};
+
+
 const Deneme = () => {
+
+ 
  
   const initialValues = {
     floor: "",
@@ -272,6 +304,8 @@ const Deneme = () => {
           productId: Yup.string().required('Le produit est requis'),
           quantity: Yup.number().min(1, 'La quantité doit être minimum 1').required('La quantité est requise'),
           taxRate: Yup.string().required('Obligatoire'),
+          discountRate: Yup.number().min(0).max(30).required('Le taux de remise est requis'),
+    discountedPrice: Yup.number().min(0).required('Le prix remisé est requis'),
       })
   ),
   itemsElectromenagers: Yup.array().of(
@@ -439,7 +473,7 @@ itemsSurfaces: Yup.array().of(
         const totalFeeSurfaces = isTaxRateSelectedSurfaces ? calculateTotalFeeSurfaces() : null;
 
 
-       
+        
 
         return (
           <Form noValidate onSubmit={formik.handleSubmit}>
@@ -547,7 +581,7 @@ itemsSurfaces: Yup.array().of(
                                   key={index}
                                   className="mb-3 align-items-center"
                                 >
-                                  {/* Accessoire Name Input */}
+                                 
                                   <Col md={12}>
                                     <Form.Group>
                                       <Form.Label>Article</Form.Label>
@@ -572,7 +606,7 @@ itemsSurfaces: Yup.array().of(
                                   <Col>
                                     <Form.Group>
                                       <Form.Label>
-                                        Tarif Catalogue € - HTVA
+                                        Tarif Catalogue € HTVA
                                       </Form.Label>
                                       <Form.Control
                                         type="number"
@@ -580,22 +614,24 @@ itemsSurfaces: Yup.array().of(
                                         value={article.furnitureListPrice || ""}
                                         onChange={(e) => {
                                           const newFurnitureListPrice =
-                                            parseFloat(e.target.value) || 0;
+                                            parseFloat(e.target.value || 0);
+                                          const discountRate =
+                                            article.discountRate ?? 0; // Eğer discountRate undefined ise, default olarak 0 kullan
+                                          const discountedPrice =
+                                            newFurnitureListPrice -
+                                            (newFurnitureListPrice *
+                                              discountRate) /
+                                              100;
+
                                           updateArticleItem(index, {
                                             ...article,
                                             furnitureListPrice:
                                               newFurnitureListPrice,
+                                            price: discountedPrice, // Güncellenmiş indirimli fiyat
                                           });
                                         }}
-                                        isInvalid={
-                                          formik.touched[
-                                            `articles[${index}].furnitureListPrice`
-                                          ] &&
-                                          !!formik.errors[
-                                            `articles[${index}].furnitureListPrice`
-                                          ]
-                                        }
                                       />
+
                                       <Form.Control.Feedback type="invalid">
                                         {formik.touched[
                                           `articles[${index}].furnitureListPrice`
@@ -604,6 +640,40 @@ itemsSurfaces: Yup.array().of(
                                             `articles[${index}].furnitureListPrice`
                                           ]}
                                       </Form.Control.Feedback>
+                                    </Form.Group>
+                                  </Col>
+
+                                  {/* İndirim Oranı Seçimi */}
+                                  <Col md={2}>
+                                    <Form.Group>
+                                      <Form.Label>Remise (%)</Form.Label>
+                                      <Form.Select
+                                        value={article.discountRate ?? "0"} // Eğer discountRate undefined ise, default olarak '0' kullan
+                                        onChange={(e) => {
+                                          const newDiscountRate = parseFloat(
+                                            e.target.value || 0
+                                          ); // Eğer e.target.value boş ise, 0 kullan
+                                          const listPrice = parseFloat(
+                                            article.furnitureListPrice || 0
+                                          );
+                                          const discountedPrice =
+                                            listPrice -
+                                            (listPrice * newDiscountRate) / 100;
+
+                                          updateArticleItem(index, {
+                                            ...article,
+                                            discountRate: newDiscountRate, // Yeni indirim oranı
+                                            price: discountedPrice, // İndirimli fiyat
+                                          });
+                                        }}
+                                      >
+                                        <option value="0">0%</option>
+                                        {[...Array(35).keys()].map((i) => (
+                                          <option key={i + 1} value={i + 1}>
+                                            {i + 1}%
+                                          </option>
+                                        ))}
+                                      </Form.Select>
                                     </Form.Group>
                                   </Col>
 
@@ -616,7 +686,7 @@ itemsSurfaces: Yup.array().of(
                                           fontWeight: "bold",
                                         }}
                                       >
-                                        Tarif Mobilier € - HTVA
+                                        Tarif Mobilier € HTVA
                                       </Form.Label>
                                       <Field
                                         type="number"
@@ -627,6 +697,7 @@ itemsSurfaces: Yup.array().of(
                                         name={`articles[${index}].price`}
                                         as={Form.Control}
                                         placeholder="Entrez le prix"
+                                        readOnly={true}
                                         onChange={(e) => {
                                           const newPrice =
                                             parseFloat(e.target.value) || 0;
@@ -654,7 +725,7 @@ itemsSurfaces: Yup.array().of(
                                   </Col>
 
                                   {/* Tax Rate Selection */}
-                                  <Col>
+                                  <Col md={2}>
                                     <Form.Group>
                                       <Form.Label>TVA</Form.Label>
                                       <Field
@@ -696,7 +767,7 @@ itemsSurfaces: Yup.array().of(
                                   </Col>
 
                                   {/* Display VAT Included Price */}
-                                  <Col>
+                                  <Col md={2}>
                                     <Form.Group>
                                       <Form.Label className="parent-text">
                                         TVA incluse
@@ -712,7 +783,7 @@ itemsSurfaces: Yup.array().of(
                                     </Form.Group>
                                   </Col>
 
-                                  {/* Remove Accessoire Button */}
+                                 
                                   <Col xs="auto">
                                     <Button
                                       variant="outline-danger"
@@ -738,7 +809,7 @@ itemsSurfaces: Yup.array().of(
                                         vatIncludedPrice: 0,
                                         subtotal: 0,
                                       });
-                                      // console.log('Added new accessoire item', values);
+                                     
                                     }}
                                   >
                                     <AiFillEdit /> Écrivez-vous
@@ -785,7 +856,7 @@ itemsSurfaces: Yup.array().of(
                                 {/* Product Selection */}
                                 <Col md={2}>
                                   <Form.Group>
-                                    <Form.Label>Produit</Form.Label>
+                                    <Form.Label>Product</Form.Label>
                                     <SearchableSelectAccessoires
                                       name={`itemsAccessoires[${index}].productId`}
                                       data={accessoires}
@@ -828,34 +899,26 @@ itemsSurfaces: Yup.array().of(
                                 {/* Quantity Input */}
                                 <Col md={1}>
                                   <Form.Group>
-                                    <Form.Label>Quantité</Form.Label>
+                                    <Form.Label>Quantity</Form.Label>
                                     <InputGroup>
                                       <Field
                                         type="number"
                                         name={`itemsAccessoires[${index}].quantity`}
                                         as={Form.Control}
                                         onChange={(e) => {
-                                          const quantity = e.target.value;
-                                          setFieldValue(
-                                            `itemsAccessoires[${index}].quantity`,
-                                            quantity
-                                          );
-                                          setFieldValue(
-                                            `itemsAccessoires[${index}].vatIncludedPrice`,
-                                            calculateVATIncludedPrice(
-                                              item.price,
-                                              item.taxRate,
-                                              quantity
-                                            )
-                                          );
-                                          setFieldValue(
-                                            `itemsAccessoires[${index}].subtotal`,
-                                            calculateSubtotal(
-                                              item.price,
-                                              quantity
-                                            )
-                                          );
-                                        }}
+  const newQuantity = parseInt(e.target.value, 10) || 0;
+  const originalPrice = values.itemsAccessoires[index].price;
+  const subtotalBeforeDiscount = originalPrice * newQuantity; // İndirim öncesi ara toplam
+  const discountRate = values.itemsAccessoires[index].discountRate || 0;
+  const discountedSubtotal = subtotalBeforeDiscount * (1 - discountRate / 100); // İndirimli toplam
+
+  setFieldValue(`itemsAccessoires[${index}].quantity`, newQuantity);
+  setFieldValue(`itemsAccessoires[${index}].subtotal`, subtotalBeforeDiscount); // İndirim öncesi ara toplamı güncelle
+  setFieldValue(`itemsAccessoires[${index}].discountedPrice`, discountedSubtotal); // Toplam indirimli fiyatı güncelle
+  setFieldValue(`itemsAccessoires[${index}].vatIncludedPrice`, calculateVATIncludedPrice(discountedSubtotal, values.itemsAccessoires[index].taxRate, 1));
+}}
+
+
                                       />
                                       <ErrorMessage
                                         name={`itemsAccessoires[${index}].quantity`}
@@ -869,7 +932,7 @@ itemsSurfaces: Yup.array().of(
                                 <Col md={2}>
                                   <Form.Group>
                                     <Form.Label className="parent-text">
-                                      Prix unitaire
+                                    Unit Price
                                     </Form.Label>
                                     <p className="price-text">{`${item.price}€`}</p>
                                   </Form.Group>
@@ -878,7 +941,7 @@ itemsSurfaces: Yup.array().of(
                                 <Col md={2}>
                                   <Form.Group>
                                     <Form.Label className="parent-text">
-                                      Sous total
+                                      Subtotal
                                     </Form.Label>
                                     <p className="price-text">{`${
                                       item.subtotal
@@ -887,57 +950,101 @@ itemsSurfaces: Yup.array().of(
                                     }€`}</p>
                                   </Form.Group>
                                 </Col>
+
+<Col md={2}>
+  <Form.Group>
+    <Form.Label>Discount (%)</Form.Label>
+    <Form.Select 
+  onChange={(e) => {
+  const newDiscountRate = parseFloat(e.target.value);
+  const originalPrice = values.itemsAccessoires[index].price;
+  const quantity = values.itemsAccessoires[index].quantity || 1;
+  const subtotalBeforeDiscount = originalPrice * quantity; // İndirim öncesi ara toplam
+  const discountedSubtotal = subtotalBeforeDiscount * (1 - newDiscountRate / 100); // İndirimli toplam
+
+  setFieldValue(`itemsAccessoires[${index}].discountRate`, newDiscountRate);
+  setFieldValue(`itemsAccessoires[${index}].subtotal`, subtotalBeforeDiscount); // İndirim öncesi ara toplamı güncelle
+  setFieldValue(`itemsAccessoires[${index}].discountedPrice`, discountedSubtotal); // Toplam indirimli fiyatı güncelle
+  setFieldValue(`itemsAccessoires[${index}].vatIncludedPrice`, calculateVATIncludedPrice(discountedSubtotal, values.itemsAccessoires[index].taxRate, 1));
+}}
+  value={item.discountRate}
+>
+  {[...Array(31).keys()].map(value => (
+    <option key={value} value={value}>
+      {value}%
+    </option>
+  ))}
+</Form.Select>
+
+  </Form.Group>
+</Col>
+
+
+
+{/* İndirimli Fiyat Gösterimi */}
+<Col md={2}>
+  <Form.Group>
+    <Form.Label>Discounted Price</Form.Label>
+    <InputGroup>
+      <InputGroup.Text>€</InputGroup.Text>
+      <Form.Control
+  type="text"
+  value={
+    item.discountedPrice && !isNaN(item.discountedPrice)
+      ? item.discountedPrice.toFixed(2)
+      : '0'
+  }
+  readOnly
+/>
+
+    </InputGroup>
+  </Form.Group>
+</Col>
+
+
+       
+
+
+                                
                                 {/* Tax Rate Selection */}
-                                <Col md={2}>
-                                  <Form.Group>
-                                    <Form.Label>TVA</Form.Label>
-                                    <Field
-                                      as="select"
-                                      name={`itemsAccessoires[${index}].taxRate`}
-                                      className="form-control"
-                                      onChange={(e) => {
-                                        const taxRate = e.target.value;
-                                        setFieldValue(
-                                          `itemsAccessoires[${index}].taxRate`,
-                                          taxRate
-                                        );
-                                        setFieldValue(
-                                          `itemsAccessoires[${index}].vatIncludedPrice`,
-                                          calculateVATIncludedPrice(
-                                            item.price,
-                                            taxRate,
-                                            item.quantity
-                                          )
-                                        );
-                                        setFieldValue(
-                                          `itemsAccessoires[${index}].subtotal`,
-                                          calculateSubtotal(
-                                            item.price,
-                                            item.quantity
-                                          )
-                                        );
-                                      }}
-                                    >
-                                      <option value="">Select Tax Rate</option>
-                                      {taxRates.map((rate) => (
-                                        <option
-                                          key={rate}
-                                          value={rate}
-                                        >{`${rate}%`}</option>
-                                      ))}
-                                    </Field>
-                                    <ErrorMessage
-                                      name={`itemsAccessoires[${index}].taxRate`}
-                                      component="div"
-                                      className="error-message"
-                                    />
-                                  </Form.Group>
-                                </Col>
+                             <Col md={2}>
+  <Form.Group>
+    <Form.Label>TAX RATE</Form.Label>
+    <Field
+  as="select"
+  name={`itemsAccessoires[${index}].taxRate`}
+  className="form-control"
+// onChange fonksiyonunuzu aşağıdaki gibi güncelleyin:
+onChange={(e) => {
+  const taxRate = parseFloat(e.target.value);
+  const discountedSubtotal = values.itemsAccessoires[index].discountedPrice * (values.itemsAccessoires[index].quantity || 1);
+
+  // %0 vergi oranı dahil, vergi dahil fiyat hesaplama
+  const vatIncludedPrice = (taxRate === 0 ? discountedSubtotal : discountedSubtotal * (1 + taxRate / 100));
+
+  setFieldValue(`itemsAccessoires[${index}].taxRate`, taxRate);
+  setFieldValue(`itemsAccessoires[${index}].vatIncludedPrice`, vatIncludedPrice);
+}}
+
+>
+  <option value="">Select Tax Rate</option>
+  {taxRates.map((rate) => (
+    <option key={rate} value={rate}>{`${rate}%`}</option>
+  ))}
+</Field>
+    <ErrorMessage
+      name={`itemsAccessoires[${index}].taxRate`}
+      component="div"
+      className="error-message"
+    />
+  </Form.Group>
+</Col>
+
                                 {/* VAT Included Price Display */}
                                 <Col md={2}>
                                   <Form.Group>
                                     <Form.Label className="parent-text">
-                                      TVA incluse
+                                      TAX Included Price
                                     </Form.Label>
                                     <p className="price-text">
                                       {item.taxRate
@@ -971,7 +1078,7 @@ itemsSurfaces: Yup.array().of(
                                 //   console.log('Added new product item', values);
                               }}
                             >
-                              <AiOutlinePlus /> Ajouter un produit
+                              <AiOutlinePlus /> Add a product
                             </Button>
                           </>
                         )}
@@ -979,7 +1086,7 @@ itemsSurfaces: Yup.array().of(
 
                       {isTaxRateSelectedAccessoires && (
                         <div className="mt-2" style={{ color: "#9f0f0f" }}>
-                          <h5>Total des Accessoires: €{totalFeeAccessoires}</h5>
+                          <h5>Total Accessories: €{totalFeeAccessoires}</h5>
                         </div>
                       )}
                     </Accordion.Body>
@@ -1850,51 +1957,50 @@ itemsSurfaces: Yup.array().of(
             </Card>
 
             <Form.Group
-  className="livraison mb-3"
-  style={{ display: "flex", gap: "15px" }}
->
-  <Form.Label as="h3">Livraison:</Form.Label>
+              className="livraison mb-3"
+              style={{ display: "flex", gap: "15px" }}
+            >
+              <Form.Label as="h3">Livraison:</Form.Label>
 
-  <Form.Control
-    type="number"
-    style={{
-      color: "#9f0f0f",
-      borderColor: "#9f0f0f",
-      width: "200px",
-    }}
-    placeholder="Frais de livraison"
-    value={values.deliveryFee}
-    onChange={(e) => setFieldValue("deliveryFee", e.target.value)}
-    isInvalid={!!formik.errors.deliveryFee}
-  />
-  <Form.Control.Feedback type="invalid">
-    {formik.errors.deliveryFee}
-  </Form.Control.Feedback>
-</Form.Group>
+              <Form.Control
+                type="number"
+                style={{
+                  color: "#9f0f0f",
+                  borderColor: "#9f0f0f",
+                  width: "200px",
+                }}
+                placeholder="Frais de livraison"
+                value={values.deliveryFee}
+                onChange={(e) => setFieldValue("deliveryFee", e.target.value)}
+                isInvalid={!!formik.errors.deliveryFee}
+              />
+              <Form.Control.Feedback type="invalid">
+                {formik.errors.deliveryFee}
+              </Form.Control.Feedback>
+            </Form.Group>
 
-<Form.Group
-  className="pose mb-5"
-  style={{ display: "flex", gap: "65px" }}
->
-  <Form.Label as="h3">Pose:</Form.Label>
+            <Form.Group
+              className="pose mb-5"
+              style={{ display: "flex", gap: "65px" }}
+            >
+              <Form.Label as="h3">Pose:</Form.Label>
 
-  <Form.Control
-    type="number"
-    style={{
-      color: "#9f0f0f",
-      borderColor: "#9f0f0f",
-      width: "200px",
-    }}
-    placeholder="Frais de pose"
-    value={values.montageFee}
-    onChange={(e) => setFieldValue("montageFee", e.target.value)}
-    isInvalid={!!formik.errors.montageFee}
-  />
-  <Form.Control.Feedback type="invalid">
-    {formik.errors.montageFee}
-  </Form.Control.Feedback>
-</Form.Group>
-
+              <Form.Control
+                type="number"
+                style={{
+                  color: "#9f0f0f",
+                  borderColor: "#9f0f0f",
+                  width: "200px",
+                }}
+                placeholder="Frais de pose"
+                value={values.montageFee}
+                onChange={(e) => setFieldValue("montageFee", e.target.value)}
+                isInvalid={!!formik.errors.montageFee}
+              />
+              <Form.Control.Feedback type="invalid">
+                {formik.errors.montageFee}
+              </Form.Control.Feedback>
+            </Form.Group>
 
             <Form.Group
               className="total mb-5"
@@ -1921,7 +2027,7 @@ itemsSurfaces: Yup.array().of(
                 readOnly
               />
             </Form.Group>
-            
+
             <Button type="submit" variant="success">
               Submit
             </Button>

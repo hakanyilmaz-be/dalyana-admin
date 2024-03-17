@@ -42,6 +42,7 @@ import ProductFormTest from "../kodtesti";
 import Onlyacc from "../onlyacc";
 import Kodtestiekleniyordeneniyor from "../kodtestieklemedeneniyor";
 import Deneme from "../components/create-new-devis-commande/deneme";
+import ProductForm from "../kodtesti";
 
 const CustomRoutes = () => {
   return (
@@ -85,6 +86,8 @@ const CustomRoutes = () => {
             </Route>
           <Route path="elements-produits" element={<AdminTemplate><ElementsProduits /></AdminTemplate>} />
           <Route path="test" element={<AdminTemplate><ProductFormTest /></AdminTemplate>} />
+          <Route path="kodtest" element={<AdminTemplate><ProductForm /></AdminTemplate>} />
+
           <Route path="onlyacc" element={<AdminTemplate><Onlyacc /></AdminTemplate>} />
 
           <Route path="kodtestideneniyor" element={<AdminTemplate><Kodtestiekleniyordeneniyor /></AdminTemplate>} />
