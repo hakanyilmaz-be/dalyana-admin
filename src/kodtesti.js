@@ -5,6 +5,9 @@ import { AiOutlinePlus, AiTwotoneDelete } from "react-icons/ai";
 import { Formik, ErrorMessage, Field, FieldArray, useFormik } from "formik";
 import {Form, Button, Row, Col, Card, InputGroup, Dropdown, FormControl, Accordion } from "react-bootstrap";
 import electromenagers from "../src/assets/data/electromenagers.json";
+import validCodes from "../src/assets/data/discountCodes.json";
+
+
 
 const taxRates = [0, 6, 10, 20, 21];
 // Discount rates array
@@ -82,12 +85,14 @@ const SearchableSelectElectromenagers = ({ name, data, setFieldValue, value, pla
 };
 
 const ProductForm = () => {
+  const [isCodeValid, setIsCodeValid] = useState(null);
   const initialValues = {
     itemsElectromenagers: [],
     deliveryFee: "",
     montageFee: "",
     totalFee: "",
     globaldiscount:"",
+    code: '',
   };
 
   const validationSchema = Yup.object({
@@ -95,6 +100,7 @@ const ProductForm = () => {
     montageFee: Yup.string(),
     totalFee: Yup.string(),
     globaldiscount: Yup.string(),
+    code: Yup.string(),
     itemsElectromenagers: Yup.array().of(
       Yup.object().shape({
         productId: Yup.string().required("Le produit est requis"),
@@ -119,6 +125,17 @@ const ProductForm = () => {
     onSubmit,
   });
 
+  const handleCodeChange = (e) => {
+    const codeInput = e.target.value;
+    formik.setFieldValue('code', codeInput);
+    if (validCodes.validCodes.includes(codeInput)) {
+      setIsCodeValid(true);
+    } else {
+      setIsCodeValid(false);
+    }
+  };
+
+
   return (
     <Formik
       initialValues={initialValues}
@@ -127,16 +144,21 @@ const ProductForm = () => {
     >
       {({ values, setFieldValue, handleSubmit }) => {
         const calculateGrandTotal = () => {
-          const totalElectromenagers = parseFloat(totalFeeElectromenagers || 0);
-          const deliveryFee = parseFloat(values.deliveryFee || 0); // deliveryFee değerini çek ve float'a çevir
-          const montageFee = parseFloat(values.montageFee || 0); // montageFee değerini çek ve float'a çevir
-          const globaldiscount = parseFloat(values.globaldiscount || 0); // globaldiscount değerini çek ve float'a çevir
+  const totalElectromenagers = parseFloat(totalFeeElectromenagers || 0);
+  const deliveryFee = parseFloat(values.deliveryFee || 0);
+  const montageFee = parseFloat(values.montageFee || 0);
+  let globaldiscount = parseFloat(values.globaldiscount || 0); // Doğrudan indirim miktarı olarak al
 
+  // globaldiscount doğrudan toplam maliyetten çıkarılacak
+  // Kod geçerli değilse veya globaldiscount değeri girilmemişse, globaldiscount'u 0 olarak kabul et
+  if (!isCodeValid || !globaldiscount) {
+    globaldiscount = 0;
+  }
 
-          // Formun altında gösterilecek genel toplamı hesapla
-          const grandTotal = totalElectromenagers + deliveryFee + montageFee - globaldiscount;
-          return grandTotal.toFixed(2); // 2 ondalık basamağa yuvarla
-        };
+  const grandTotal = totalElectromenagers + deliveryFee + montageFee - globaldiscount; // Toplam maliyeti hesapla
+  return grandTotal.toFixed(2); // Sonucu iki ondalık basamakla sınırla
+};
+
 
         const calculateTotalFeeElectromenagers = () => {
           return values.itemsElectromenagers
@@ -502,28 +524,45 @@ const ProductForm = () => {
               </Form.Control.Feedback>
             </Form.Group>
 
-            <Form.Group
-              className="pose mb-5"
-              style={{ display: "flex", gap: "65px" }}
-            >
-              <Form.Label as="h3">Global Remise:</Form.Label>
+            <Form.Group className="mb-3">
+        <Form.Label>Code:</Form.Label>
+        <Form.Control
+          type="text"
+          placeholder="Enter code"
+          value={formik.values.code}
+          onChange={handleCodeChange}
+          isInvalid={isCodeValid === false}
+          isValid={isCodeValid === true}
+        />
+        <Form.Control.Feedback type="invalid">
+          Invalid code.
+        </Form.Control.Feedback>
+        <Form.Control.Feedback type="valid">
+          Code is valid!
+        </Form.Control.Feedback>
+      </Form.Group>
 
-              <Form.Control
-                type="number"
-                style={{
-                  color: "#9f0f0f",
-                  borderColor: "#9f0f0f",
-                  width: "200px",
-                }} 
-                placeholder="Global Remise:"
-                value={values.globaldiscount}
-                onChange={(e) => setFieldValue("globaldiscount", e.target.value)}
-                isInvalid={!!formik.errors.globaldiscount}
-              />
-              <Form.Control.Feedback type="invalid">
-                {formik.errors.globaldiscount}
-              </Form.Control.Feedback>
-            </Form.Group>
+      <Form.Group className="pose mb-5" style={{ display: "flex", gap: "65px" }}>
+        <Form.Label as="h3">Global Remise:</Form.Label>
+        <Form.Control
+          type="number"
+          style={{
+            color: "#9f0f0f",
+            borderColor: "#9f0f0f",
+            width: "200px",
+          }} 
+          placeholder="Global Remise:"
+          value={values.globaldiscount}
+          onChange={(e) => setFieldValue("globaldiscount", e.target.value)}
+
+          
+          isInvalid={!!formik.errors.globaldiscount}
+          disabled={isCodeValid !== true}
+        />
+        <Form.Control.Feedback type="invalid">
+          {formik.errors.globaldiscount}
+        </Form.Control.Feedback>
+      </Form.Group>
 
             <Form.Group
               className="total mb-5"
