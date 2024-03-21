@@ -11,7 +11,7 @@ import validCodes from "../src/assets/data/discountCodes.json";
 
 const taxRates = [0, 6, 10, 20, 21];
 // Discount rates array
-const discountRates = Array.from({ length: 31 }, (_, index) => index); // 0'dan 30'a kadar olan sayılar
+const discountRatesElectromenagers = Array.from({ length: 31 }, (_, index) => index); // 0'dan 30'a kadar olan sayılar
 const calculateVATIncludedPrice = (price, taxRate, quantity) => {
   return price * quantity * (1 + taxRate / 100);
 };
@@ -346,12 +346,14 @@ const ProductForm = () => {
                                       <option value="">
                                         Select Discount Rate
                                       </option>
-                                      {discountRates.map((rate) => (
-                                        <option
-                                          key={rate}
-                                          value={rate}
-                                        >{`${rate}%`}</option>
-                                      ))}
+                                      {discountRatesElectromenagers.map(
+                                        (rate) => (
+                                          <option
+                                            key={rate}
+                                            value={rate}
+                                          >{`${rate}%`}</option>
+                                        )
+                                      )}
                                     </Field>
                                   </Form.Group>
                                 </Col>
@@ -525,44 +527,47 @@ const ProductForm = () => {
             </Form.Group>
 
             <Form.Group className="mb-3">
-        <Form.Label>Code:</Form.Label>
-        <Form.Control
-          type="text"
-          placeholder="Enter code"
-          value={formik.values.code}
-          onChange={handleCodeChange}
-          isInvalid={isCodeValid === false}
-          isValid={isCodeValid === true}
-        />
-        <Form.Control.Feedback type="invalid">
-          Invalid code.
-        </Form.Control.Feedback>
-        <Form.Control.Feedback type="valid">
-          Code is valid!
-        </Form.Control.Feedback>
-      </Form.Group>
+              <Form.Label>Code:</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter code"
+                value={formik.values.code}
+                onChange={handleCodeChange}
+                isInvalid={isCodeValid === false}
+                isValid={isCodeValid === true}
+              />
+              <Form.Control.Feedback type="invalid">
+                Invalid code.
+              </Form.Control.Feedback>
+              <Form.Control.Feedback type="valid">
+                Code is valid!
+              </Form.Control.Feedback>
+            </Form.Group>
 
-      <Form.Group className="pose mb-5" style={{ display: "flex", gap: "65px" }}>
-        <Form.Label as="h3">Global Remise:</Form.Label>
-        <Form.Control
-          type="number"
-          style={{
-            color: "#9f0f0f",
-            borderColor: "#9f0f0f",
-            width: "200px",
-          }} 
-          placeholder="Global Remise:"
-          value={values.globaldiscount}
-          onChange={(e) => setFieldValue("globaldiscount", e.target.value)}
-
-          
-          isInvalid={!!formik.errors.globaldiscount}
-          disabled={isCodeValid !== true}
-        />
-        <Form.Control.Feedback type="invalid">
-          {formik.errors.globaldiscount}
-        </Form.Control.Feedback>
-      </Form.Group>
+            <Form.Group
+              className="pose mb-5"
+              style={{ display: "flex", gap: "65px" }}
+            >
+              <Form.Label as="h3">Global Remise:</Form.Label>
+              <Form.Control
+                type="number"
+                style={{
+                  color: "#9f0f0f",
+                  borderColor: "#9f0f0f",
+                  width: "200px",
+                }}
+                placeholder="Global Remise:"
+                value={values.globaldiscount}
+                onChange={(e) =>
+                  setFieldValue("globaldiscount", e.target.value)
+                }
+                isInvalid={!!formik.errors.globaldiscount}
+                disabled={isCodeValid !== true}
+              />
+              <Form.Control.Feedback type="invalid">
+                {formik.errors.globaldiscount}
+              </Form.Control.Feedback>
+            </Form.Group>
 
             <Form.Group
               className="total mb-5"

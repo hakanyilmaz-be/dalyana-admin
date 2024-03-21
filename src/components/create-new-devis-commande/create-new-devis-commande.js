@@ -1,19 +1,21 @@
 import React, { useEffect, useState } from "react";
 import "./create-new-devis-commande.css";
 import * as Yup from "yup";
-import { AiOutlinePlus, AiTwotoneDelete, AiFillEdit } from 'react-icons/ai';
+import { toast } from "react-toastify";
+import { AiOutlinePlus, AiTwotoneDelete, AiFillEdit } from "react-icons/ai";
 //import { toast } from "react-toastify";
 import { Formik, ErrorMessage, Field, FieldArray, useFormik } from "formik";
 //import MaskedInput from "react-maskedinput";
 import {
-  Form, 
+  Form,
   Button,
   Spinner,
   Row,
   Col,
   Card,
   InputGroup,
-  Dropdown, FormControl,
+  Dropdown,
+  FormControl,
   Accordion,
 } from "react-bootstrap";
 import accessoires from "../../assets/data/accessoires.json";
@@ -21,227 +23,22 @@ import electromenagers from "../../assets/data/electromenagers.json";
 import sanitaires from "../../assets/data/sanitaires.json";
 import divers from "../../assets/data/divers.json";
 import surfaces from "../../assets/data/surfaces.json";
+import validCodes from "../../assets/data/discountCodes.json";
 //import { createUser } from "../../../api/admin-user-service";
 
-// Utility function to calculate total for each group of items
-const calculateGroupTotal = (items) => {
-  return items.reduce((total, item) => total + parseFloat(item.vatIncludedPrice || 0), 0);
-};
-
-// Total fee calculation updated to include all items and additional fees
-const calculateTotalFee = (values) => {
-  let totalFee = 0;
-
-  // Adding up all individual fees for each group of items
-  totalFee += calculateGroupTotal(values.itemsAccessoires);
-  totalFee += calculateGroupTotal(values.itemsElectromenagers);
-  totalFee += calculateGroupTotal(values.itemsSanitaires);
-  totalFee += calculateGroupTotal(values.itemsDivers);
-  totalFee += calculateGroupTotal(values.itemsSurfaces);
-
-  // Adding delivery and montage fees
-  totalFee += parseFloat(values.deliveryFee || 0);
-  totalFee += parseFloat(values.montageFee || 0);
-
-  return totalFee.toFixed(2); // Ensure the total is a string with 2 decimal places
-};
-
 const taxRates = [0, 6, 10, 20, 21];
-const SearchableSelectAccessoires = ({ name, data, setFieldValue, value, placeholder, isProduct, index, setPrice, values, calculateVATIncludedPrice, calculateSubtotal }) => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [showDropdown, setShowDropdown] = useState(false);
-  const selectedItem = data.find(item => item.id === value);
+const discountRatesElectromenagers = Array.from(
+  { length: 31 },
+  (_, index) => index
+); // 0'dan 30'a kadar olan sayılar
+const discountRatesAccessoires = Array.from(
+  { length: 31 },
+  (_, index) => index
+); // 0'dan 30'a kadar olan sayılar
+const discountRatesSanitaires = Array.from({ length: 31 }, (_, index) => index); // 0'dan 30'a kadar olan sayılar
+const discountRatesDivers = Array.from({ length: 31 }, (_, index) => index); // 0'dan 30'a kadar olan sayılar
+const discountRatesSurfaces = Array.from({ length: 31 }, (_, index) => index); // 0'dan 30'a kadar olan sayılar
 
-  return (
-    <div>
-      <FormControl
-          placeholder={placeholder}
-          value={searchTerm || (selectedItem ? selectedItem.name : '')}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          onFocus={() => setShowDropdown(true)}
-          onBlur={() => setTimeout(() => setShowDropdown(false), 300)}
-      />
-      {showDropdown && (
-          <Dropdown.Menu show>
-              {data.filter(item => item.name.toLowerCase().includes(searchTerm.toLowerCase())).map((item) => (
-                  <Dropdown.Item key={item.id} onClick={() => {
-                      setFieldValue(name, item.id);
-                      setSearchTerm('');
-                      
-                      if (isProduct) {
-                          const currentQuantity = values.itemsAccessoires[index].quantity || 1;
-                          const selectedProduct = accessoires.find(p => p.id === item.id);
-                          const price = selectedProduct ? selectedProduct.price : 0;
-                          setPrice(index, price, currentQuantity);
-                          setFieldValue(`itemsAccessoires[${index}].vatIncludedPrice`, calculateVATIncludedPrice(price, values.itemsAccessoires[index].taxRate, currentQuantity));
-                          setFieldValue(`itemsAccessoires[${index}].subtotal`, calculateSubtotal(price, currentQuantity));
-                      }
-                  }}>
-                      {item.name}
-                  </Dropdown.Item>
-              ))}
-          </Dropdown.Menu>
-      )}
-    </div>
-    );
-};
-
-const SearchableSelectElectromenagers = ({ name, data, setFieldValue, value, placeholder, isProduct, index, setPrice, values, calculateVATIncludedPrice, calculateSubtotal }) => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [showDropdown, setShowDropdown] = useState(false);
-  const selectedItem = data.find(item => item.id === value);
-
-  return (
-    <div>
-      <FormControl
-          placeholder={placeholder}
-          value={searchTerm || (selectedItem ? selectedItem.name : '')}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          onFocus={() => setShowDropdown(true)}
-          onBlur={() => setTimeout(() => setShowDropdown(false), 300)}
-      />
-      {showDropdown && (
-          <Dropdown.Menu show>
-              {data.filter(item => item.name.toLowerCase().includes(searchTerm.toLowerCase())).map((item) => (
-                  <Dropdown.Item key={item.id} onClick={() => {
-                      setFieldValue(name, item.id);
-                      setSearchTerm('');
-                      
-                      if (isProduct) {
-                          const currentQuantity = values.itemsElectromenagers[index].quantity || 1;
-                          const selectedProduct = electromenagers.find(p => p.id === item.id);
-                          const price = selectedProduct ? selectedProduct.price : 0;
-                          setPrice(index, price, currentQuantity);
-                          setFieldValue(`itemsElectromenagers[${index}].vatIncludedPrice`, calculateVATIncludedPrice(price, values.itemsElectromenagers[index].taxRate, currentQuantity));
-                          setFieldValue(`itemsElectromenagers[${index}].subtotal`, calculateSubtotal(price, currentQuantity));
-                      }
-                  }}>
-                      {item.name}
-                  </Dropdown.Item>
-              ))}
-          </Dropdown.Menu>
-      )}
-    </div>
-    );
-};
-
-const SearchableSelectSanitaires = ({ name, data, setFieldValue, value, placeholder, isProduct, index, setPrice, values, calculateVATIncludedPrice, calculateSubtotal }) => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [showDropdown, setShowDropdown] = useState(false);
-  const selectedItem = data.find(item => item.id === value);
-
-  return (
-    <div>
-      <FormControl
-          placeholder={placeholder}
-          value={searchTerm || (selectedItem ? selectedItem.name : '')}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          onFocus={() => setShowDropdown(true)}
-          onBlur={() => setTimeout(() => setShowDropdown(false), 300)}
-      />
-      {showDropdown && (
-          <Dropdown.Menu show>
-              {data.filter(item => item.name.toLowerCase().includes(searchTerm.toLowerCase())).map((item) => (
-                  <Dropdown.Item key={item.id} onClick={() => {
-                      setFieldValue(name, item.id);
-                      setSearchTerm('');
-                      
-                      if (isProduct) {
-                          const currentQuantity = values.itemsSanitaires[index].quantity || 1;
-                          const selectedProduct = sanitaires.find(p => p.id === item.id);
-                          const price = selectedProduct ? selectedProduct.price : 0;
-                          setPrice(index, price, currentQuantity);
-                          setFieldValue(`itemsSanitaires[${index}].vatIncludedPrice`, calculateVATIncludedPrice(price, values.itemsSanitaires[index].taxRate, currentQuantity));
-                          setFieldValue(`itemsSanitaires[${index}].subtotal`, calculateSubtotal(price, currentQuantity));
-                      }
-                  }}>
-                      {item.name}
-                  </Dropdown.Item>
-              ))}
-          </Dropdown.Menu>
-      )}
-    </div>
-    );
-};
-
-const SearchableSelectDivers = ({ name, data, setFieldValue, value, placeholder, isProduct, index, setPrice, values, calculateVATIncludedPrice, calculateSubtotal }) => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [showDropdown, setShowDropdown] = useState(false);
-  const selectedItem = data.find(item => item.id === value);
-
-  return (
-    <div>
-      <FormControl
-          placeholder={placeholder}
-          value={searchTerm || (selectedItem ? selectedItem.name : '')}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          onFocus={() => setShowDropdown(true)}
-          onBlur={() => setTimeout(() => setShowDropdown(false), 300)}
-      />
-      {showDropdown && (
-          <Dropdown.Menu show>
-              {data.filter(item => item.name.toLowerCase().includes(searchTerm.toLowerCase())).map((item) => (
-                  <Dropdown.Item key={item.id} onClick={() => {
-                      setFieldValue(name, item.id);
-                      setSearchTerm('');
-                      
-                      if (isProduct) {
-                          const currentQuantity = values.itemsDivers[index].quantity || 1;
-                          const selectedProduct = divers.find(p => p.id === item.id);
-                          const price = selectedProduct ? selectedProduct.price : 0;
-                          setPrice(index, price, currentQuantity);
-                          setFieldValue(`itemsDivers[${index}].vatIncludedPrice`, calculateVATIncludedPrice(price, values.itemsDivers[index].taxRate, currentQuantity));
-                          setFieldValue(`itemsDivers[${index}].subtotal`, calculateSubtotal(price, currentQuantity));
-                      }
-                  }}>
-                      {item.name}
-                  </Dropdown.Item>
-              ))}
-          </Dropdown.Menu>
-      )}
-    </div>
-    );
-};
-
-const SearchableSelectSurfaces = ({ name, data, setFieldValue, value, placeholder, isProduct, index, setPrice, values, calculateVATIncludedPrice, calculateSubtotal }) => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [showDropdown, setShowDropdown] = useState(false);
-  const selectedItem = data.find(item => item.id === value);
-
-  return (
-    <div>
-      <FormControl
-          placeholder={placeholder}
-          value={searchTerm || (selectedItem ? selectedItem.name : '')}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          onFocus={() => setShowDropdown(true)}
-          onBlur={() => setTimeout(() => setShowDropdown(false), 300)}
-      />
-      {showDropdown && (
-          <Dropdown.Menu show>
-              {data.filter(item => item.name.toLowerCase().includes(searchTerm.toLowerCase())).map((item) => (
-                  <Dropdown.Item key={item.id} onClick={() => {
-                      setFieldValue(name, item.id);
-                      setSearchTerm('');
-                      
-                      if (isProduct) {
-                          const currentQuantity = values.itemsSurfaces[index].quantity || 1;
-                          const selectedProduct = surfaces.find(p => p.id === item.id);
-                          const price = selectedProduct ? selectedProduct.price : 0;
-                          setPrice(index, price, currentQuantity);
-                          setFieldValue(`itemsSurfaces[${index}].vatIncludedPrice`, calculateVATIncludedPrice(price, values.itemsSurfaces[index].taxRate, currentQuantity));
-                          setFieldValue(`itemsSurfaces[${index}].subtotal`, calculateSubtotal(price, currentQuantity));
-                      }
-                  }}>
-                      {item.name}
-                  </Dropdown.Item>
-              ))}
-          </Dropdown.Menu>
-      )}
-    </div>
-    );
-};
-  
 const calculateVATIncludedPrice = (price, taxRate, quantity) => {
   return price * quantity * (1 + taxRate / 100);
 };
@@ -250,8 +47,442 @@ const calculateSubtotal = (price, quantity) => {
   return price * quantity;
 };
 
+// Discounted Price ve Tax Included Price hesaplama fonksiyonları
+const calculateDiscountedPrice = (subtotal, discountRate) => {
+  return subtotal * (1 - discountRate / 100);
+};
+
+const calculateVATIncludedPriceAfterDiscount = (discountedPrice, taxRate) => {
+  return discountedPrice * (1 + taxRate / 100);
+};
+
+const SearchableSelectAccessoires = ({
+  name,
+  data,
+  setFieldValue,
+  value,
+  placeholder,
+  isProduct,
+  index,
+  setPrice,
+  values,
+  calculateVATIncludedPrice,
+  calculateSubtotal,
+}) => {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [showDropdown, setShowDropdown] = useState(false);
+  const selectedItem = data.find((item) => item.id === value);
+
+  return (
+    <div>
+      <FormControl
+        placeholder={placeholder}
+        value={searchTerm || (selectedItem ? selectedItem.name : "")}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        onFocus={() => setShowDropdown(true)}
+        onBlur={() => setTimeout(() => setShowDropdown(false), 300)}
+      />
+      {showDropdown && (
+        <Dropdown.Menu show>
+          {data
+            .filter((item) =>
+              item.name.toLowerCase().includes(searchTerm.toLowerCase())
+            )
+            .map((item) => (
+              <Dropdown.Item
+                key={item.id}
+                onClick={() => {
+                  setFieldValue(name, item.id);
+                  setSearchTerm("");
+
+                  if (isProduct) {
+                    const currentQuantity =
+                      values.itemsAccessoires[index].quantity || 1;
+                    const selectedProduct = accessoires.find(
+                      (p) => p.id === item.id
+                    );
+                    const price = selectedProduct ? selectedProduct.price : 0;
+                    const subtotal = calculateSubtotal(price, currentQuantity);
+                    const discountRate =
+                      values.itemsAccessoires[index].discountRate || 0;
+                    const discountedPrice = calculateDiscountedPrice(
+                      subtotal,
+                      discountRate
+                    );
+                    const vatIncludedPrice =
+                      calculateVATIncludedPriceAfterDiscount(
+                        discountedPrice,
+                        values.itemsAccessoires[index].taxRate
+                      );
+
+                    setFieldValue(`itemsAccessoires[${index}].price`, price);
+                    setFieldValue(
+                      `itemsAccessoires[${index}].subtotal`,
+                      subtotal
+                    );
+                    setFieldValue(
+                      `itemsAccessoires[${index}].discountedPrice`,
+                      discountedPrice
+                    );
+                    setFieldValue(
+                      `itemsAccessoires[${index}].vatIncludedPrice`,
+                      vatIncludedPrice
+                    );
+                  }
+                }}
+              >
+                {item.name}
+              </Dropdown.Item>
+            ))}
+        </Dropdown.Menu>
+      )}
+    </div>
+  );
+};
+
+const SearchableSelectElectromenagers = ({
+  name,
+  data,
+  setFieldValue,
+  value,
+  placeholder,
+  isProduct,
+  index,
+  setPrice,
+  values,
+  calculateVATIncludedPrice,
+  calculateSubtotal,
+}) => {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [showDropdown, setShowDropdown] = useState(false);
+  const selectedItem = data.find((item) => item.id === value);
+
+  return (
+    <div>
+      <FormControl
+        placeholder={placeholder}
+        value={searchTerm || (selectedItem ? selectedItem.name : "")}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        onFocus={() => setShowDropdown(true)}
+        onBlur={() => setTimeout(() => setShowDropdown(false), 300)}
+      />
+      {showDropdown && (
+        <Dropdown.Menu show>
+          {data
+            .filter((item) =>
+              item.name.toLowerCase().includes(searchTerm.toLowerCase())
+            )
+            .map((item) => (
+              <Dropdown.Item
+                key={item.id}
+                onClick={() => {
+                  setFieldValue(name, item.id);
+                  setSearchTerm("");
+
+                  if (isProduct) {
+                    const currentQuantity =
+                      values.itemsElectromenagers[index].quantity || 1;
+                    const selectedProduct = electromenagers.find(
+                      (p) => p.id === item.id
+                    );
+                    const price = selectedProduct ? selectedProduct.price : 0;
+                    const subtotal = calculateSubtotal(price, currentQuantity);
+                    const discountRate =
+                      values.itemsElectromenagers[index].discountRate || 0;
+                    const discountedPrice = calculateDiscountedPrice(
+                      subtotal,
+                      discountRate
+                    );
+                    const vatIncludedPrice =
+                      calculateVATIncludedPriceAfterDiscount(
+                        discountedPrice,
+                        values.itemsElectromenagers[index].taxRate
+                      );
+
+                    setFieldValue(
+                      `itemsElectromenagers[${index}].price`,
+                      price
+                    );
+                    setFieldValue(
+                      `itemsElectromenagers[${index}].subtotal`,
+                      subtotal
+                    );
+                    setFieldValue(
+                      `itemsElectromenagers[${index}].discountedPrice`,
+                      discountedPrice
+                    );
+                    setFieldValue(
+                      `itemsElectromenagers[${index}].vatIncludedPrice`,
+                      vatIncludedPrice
+                    );
+                  }
+                }}
+              >
+                {item.name}
+              </Dropdown.Item>
+            ))}
+        </Dropdown.Menu>
+      )}
+    </div>
+  );
+};
+
+const SearchableSelectSanitaires = ({
+  name,
+  data,
+  setFieldValue,
+  value,
+  placeholder,
+  isProduct,
+  index,
+  setPrice,
+  values,
+  calculateVATIncludedPrice,
+  calculateSubtotal,
+}) => {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [showDropdown, setShowDropdown] = useState(false);
+  const selectedItem = data.find((item) => item.id === value);
+
+  return (
+    <div>
+      <FormControl
+        placeholder={placeholder}
+        value={searchTerm || (selectedItem ? selectedItem.name : "")}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        onFocus={() => setShowDropdown(true)}
+        onBlur={() => setTimeout(() => setShowDropdown(false), 300)}
+      />
+      {showDropdown && (
+        <Dropdown.Menu show>
+          {data
+            .filter((item) =>
+              item.name.toLowerCase().includes(searchTerm.toLowerCase())
+            )
+            .map((item) => (
+              <Dropdown.Item
+                key={item.id}
+                onClick={() => {
+                  setFieldValue(name, item.id);
+                  setSearchTerm("");
+
+                  if (isProduct) {
+                    const currentQuantity =
+                      values.itemsSanitaires[index].quantity || 1;
+                    const selectedProduct = sanitaires.find(
+                      (p) => p.id === item.id
+                    );
+                    const price = selectedProduct ? selectedProduct.price : 0;
+                    const subtotal = calculateSubtotal(price, currentQuantity);
+                    const discountRate =
+                      values.itemsSanitaires[index].discountRate || 0;
+                    const discountedPrice = calculateDiscountedPrice(
+                      subtotal,
+                      discountRate
+                    );
+                    const vatIncludedPrice =
+                      calculateVATIncludedPriceAfterDiscount(
+                        discountedPrice,
+                        values.itemsSanitaires[index].taxRate
+                      );
+
+                    setFieldValue(`itemsSanitaires[${index}].price`, price);
+                    setFieldValue(
+                      `itemsSanitaires[${index}].subtotal`,
+                      subtotal
+                    );
+                    setFieldValue(
+                      `itemsSanitaires[${index}].discountedPrice`,
+                      discountedPrice
+                    );
+                    setFieldValue(
+                      `itemsSanitaires[${index}].vatIncludedPrice`,
+                      vatIncludedPrice
+                    );
+                  }
+                }}
+              >
+                {item.name}
+              </Dropdown.Item>
+            ))}
+        </Dropdown.Menu>
+      )}
+    </div>
+  );
+};
+
+const SearchableSelectDivers = ({
+  name,
+  data,
+  setFieldValue,
+  value,
+  placeholder,
+  isProduct,
+  index,
+  setPrice,
+  values,
+  calculateVATIncludedPrice,
+  calculateSubtotal,
+}) => {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [showDropdown, setShowDropdown] = useState(false);
+  const selectedItem = data.find((item) => item.id === value);
+
+  return (
+    <div>
+      <FormControl
+        placeholder={placeholder}
+        value={searchTerm || (selectedItem ? selectedItem.name : "")}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        onFocus={() => setShowDropdown(true)}
+        onBlur={() => setTimeout(() => setShowDropdown(false), 300)}
+      />
+      {showDropdown && (
+        <Dropdown.Menu show>
+          {data
+            .filter((item) =>
+              item.name.toLowerCase().includes(searchTerm.toLowerCase())
+            )
+            .map((item) => (
+              <Dropdown.Item
+                key={item.id}
+                onClick={() => {
+                  setFieldValue(name, item.id);
+                  setSearchTerm("");
+
+                  if (isProduct) {
+                    const currentQuantity =
+                      values.itemsDivers[index].quantity || 1;
+                    const selectedProduct = divers.find(
+                      (p) => p.id === item.id
+                    );
+                    const price = selectedProduct ? selectedProduct.price : 0;
+                    const subtotal = calculateSubtotal(price, currentQuantity);
+                    const discountRate =
+                      values.itemsDivers[index].discountRate || 0;
+                    const discountedPrice = calculateDiscountedPrice(
+                      subtotal,
+                      discountRate
+                    );
+                    const vatIncludedPrice =
+                      calculateVATIncludedPriceAfterDiscount(
+                        discountedPrice,
+                        values.itemsDivers[index].taxRate
+                      );
+
+                    setFieldValue(`itemsDivers[${index}].price`, price);
+                    setFieldValue(`itemsDivers[${index}].subtotal`, subtotal);
+                    setFieldValue(
+                      `itemsDivers[${index}].discountedPrice`,
+                      discountedPrice
+                    );
+                    setFieldValue(
+                      `itemsDivers[${index}].vatIncludedPrice`,
+                      vatIncludedPrice
+                    );
+                  }
+                }}
+              >
+                {item.name}
+              </Dropdown.Item>
+            ))}
+        </Dropdown.Menu>
+      )}
+    </div>
+  );
+};
+
+const SearchableSelectSurfaces = ({
+  name,
+  data,
+  setFieldValue,
+  value,
+  placeholder,
+  isProduct,
+  index,
+  setPrice,
+  values,
+  calculateVATIncludedPrice,
+  calculateSubtotal,
+}) => {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [showDropdown, setShowDropdown] = useState(false);
+  const selectedItem = data.find((item) => item.id === value);
+
+  return (
+    <div>
+      <FormControl
+        placeholder={placeholder}
+        value={searchTerm || (selectedItem ? selectedItem.name : "")}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        onFocus={() => setShowDropdown(true)}
+        onBlur={() => setTimeout(() => setShowDropdown(false), 300)}
+      />
+      {showDropdown && (
+        <Dropdown.Menu show>
+          {data
+            .filter((item) =>
+              item.name.toLowerCase().includes(searchTerm.toLowerCase())
+            )
+            .map((item) => (
+              <Dropdown.Item
+                key={item.id}
+                onClick={() => {
+                  setFieldValue(name, item.id);
+                  setSearchTerm("");
+
+                  if (isProduct) {
+                    const currentQuantity =
+                      values.itemsSurfaces[index].quantity || 1;
+                    const selectedProduct = surfaces.find(
+                      (p) => p.id === item.id
+                    );
+                    const price = selectedProduct ? selectedProduct.price : 0;
+                    const subtotal = calculateSubtotal(price, currentQuantity);
+                    const discountRate =
+                      values.itemsSurfaces[index].discountRate || 0;
+                    const discountedPrice = calculateDiscountedPrice(
+                      subtotal,
+                      discountRate
+                    );
+                    const vatIncludedPrice =
+                      calculateVATIncludedPriceAfterDiscount(
+                        discountedPrice,
+                        values.itemsSurfaces[index].taxRate
+                      );
+
+                    setFieldValue(`itemsSurfaces[${index}].price`, price);
+                    setFieldValue(`itemsSurfaces[${index}].subtotal`, subtotal);
+                    setFieldValue(
+                      `itemsSurfaces[${index}].discountedPrice`,
+                      discountedPrice
+                    );
+                    setFieldValue(
+                      `itemsSurfaces[${index}].vatIncludedPrice`,
+                      vatIncludedPrice
+                    );
+                  }
+                }}
+              >
+                {item.name}
+              </Dropdown.Item>
+            ))}
+        </Dropdown.Menu>
+      )}
+    </div>
+  );
+};
+
+const calculateTotalVATIncludedPrice = (articles) => {
+  return articles.reduce(
+    (total, article) => total + (article.vatIncludedPrice || 0),
+    0
+  );
+};
+
 const CreateNewDevisCommande = () => {
- 
+  const [isCodeValid, setIsCodeValid] = useState(null);
+  const [creating, setCreating] = useState(false);
 
   const initialValues = {
     floor: "",
@@ -267,61 +498,85 @@ const CreateNewDevisCommande = () => {
     deliveryFee: "",
     montageFee: "",
     totalFee: "",
+    globaldiscount: "",
+    code: "",
   };
 
   const validationSchema = Yup.object({
-    floor: Yup.string().required("Veuillez sélectionner l'étage"),
-    elevator: Yup.string().required("Veuillez sélectionner"),
-    status: Yup.string().required("Veuillez sélectionner le type de document"),
-    furnitureListPrice: Yup.string().required('Obligatoire'),
+    floor: Yup.string().required("Obligatoire"),
+    elevator: Yup.string().required("Obligatoire"),
+    status: Yup.string().required("Obligatoire"),
+    furnitureListPrice: Yup.string(),
     deliveryFee: Yup.string(),
     montageFee: Yup.string(),
     totalFee: Yup.string(),
+    globaldiscount: Yup.string(),
+    code: Yup.string(),
     articles: Yup.array().of(
       Yup.object().shape({
-        name: Yup.string().required('Obligatoire'),
-        price: Yup.number().required('Obligatoire'),
-        quantity: Yup.number().min(1, 'La quantité doit être minimum 1').required('La quantité est requise'),
-        taxRate: Yup.string().required('Obligatoire'),
-        })
+        name: Yup.string().required("Obligatoire"),
+        price: Yup.number().required("Obligatoire"),
+        quantity: Yup.number()
+          .min(1, "La quantité doit être minimum 1")
+          .required("La quantité est requise"),
+        taxRate: Yup.string().required("Obligatoire"),
+      })
     ),
     itemsAccessoires: Yup.array().of(
       Yup.object().shape({
-          productId: Yup.string().required('Le produit est requis'),
-          quantity: Yup.number().min(1, 'La quantité doit être minimum 1').required('La quantité est requise'),
-          taxRate: Yup.string().required('Obligatoire'),
+        productId: Yup.string().required("Le produit est requis"),
+        quantity: Yup.number()
+          .min(1, "La quantité doit être minimum 1")
+          .required("La quantité est requise"),
+        taxRate: Yup.string().required("Obligatoire"),
+        discountRate: Yup.string(),
+        discountedPrice: Yup.number(),
       })
-  ),
-  itemsElectromenagers: Yup.array().of(
-    Yup.object().shape({
-        productId: Yup.string().required('Le produit est requis'),
-        quantity: Yup.number().min(1, 'La quantité doit être minimum 1').required('La quantité est requise'),
-        taxRate: Yup.string().required('Obligatoire'),
-    })
-),
-itemsSanitaires: Yup.array().of(
-  Yup.object().shape({
-      productId: Yup.string().required('Le produit est requis'),
-      quantity: Yup.number().min(1, 'La quantité doit être minimum 1').required('La quantité est requise'),
-      taxRate: Yup.string().required('Obligatoire'),
-  })
-),
-itemsDivers: Yup.array().of(
-  Yup.object().shape({
-      productId: Yup.string().required('Le produit est requis'),
-      quantity: Yup.number().min(1, 'La quantité doit être minimum 1').required('La quantité est requise'),
-      taxRate: Yup.string().required('Obligatoire'),
-  })
-),
-itemsSurfaces: Yup.array().of(
-  Yup.object().shape({
-      productId: Yup.string().required('Le produit est requis'),
-      quantity: Yup.number().min(1, 'La quantité doit être minimum 1').required('La quantité est requise'),
-      taxRate: Yup.string().required('Obligatoire'),
-  })
-),
-
-
+    ),
+    itemsElectromenagers: Yup.array().of(
+      Yup.object().shape({
+        productId: Yup.string().required("Le produit est requis"),
+        quantity: Yup.number()
+          .min(1, "La quantité doit être minimum 1")
+          .required("La quantité est requise"),
+        taxRate: Yup.string().required("Obligatoire"),
+        discountRate: Yup.string(),
+        discountedPrice: Yup.number(),
+      })
+    ),
+    itemsSanitaires: Yup.array().of(
+      Yup.object().shape({
+        productId: Yup.string().required("Le produit est requis"),
+        quantity: Yup.number()
+          .min(1, "La quantité doit être minimum 1")
+          .required("La quantité est requise"),
+        taxRate: Yup.string().required("Obligatoire"),
+        discountRate: Yup.string(),
+        discountedPrice: Yup.number(),
+      })
+    ),
+    itemsDivers: Yup.array().of(
+      Yup.object().shape({
+        productId: Yup.string().required("Le produit est requis"),
+        quantity: Yup.number()
+          .min(1, "La quantité doit être minimum 1")
+          .required("La quantité est requise"),
+        taxRate: Yup.string().required("Obligatoire"),
+        discountRate: Yup.string(),
+        discountedPrice: Yup.number(),
+      })
+    ),
+    itemsSurfaces: Yup.array().of(
+      Yup.object().shape({
+        productId: Yup.string().required("Le produit est requis"),
+        quantity: Yup.number()
+          .min(1, "La quantité doit être minimum 1")
+          .required("La quantité est requise"),
+        taxRate: Yup.string().required("Obligatoire"),
+        discountRate: Yup.string(),
+        discountedPrice: Yup.number(),
+      })
+    ),
   });
 
   /* const onSubmit = async (values) => {
@@ -340,10 +595,20 @@ itemsSurfaces: Yup.array().of(
 
   //ASAGIDAKI BOS FONK GEREK YOK, HATA VERMEMESI ICIN YAZDIM
   const onSubmit = (values) => {
-    console.log("Values:", values);
+    console.log("Form values:", values);
+    setCreating(true);
+    try {
+      // Perform submit actions, e.g., API call
+      toast.success("Devis créé avec succès");
+    } catch (error) {
+      console.error("Error:", error);
+    } finally {
+      setTimeout(() => {
+        setCreating(false);
+      }, 700);
+    }
   };
 
- 
   const formik = useFormik({
     enableReinitialize: true,
     initialValues,
@@ -351,19 +616,15 @@ itemsSurfaces: Yup.array().of(
     onSubmit,
   });
 
- // useEffect to update total fee whenever dependencies change
- useEffect(() => {
-  const total = calculateTotalFee(formik.values);
-  formik.setFieldValue("totalFee", total);
-}, [
-  formik.values.itemsAccessoires,
-  formik.values.itemsElectromenagers,
-  formik.values.itemsSanitaires,
-  formik.values.itemsDivers,
-  formik.values.itemsSurfaces,
-  formik.values.deliveryFee,
-  formik.values.montageFee,
-]);
+  const handleCodeChange = (e) => {
+    const codeInput = e.target.value;
+    formik.setFieldValue("code", codeInput);
+    if (validCodes.validCodes.includes(codeInput)) {
+      setIsCodeValid(true);
+    } else {
+      setIsCodeValid(false);
+    }
+  };
 
   return (
     <Formik
@@ -372,13 +633,51 @@ itemsSurfaces: Yup.array().of(
       onSubmit={onSubmit}
     >
       {({ values, setFieldValue, handleSubmit }) => {
+        const calculateGrandTotal = () => {
+          const totalAccessoires = parseFloat(totalFeeAccessoires || 0);
+          const totalElectromenagers = parseFloat(totalFeeElectromenagers || 0);
+          const totalSanitaires = parseFloat(totalFeeSanitaires || 0);
+          const totalDivers = parseFloat(totalFeeDivers || 0);
+          const totalSurfaces = parseFloat(totalFeeSurfaces || 0);
+          const totalArticles = parseFloat(
+            calculateTotalVATIncludedPrice(values.articles) || 0
+          );
+          const deliveryFee = parseFloat(values.deliveryFee || 0); // deliveryFee değerini çek ve float'a çevir
+          const montageFee = parseFloat(values.montageFee || 0); // montageFee değerini çek ve float'a çevir
+          let globaldiscount = parseFloat(values.globaldiscount || 0); // Doğrudan indirim miktarı olarak al
 
+          // globaldiscount doğrudan toplam maliyetten çıkarılacak
+          // Kod geçerli değilse veya globaldiscount değeri girilmemişse, globaldiscount'u 0 olarak kabul et
+          if (!isCodeValid || !globaldiscount) {
+            globaldiscount = 0;
+          }
+
+          // Formun altında gösterilecek genel toplamı hesapla
+          const grandTotal =
+            totalAccessoires +
+            totalElectromenagers +
+            totalSanitaires +
+            totalDivers +
+            totalSurfaces +
+            totalArticles +
+            deliveryFee +
+            montageFee -
+            globaldiscount;
+          return grandTotal.toFixed(2); // 2 ondalık basamağa yuvarla
+        };
 
         // Update articles function using setFieldValue from render props
         const updateArticleItem = (index, updatedValues) => {
           const newArticles = [...values.articles];
           newArticles[index] = { ...newArticles[index], ...updatedValues };
-          setFieldValue('articles', newArticles);
+          setFieldValue("articles", newArticles);
+        };
+
+        const allArticlesHaveTaxRateSelected = (articles) => {
+          // taxRate'in tanımlı olup olmadığını kontrol et
+          return articles.every(
+            (article) => article.taxRate !== undefined && article.taxRate !== ""
+          );
         };
 
         const calculateTotalFeeAccessoires = () => {
@@ -387,11 +686,15 @@ itemsSurfaces: Yup.array().of(
             .toFixed(2); // Convert to a fixed 2 decimal places
         };
 
-          // Check if any item has a tax rate selected
-          const isTaxRateSelectedAccessoires = values.itemsAccessoires.some(item => item.taxRate);
+        // Check if any item has a tax rate selected
+        const isTaxRateSelectedAccessoires = values.itemsAccessoires.some(
+          (item) => item.taxRate
+        );
 
         // Calculate the total fee only if tax rate is selected
-        const totalFeeAccessoires = isTaxRateSelectedAccessoires ? calculateTotalFeeAccessoires() : null;
+        const totalFeeAccessoires = isTaxRateSelectedAccessoires
+          ? calculateTotalFeeAccessoires()
+          : null;
 
         const calculateTotalFeeElectromenagers = () => {
           return values.itemsElectromenagers
@@ -399,14 +702,14 @@ itemsSurfaces: Yup.array().of(
             .toFixed(2); // Convert to a fixed 2 decimal places
         };
 
-          // Check if any item has a tax rate selected
-          const isTaxRateSelectedElectromenagers = values.itemsElectromenagers.some(item => item.taxRate);
+        // Check if any item has a tax rate selected
+        const isTaxRateSelectedElectromenagers =
+          values.itemsElectromenagers.some((item) => item.taxRate);
 
         // Calculate the total fee only if tax rate is selected
-        const totalFeeElectromenagers = isTaxRateSelectedElectromenagers ? calculateTotalFeeElectromenagers() : null;
-
-
-
+        const totalFeeElectromenagers = isTaxRateSelectedElectromenagers
+          ? calculateTotalFeeElectromenagers()
+          : null;
 
         const calculateTotalFeeSanitaires = () => {
           return values.itemsSanitaires
@@ -414,11 +717,15 @@ itemsSurfaces: Yup.array().of(
             .toFixed(2); // Convert to a fixed 2 decimal places
         };
 
-          // Check if any item has a tax rate selected
-          const isTaxRateSelectedSanitaires = values.itemsSanitaires.some(item => item.taxRate);
+        // Check if any item has a tax rate selected
+        const isTaxRateSelectedSanitaires = values.itemsSanitaires.some(
+          (item) => item.taxRate
+        );
 
         // Calculate the total fee only if tax rate is selected
-        const totalFeeSanitaires = isTaxRateSelectedSanitaires ? calculateTotalFeeSanitaires() : null;
+        const totalFeeSanitaires = isTaxRateSelectedSanitaires
+          ? calculateTotalFeeSanitaires()
+          : null;
 
         const calculateTotalFeeDivers = () => {
           return values.itemsDivers
@@ -426,11 +733,15 @@ itemsSurfaces: Yup.array().of(
             .toFixed(2); // Convert to a fixed 2 decimal places
         };
 
-          // Check if any item has a tax rate selected
-          const isTaxRateSelectedDivers = values.itemsDivers.some(item => item.taxRate);
+        // Check if any item has a tax rate selected
+        const isTaxRateSelectedDivers = values.itemsDivers.some(
+          (item) => item.taxRate
+        );
 
         // Calculate the total fee only if tax rate is selected
-        const totalFeeDivers = isTaxRateSelectedDivers ? calculateTotalFeeDivers() : null;
+        const totalFeeDivers = isTaxRateSelectedDivers
+          ? calculateTotalFeeDivers()
+          : null;
 
         const calculateTotalFeeSurfaces = () => {
           return values.itemsSurfaces
@@ -438,15 +749,18 @@ itemsSurfaces: Yup.array().of(
             .toFixed(2); // Convert to a fixed 2 decimal places
         };
 
-          // Check if any item has a tax rate selected
-          const isTaxRateSelectedSurfaces = values.itemsSurfaces.some(item => item.taxRate);
+        // Check if any item has a tax rate selected
+        const isTaxRateSelectedSurfaces = values.itemsSurfaces.some(
+          (item) => item.taxRate
+        );
 
         // Calculate the total fee only if tax rate is selected
-        const totalFeeSurfaces = isTaxRateSelectedSurfaces ? calculateTotalFeeSurfaces() : null;
-
+        const totalFeeSurfaces = isTaxRateSelectedSurfaces
+          ? calculateTotalFeeSurfaces()
+          : null;
 
         return (
-          <Form noValidate onSubmit={formik.handleSubmit}>
+          <Form noValidate onSubmit={handleSubmit}>
             <Card className="mb-5">
               <Card.Header
                 as="h3"
@@ -459,66 +773,65 @@ itemsSurfaces: Yup.array().of(
                   <Form.Group as={Col} md={4} lg={4} className="mb-3">
                     <Form.Label>Sélectionnez le type de document</Form.Label>
                     <Form.Select
-                      {...formik.getFieldProps("status")}
-                      isInvalid={
-                        formik.touched.status && !!formik.errors.status
-                      }
+                      name="status"
+                      value={values.status}
+                    onChange={(e) => setFieldValue("status", e.target.value)}
+                      isInvalid={!!formik.errors.status}
                     >
                       <option value="" disabled>
                         --Devis ou Bon de commande--
                       </option>
-                      <option value="type:Devis">Devis</option>
-                      <option value="type:Bon de commande">
-                        Bon de commande
-                      </option>
+                      <option value="Devis">Devis</option>
+                      <option value="Bon de commande">Bon de commande</option>
                     </Form.Select>
-                    <Form.Control.Feedback type="invalid">
-                      {formik.touched.status && formik.errors.status}
-                    </Form.Control.Feedback>
+                    {/* ErrorMessage bileşenini kullanarak hata mesajını göster */}
+                    <ErrorMessage name="status" component="div" className="error-message" />
                   </Form.Group>
 
                   <Form.Group as={Col} md={4} lg={4} className="mb-3">
                     <Form.Label>A quel étage se trouve la cuisine ?</Form.Label>
                     <Form.Select
-                      {...formik.getFieldProps("floor")}
-                      isInvalid={formik.touched.floor && !!formik.errors.floor}
+                      name="floor"
+                      value={values.floor}
+                    onChange={(e) => setFieldValue("floor", e.target.value)}
+                      isInvalid={!!formik.errors.floor}
                     >
                       <option value="" disabled>
                         --Sélectionnez l'étage--
                       </option>
-                      <option value="étage:Rez-de-chaussée">
-                        Rez-de-chaussée
-                      </option>
-                      <option value="étage:1">1</option>
-                      <option value="étage:2">2</option>
-                      <option value="étage:3">3</option>
-                      <option value="étage:4">4</option>
-                      <option value="étage:5 ou plus">5 ou plus</option>
+                      <option value="Rez-de-chaussee">Rez-de-chaussée</option>
+                      <option value="etage-1">1</option>
+                      <option value="etage-2">2</option>
+                      <option value="etage-3">3</option>
+                      <option value="etage-4">4</option>
+                      <option value="etage 5 ou plus">5 ou plus</option>
                     </Form.Select>
-                    <Form.Control.Feedback type="invalid">
-                      {formik.touched.floor && formik.errors.floor}
-                    </Form.Control.Feedback>
+                     {/* ErrorMessage bileşenini kullanarak hata mesajını göster */}
+                     <ErrorMessage name="floor" component="div" className="error-message" />
                   </Form.Group>
 
                   <Form.Group as={Col} md={4} lg={4} className="mb-3">
                     <Form.Label>Ascenseur - Lift ?</Form.Label>
                     <Form.Select
-                      {...formik.getFieldProps("elevator")}
+                      name="elevator"
+                      value={values.elevator}
+                      onChange={(e) => setFieldValue("elevator", e.target.value)}
                       isInvalid={
-                        formik.touched.elevator && !!formik.errors.elevator
+                        !!formik.errors.elevator
                       }
                     >
                       <option value="" disabled>
                         --Sélectionnez--
                       </option>
-                      <option value="ascenseur:oui">Oui</option>
-                      <option value="ascenseur:non">Non</option>
-                      <option value="ascenseur:pasbesoin">Pas Besoin</option>
-                      <option value="lift:necessaire">Lift nécessaire</option>
+                      <option value="ascenseur-oui">Oui</option>
+                      <option value="ascenseur-non">Non</option>
+                      <option value="ascenseuroulift-pasbesoin">Pas Besoin</option>
+                      <option value="lift-liftnecessaire">
+                        Lift nécessaire
+                      </option>
                     </Form.Select>
-                    <Form.Control.Feedback type="invalid">
-                      {formik.touched.elevator && formik.errors.elevator}
-                    </Form.Control.Feedback>
+                     {/* ErrorMessage bileşenini kullanarak hata mesajını göster */}
+                     <ErrorMessage name="elevator" component="div" className="error-message" />
                   </Form.Group>
                 </Row>
               </Card.Body>
@@ -529,7 +842,7 @@ itemsSurfaces: Yup.array().of(
                 as="h3"
                 style={{ color: "white", backgroundColor: "var(--color2)" }}
               >
-                Projet
+                {/* Projet */}
               </Card.Header>
               <Card.Body>
                 <Accordion defaultActiveKey={["0"]} alwaysOpen>
@@ -551,7 +864,6 @@ itemsSurfaces: Yup.array().of(
                                   key={index}
                                   className="mb-3 align-items-center"
                                 >
-                                  {/* Accessoire Name Input */}
                                   <Col md={12}>
                                     <Form.Group>
                                       <Form.Label>Article</Form.Label>
@@ -576,25 +888,74 @@ itemsSurfaces: Yup.array().of(
                                   <Col>
                                     <Form.Group>
                                       <Form.Label>
-                                        Tarif Catalogue € - HTVA
+                                        Tarif Catalogue € HTVA
                                       </Form.Label>
                                       <Form.Control
                                         type="number"
-                                        // as={MaskedInput}
-                                        // mask="(111) 111-1111"
                                         placeholder="Entrez tarif catalogue"
-                                        {...formik.getFieldProps(
-                                          "furnitureListPrice"
-                                        )}
-                                        isInvalid={
-                                          formik.touched.furnitureListPrice &&
-                                          !!formik.errors.furnitureListPrice
-                                        }
+                                        value={article.furnitureListPrice || ""}
+                                        onChange={(e) => {
+                                          const newFurnitureListPrice =
+                                            parseFloat(e.target.value || 0);
+                                          const discountRate =
+                                            article.discountRate ?? 0; // Eğer discountRate undefined ise, default olarak 0 kullan
+                                          const discountedPrice =
+                                            newFurnitureListPrice -
+                                            (newFurnitureListPrice *
+                                              discountRate) /
+                                              100;
+
+                                          updateArticleItem(index, {
+                                            ...article,
+                                            furnitureListPrice:
+                                              newFurnitureListPrice,
+                                            price: discountedPrice, // Güncellenmiş indirimli fiyat
+                                          });
+                                        }}
                                       />
+
                                       <Form.Control.Feedback type="invalid">
-                                        {formik.touched.furnitureListPrice &&
-                                          formik.errors.furnitureListPrice}
+                                        {formik.touched[
+                                          `articles[${index}].furnitureListPrice`
+                                        ] &&
+                                          formik.errors[
+                                            `articles[${index}].furnitureListPrice`
+                                          ]}
                                       </Form.Control.Feedback>
+                                    </Form.Group>
+                                  </Col>
+
+                                  {/* İndirim Oranı Seçimi */}
+                                  <Col md={2}>
+                                    <Form.Group>
+                                      <Form.Label>Remise (%)</Form.Label>
+                                      <Form.Select
+                                        value={article.discountRate ?? "0"} // Eğer discountRate undefined ise, default olarak '0' kullan
+                                        onChange={(e) => {
+                                          const newDiscountRate = parseFloat(
+                                            e.target.value || 0
+                                          ); // Eğer e.target.value boş ise, 0 kullan
+                                          const listPrice = parseFloat(
+                                            article.furnitureListPrice || 0
+                                          );
+                                          const discountedPrice =
+                                            listPrice -
+                                            (listPrice * newDiscountRate) / 100;
+
+                                          updateArticleItem(index, {
+                                            ...article,
+                                            discountRate: newDiscountRate, // Yeni indirim oranı
+                                            price: discountedPrice, // İndirimli fiyat
+                                          });
+                                        }}
+                                      >
+                                        <option value="0">0%</option>
+                                        {[...Array(35).keys()].map((i) => (
+                                          <option key={i + 1} value={i + 1}>
+                                            {i + 1}%
+                                          </option>
+                                        ))}
+                                      </Form.Select>
                                     </Form.Group>
                                   </Col>
 
@@ -607,7 +968,7 @@ itemsSurfaces: Yup.array().of(
                                           fontWeight: "bold",
                                         }}
                                       >
-                                        Tarif Mobilier € - HTVA
+                                        Tarif Mobilier € HTVA
                                       </Form.Label>
                                       <Field
                                         type="number"
@@ -618,6 +979,7 @@ itemsSurfaces: Yup.array().of(
                                         name={`articles[${index}].price`}
                                         as={Form.Control}
                                         placeholder="Entrez le prix"
+                                        readOnly={true}
                                         onChange={(e) => {
                                           const newPrice =
                                             parseFloat(e.target.value) || 0;
@@ -645,7 +1007,7 @@ itemsSurfaces: Yup.array().of(
                                   </Col>
 
                                   {/* Tax Rate Selection */}
-                                  <Col>
+                                  <Col md={2}>
                                     <Form.Group>
                                       <Form.Label>TVA</Form.Label>
                                       <Field
@@ -687,7 +1049,7 @@ itemsSurfaces: Yup.array().of(
                                   </Col>
 
                                   {/* Display VAT Included Price */}
-                                  <Col>
+                                  <Col md={2}>
                                     <Form.Group>
                                       <Form.Label className="parent-text">
                                         TVA incluse
@@ -703,7 +1065,6 @@ itemsSurfaces: Yup.array().of(
                                     </Form.Group>
                                   </Col>
 
-                                  {/* Remove Accessoire Button */}
                                   <Col xs="auto">
                                     <Button
                                       variant="outline-danger"
@@ -722,28 +1083,48 @@ itemsSurfaces: Yup.array().of(
                                     onClick={() => {
                                       push({
                                         name: "",
+                                        furnitureListPrice: "",
                                         price: "",
                                         quantity: 1,
                                         taxRate: "",
                                         vatIncludedPrice: 0,
                                         subtotal: 0,
                                       });
-                                      // console.log('Added new accessoire item', values);
                                     }}
                                   >
                                     <AiFillEdit /> Écrivez-vous
                                   </Button>
                                 </Col>
                               </Row>
+                              {/* Toplam KDV Dahil Fiyatı Koşullu Olarak Göster */}
+                              {values.articles.length > 0 &&
+                                allArticlesHaveTaxRateSelected(
+                                  values.articles
+                                ) && (
+                                  <Row
+                                    className="mt-2"
+                                    style={{ color: "#9f0f0f" }}
+                                  >
+                                    <Col>
+                                      <h4>
+                                        Total Article Price:{" "}
+                                        {calculateTotalVATIncludedPrice(
+                                          values.articles
+                                        ).toFixed(2)}
+                                        €
+                                      </h4>
+                                    </Col>
+                                  </Row>
+                                )}
                             </>
                           )}
                         </FieldArray>
-                        
                       </Row>
                     </Accordion.Body>
                   </Accordion.Item>
+
                   <Accordion.Item eventKey="1">
-                    <Accordion.Header>ACCESSOIRES</Accordion.Header>
+                    <Accordion.Header>Accessoires</Accordion.Header>
                     <Accordion.Body>
                       <FieldArray name="itemsAccessoires">
                         {({ remove, push }) => (
@@ -756,7 +1137,7 @@ itemsSurfaces: Yup.array().of(
                                 {/* Product Selection */}
                                 <Col md={2}>
                                   <Form.Group>
-                                    <Form.Label>Produit</Form.Label>
+                                    <Form.Label>Product</Form.Label>
                                     <SearchableSelectAccessoires
                                       name={`itemsAccessoires[${index}].productId`}
                                       data={accessoires}
@@ -799,7 +1180,7 @@ itemsSurfaces: Yup.array().of(
                                 {/* Quantity Input */}
                                 <Col md={1}>
                                   <Form.Group>
-                                    <Form.Label>Quantité</Form.Label>
+                                    <Form.Label>Quantity</Form.Label>
                                     <InputGroup>
                                       <Field
                                         type="number"
@@ -811,19 +1192,24 @@ itemsSurfaces: Yup.array().of(
                                             `itemsAccessoires[${index}].quantity`,
                                             quantity
                                           );
+                                          const subtotal = calculateSubtotal(
+                                            item.price,
+                                            quantity
+                                          );
+                                          const discountedPrice =
+                                            calculateDiscountedPrice(
+                                              subtotal,
+                                              item.discountRate || 0
+                                            );
                                           setFieldValue(
-                                            `itemsAccessoires[${index}].vatIncludedPrice`,
-                                            calculateVATIncludedPrice(
-                                              item.price,
-                                              item.taxRate,
-                                              quantity
-                                            )
+                                            `itemsAccessoires[${index}].discountedPrice`,
+                                            discountedPrice
                                           );
                                           setFieldValue(
-                                            `itemsAccessoires[${index}].subtotal`,
-                                            calculateSubtotal(
-                                              item.price,
-                                              quantity
+                                            `itemsAccessoires[${index}].vatIncludedPrice`,
+                                            calculateVATIncludedPriceAfterDiscount(
+                                              discountedPrice,
+                                              item.taxRate
                                             )
                                           );
                                         }}
@@ -840,7 +1226,7 @@ itemsSurfaces: Yup.array().of(
                                 <Col md={2}>
                                   <Form.Group>
                                     <Form.Label className="parent-text">
-                                      Prix unitaire
+                                      Unit price
                                     </Form.Label>
                                     <p className="price-text">{`${item.price}€`}</p>
                                   </Form.Group>
@@ -849,7 +1235,7 @@ itemsSurfaces: Yup.array().of(
                                 <Col md={2}>
                                   <Form.Group>
                                     <Form.Label className="parent-text">
-                                      Sous total
+                                      Subtotal
                                     </Form.Label>
                                     <p className="price-text">{`${
                                       item.subtotal
@@ -858,10 +1244,72 @@ itemsSurfaces: Yup.array().of(
                                     }€`}</p>
                                   </Form.Group>
                                 </Col>
+
+                                <Col md={2}>
+                                  <Form.Group>
+                                    <Form.Label>Discount Rate</Form.Label>
+                                    <Field
+                                      as="select"
+                                      name={`itemsAccessoires[${index}].discountRate`}
+                                      className="form-control"
+                                      onChange={(e) => {
+                                        const discountRate = e.target.value;
+                                        const subtotal = calculateSubtotal(
+                                          item.price,
+                                          item.quantity
+                                        );
+                                        const discountedPrice =
+                                          calculateDiscountedPrice(
+                                            subtotal,
+                                            discountRate
+                                          );
+                                        setFieldValue(
+                                          `itemsAccessoires[${index}].discountRate`,
+                                          discountRate
+                                        );
+                                        setFieldValue(
+                                          `itemsAccessoires[${index}].discountedPrice`,
+                                          discountedPrice
+                                        );
+                                        setFieldValue(
+                                          `itemsAccessoires[${index}].vatIncludedPrice`,
+                                          calculateVATIncludedPriceAfterDiscount(
+                                            discountedPrice,
+                                            item.taxRate
+                                          )
+                                        );
+                                      }}
+                                    >
+                                      <option value="">
+                                        Select Discount Rate
+                                      </option>
+                                      {discountRatesAccessoires.map((rate) => (
+                                        <option
+                                          key={rate}
+                                          value={rate}
+                                        >{`${rate}%`}</option>
+                                      ))}
+                                    </Field>
+                                  </Form.Group>
+                                </Col>
+
+                                <Col md={2}>
+                                  <Form.Group>
+                                    <Form.Label className="parent-text">
+                                      Discounted Price
+                                    </Form.Label>
+                                    <p className="price-text">{`${
+                                      item.discountedPrice
+                                        ? item.discountedPrice.toFixed(2)
+                                        : "0.00"
+                                    }€`}</p>
+                                  </Form.Group>
+                                </Col>
+
                                 {/* Tax Rate Selection */}
                                 <Col md={2}>
                                   <Form.Group>
-                                    <Form.Label>TVA</Form.Label>
+                                    <Form.Label>TAX Rate</Form.Label>
                                     <Field
                                       as="select"
                                       name={`itemsAccessoires[${index}].taxRate`}
@@ -872,19 +1320,24 @@ itemsSurfaces: Yup.array().of(
                                           `itemsAccessoires[${index}].taxRate`,
                                           taxRate
                                         );
+                                        const subtotal = calculateSubtotal(
+                                          item.price,
+                                          item.quantity
+                                        );
+                                        const discountedPrice =
+                                          calculateDiscountedPrice(
+                                            subtotal,
+                                            item.discountRate || 0
+                                          );
                                         setFieldValue(
-                                          `itemsAccessoires[${index}].vatIncludedPrice`,
-                                          calculateVATIncludedPrice(
-                                            item.price,
-                                            taxRate,
-                                            item.quantity
-                                          )
+                                          `itemsAccessoires[${index}].discountedPrice`,
+                                          discountedPrice
                                         );
                                         setFieldValue(
-                                          `itemsAccessoires[${index}].subtotal`,
-                                          calculateSubtotal(
-                                            item.price,
-                                            item.quantity
+                                          `itemsAccessoires[${index}].vatIncludedPrice`,
+                                          calculateVATIncludedPriceAfterDiscount(
+                                            discountedPrice,
+                                            taxRate
                                           )
                                         );
                                       }}
@@ -908,7 +1361,7 @@ itemsSurfaces: Yup.array().of(
                                 <Col md={2}>
                                   <Form.Group>
                                     <Form.Label className="parent-text">
-                                      TVA incluse
+                                      VAT Included Prıce
                                     </Form.Label>
                                     <p className="price-text">
                                       {item.taxRate
@@ -949,10 +1402,10 @@ itemsSurfaces: Yup.array().of(
                       </FieldArray>
 
                       {isTaxRateSelectedAccessoires && (
-                <div className="mt-2" style={{ color: "#9f0f0f" }}>
-                  <h5>Total des Accessoires: €{totalFeeAccessoires}</h5>
-                </div>
-              )}
+                        <div className="mt-2" style={{ color: "#9f0f0f" }}>
+                          <h5>Total des Accessoires: €{totalFeeAccessoires}</h5>
+                        </div>
+                      )}
                     </Accordion.Body>
                   </Accordion.Item>
 
@@ -970,7 +1423,7 @@ itemsSurfaces: Yup.array().of(
                                 {/* Product Selection */}
                                 <Col md={2}>
                                   <Form.Group>
-                                    <Form.Label>Produit</Form.Label>
+                                    <Form.Label>Product</Form.Label>
                                     <SearchableSelectElectromenagers
                                       name={`itemsElectromenagers[${index}].productId`}
                                       data={electromenagers}
@@ -1013,7 +1466,7 @@ itemsSurfaces: Yup.array().of(
                                 {/* Quantity Input */}
                                 <Col md={1}>
                                   <Form.Group>
-                                    <Form.Label>Quantité</Form.Label>
+                                    <Form.Label>Quantity</Form.Label>
                                     <InputGroup>
                                       <Field
                                         type="number"
@@ -1025,19 +1478,24 @@ itemsSurfaces: Yup.array().of(
                                             `itemsElectromenagers[${index}].quantity`,
                                             quantity
                                           );
+                                          const subtotal = calculateSubtotal(
+                                            item.price,
+                                            quantity
+                                          );
+                                          const discountedPrice =
+                                            calculateDiscountedPrice(
+                                              subtotal,
+                                              item.discountRate || 0
+                                            );
                                           setFieldValue(
-                                            `itemsElectromenagers[${index}].vatIncludedPrice`,
-                                            calculateVATIncludedPrice(
-                                              item.price,
-                                              item.taxRate,
-                                              quantity
-                                            )
+                                            `itemsElectromenagers[${index}].discountedPrice`,
+                                            discountedPrice
                                           );
                                           setFieldValue(
-                                            `itemsElectromenagers[${index}].subtotal`,
-                                            calculateSubtotal(
-                                              item.price,
-                                              quantity
+                                            `itemsElectromenagers[${index}].vatIncludedPrice`,
+                                            calculateVATIncludedPriceAfterDiscount(
+                                              discountedPrice,
+                                              item.taxRate
                                             )
                                           );
                                         }}
@@ -1054,7 +1512,7 @@ itemsSurfaces: Yup.array().of(
                                 <Col md={2}>
                                   <Form.Group>
                                     <Form.Label className="parent-text">
-                                      Prix unitaire
+                                      Unit price
                                     </Form.Label>
                                     <p className="price-text">{`${item.price}€`}</p>
                                   </Form.Group>
@@ -1063,7 +1521,7 @@ itemsSurfaces: Yup.array().of(
                                 <Col md={2}>
                                   <Form.Group>
                                     <Form.Label className="parent-text">
-                                      Sous total
+                                      Subtotal
                                     </Form.Label>
                                     <p className="price-text">{`${
                                       item.subtotal
@@ -1072,10 +1530,74 @@ itemsSurfaces: Yup.array().of(
                                     }€`}</p>
                                   </Form.Group>
                                 </Col>
+
+                                <Col md={2}>
+                                  <Form.Group>
+                                    <Form.Label>Discount Rate</Form.Label>
+                                    <Field
+                                      as="select"
+                                      name={`itemsElectromenagers[${index}].discountRate`}
+                                      className="form-control"
+                                      onChange={(e) => {
+                                        const discountRate = e.target.value;
+                                        const subtotal = calculateSubtotal(
+                                          item.price,
+                                          item.quantity
+                                        );
+                                        const discountedPrice =
+                                          calculateDiscountedPrice(
+                                            subtotal,
+                                            discountRate
+                                          );
+                                        setFieldValue(
+                                          `itemsElectromenagers[${index}].discountRate`,
+                                          discountRate
+                                        );
+                                        setFieldValue(
+                                          `itemsElectromenagers[${index}].discountedPrice`,
+                                          discountedPrice
+                                        );
+                                        setFieldValue(
+                                          `itemsElectromenagers[${index}].vatIncludedPrice`,
+                                          calculateVATIncludedPriceAfterDiscount(
+                                            discountedPrice,
+                                            item.taxRate
+                                          )
+                                        );
+                                      }}
+                                    >
+                                      <option value="">
+                                        Select Discount Rate
+                                      </option>
+                                      {discountRatesElectromenagers.map(
+                                        (rate) => (
+                                          <option
+                                            key={rate}
+                                            value={rate}
+                                          >{`${rate}%`}</option>
+                                        )
+                                      )}
+                                    </Field>
+                                  </Form.Group>
+                                </Col>
+
+                                <Col md={2}>
+                                  <Form.Group>
+                                    <Form.Label className="parent-text">
+                                      Discounted Price
+                                    </Form.Label>
+                                    <p className="price-text">{`${
+                                      item.discountedPrice
+                                        ? item.discountedPrice.toFixed(2)
+                                        : "0.00"
+                                    }€`}</p>
+                                  </Form.Group>
+                                </Col>
+
                                 {/* Tax Rate Selection */}
                                 <Col md={2}>
                                   <Form.Group>
-                                    <Form.Label>TVA</Form.Label>
+                                    <Form.Label>TAX Rate</Form.Label>
                                     <Field
                                       as="select"
                                       name={`itemsElectromenagers[${index}].taxRate`}
@@ -1086,19 +1608,24 @@ itemsSurfaces: Yup.array().of(
                                           `itemsElectromenagers[${index}].taxRate`,
                                           taxRate
                                         );
+                                        const subtotal = calculateSubtotal(
+                                          item.price,
+                                          item.quantity
+                                        );
+                                        const discountedPrice =
+                                          calculateDiscountedPrice(
+                                            subtotal,
+                                            item.discountRate || 0
+                                          );
                                         setFieldValue(
-                                          `itemsElectromenagers[${index}].vatIncludedPrice`,
-                                          calculateVATIncludedPrice(
-                                            item.price,
-                                            taxRate,
-                                            item.quantity
-                                          )
+                                          `itemsElectromenagers[${index}].discountedPrice`,
+                                          discountedPrice
                                         );
                                         setFieldValue(
-                                          `itemsElectromenagers[${index}].subtotal`,
-                                          calculateSubtotal(
-                                            item.price,
-                                            item.quantity
+                                          `itemsElectromenagers[${index}].vatIncludedPrice`,
+                                          calculateVATIncludedPriceAfterDiscount(
+                                            discountedPrice,
+                                            taxRate
                                           )
                                         );
                                       }}
@@ -1122,7 +1649,7 @@ itemsSurfaces: Yup.array().of(
                                 <Col md={2}>
                                   <Form.Group>
                                     <Form.Label className="parent-text">
-                                      TVA incluse
+                                      VAT Included Prıce
                                     </Form.Label>
                                     <p className="price-text">
                                       {item.taxRate
@@ -1163,10 +1690,13 @@ itemsSurfaces: Yup.array().of(
                       </FieldArray>
 
                       {isTaxRateSelectedElectromenagers && (
-                <div className="mt-2" style={{ color: "#9f0f0f" }}>
-                  <h5>Total des Électroménagers: €{totalFeeElectromenagers}</h5>
-                </div>
-              )}
+                        <div className="mt-2" style={{ color: "#9f0f0f" }}>
+                          <h5>
+                            Total des Électroménagers: €
+                            {totalFeeElectromenagers}
+                          </h5>
+                        </div>
+                      )}
                     </Accordion.Body>
                   </Accordion.Item>
 
@@ -1184,7 +1714,7 @@ itemsSurfaces: Yup.array().of(
                                 {/* Product Selection */}
                                 <Col md={2}>
                                   <Form.Group>
-                                    <Form.Label>Produit</Form.Label>
+                                    <Form.Label>Product</Form.Label>
                                     <SearchableSelectSanitaires
                                       name={`itemsSanitaires[${index}].productId`}
                                       data={sanitaires}
@@ -1227,7 +1757,7 @@ itemsSurfaces: Yup.array().of(
                                 {/* Quantity Input */}
                                 <Col md={1}>
                                   <Form.Group>
-                                    <Form.Label>Quantité</Form.Label>
+                                    <Form.Label>Quantity</Form.Label>
                                     <InputGroup>
                                       <Field
                                         type="number"
@@ -1239,19 +1769,24 @@ itemsSurfaces: Yup.array().of(
                                             `itemsSanitaires[${index}].quantity`,
                                             quantity
                                           );
+                                          const subtotal = calculateSubtotal(
+                                            item.price,
+                                            quantity
+                                          );
+                                          const discountedPrice =
+                                            calculateDiscountedPrice(
+                                              subtotal,
+                                              item.discountRate || 0
+                                            );
                                           setFieldValue(
-                                            `itemsSanitaires[${index}].vatIncludedPrice`,
-                                            calculateVATIncludedPrice(
-                                              item.price,
-                                              item.taxRate,
-                                              quantity
-                                            )
+                                            `itemsSanitaires[${index}].discountedPrice`,
+                                            discountedPrice
                                           );
                                           setFieldValue(
-                                            `itemsSanitaires[${index}].subtotal`,
-                                            calculateSubtotal(
-                                              item.price,
-                                              quantity
+                                            `itemsSanitaires[${index}].vatIncludedPrice`,
+                                            calculateVATIncludedPriceAfterDiscount(
+                                              discountedPrice,
+                                              item.taxRate
                                             )
                                           );
                                         }}
@@ -1268,7 +1803,7 @@ itemsSurfaces: Yup.array().of(
                                 <Col md={2}>
                                   <Form.Group>
                                     <Form.Label className="parent-text">
-                                      Prix unitaire
+                                      Unit price
                                     </Form.Label>
                                     <p className="price-text">{`${item.price}€`}</p>
                                   </Form.Group>
@@ -1277,7 +1812,7 @@ itemsSurfaces: Yup.array().of(
                                 <Col md={2}>
                                   <Form.Group>
                                     <Form.Label className="parent-text">
-                                      Sous total
+                                      Subtotal
                                     </Form.Label>
                                     <p className="price-text">{`${
                                       item.subtotal
@@ -1286,10 +1821,72 @@ itemsSurfaces: Yup.array().of(
                                     }€`}</p>
                                   </Form.Group>
                                 </Col>
+
+                                <Col md={2}>
+                                  <Form.Group>
+                                    <Form.Label>Discount Rate</Form.Label>
+                                    <Field
+                                      as="select"
+                                      name={`itemsSanitaires[${index}].discountRate`}
+                                      className="form-control"
+                                      onChange={(e) => {
+                                        const discountRate = e.target.value;
+                                        const subtotal = calculateSubtotal(
+                                          item.price,
+                                          item.quantity
+                                        );
+                                        const discountedPrice =
+                                          calculateDiscountedPrice(
+                                            subtotal,
+                                            discountRate
+                                          );
+                                        setFieldValue(
+                                          `itemsSanitaires[${index}].discountRate`,
+                                          discountRate
+                                        );
+                                        setFieldValue(
+                                          `itemsSanitaires[${index}].discountedPrice`,
+                                          discountedPrice
+                                        );
+                                        setFieldValue(
+                                          `itemsSanitaires[${index}].vatIncludedPrice`,
+                                          calculateVATIncludedPriceAfterDiscount(
+                                            discountedPrice,
+                                            item.taxRate
+                                          )
+                                        );
+                                      }}
+                                    >
+                                      <option value="">
+                                        Select Discount Rate
+                                      </option>
+                                      {discountRatesSanitaires.map((rate) => (
+                                        <option
+                                          key={rate}
+                                          value={rate}
+                                        >{`${rate}%`}</option>
+                                      ))}
+                                    </Field>
+                                  </Form.Group>
+                                </Col>
+
+                                <Col md={2}>
+                                  <Form.Group>
+                                    <Form.Label className="parent-text">
+                                      Discounted Price
+                                    </Form.Label>
+                                    <p className="price-text">{`${
+                                      item.discountedPrice
+                                        ? item.discountedPrice.toFixed(2)
+                                        : "0.00"
+                                    }€`}</p>
+                                  </Form.Group>
+                                </Col>
+
                                 {/* Tax Rate Selection */}
                                 <Col md={2}>
                                   <Form.Group>
-                                    <Form.Label>TVA</Form.Label>
+                                    <Form.Label>TAX Rate</Form.Label>
                                     <Field
                                       as="select"
                                       name={`itemsSanitaires[${index}].taxRate`}
@@ -1300,19 +1897,24 @@ itemsSurfaces: Yup.array().of(
                                           `itemsSanitaires[${index}].taxRate`,
                                           taxRate
                                         );
+                                        const subtotal = calculateSubtotal(
+                                          item.price,
+                                          item.quantity
+                                        );
+                                        const discountedPrice =
+                                          calculateDiscountedPrice(
+                                            subtotal,
+                                            item.discountRate || 0
+                                          );
                                         setFieldValue(
-                                          `itemsSanitaires[${index}].vatIncludedPrice`,
-                                          calculateVATIncludedPrice(
-                                            item.price,
-                                            taxRate,
-                                            item.quantity
-                                          )
+                                          `itemsSanitaires[${index}].discountedPrice`,
+                                          discountedPrice
                                         );
                                         setFieldValue(
-                                          `itemsSanitaires[${index}].subtotal`,
-                                          calculateSubtotal(
-                                            item.price,
-                                            item.quantity
+                                          `itemsSanitaires[${index}].vatIncludedPrice`,
+                                          calculateVATIncludedPriceAfterDiscount(
+                                            discountedPrice,
+                                            taxRate
                                           )
                                         );
                                       }}
@@ -1336,7 +1938,7 @@ itemsSurfaces: Yup.array().of(
                                 <Col md={2}>
                                   <Form.Group>
                                     <Form.Label className="parent-text">
-                                      TVA incluse
+                                      VAT Included Prıce
                                     </Form.Label>
                                     <p className="price-text">
                                       {item.taxRate
@@ -1378,9 +1980,9 @@ itemsSurfaces: Yup.array().of(
 
                       {isTaxRateSelectedSanitaires && (
                         <div className="mt-2" style={{ color: "#9f0f0f" }}>
-                        <h5>Total des Sanitaires: €{totalFeeSanitaires}</h5>
-                      </div>
-              )}
+                          <h5>Total des Sanitaires: €{totalFeeSanitaires}</h5>
+                        </div>
+                      )}
                     </Accordion.Body>
                   </Accordion.Item>
 
@@ -1398,7 +2000,7 @@ itemsSurfaces: Yup.array().of(
                                 {/* Product Selection */}
                                 <Col md={2}>
                                   <Form.Group>
-                                    <Form.Label>Produit</Form.Label>
+                                    <Form.Label>Product</Form.Label>
                                     <SearchableSelectSurfaces
                                       name={`itemsSurfaces[${index}].productId`}
                                       data={surfaces}
@@ -1441,7 +2043,7 @@ itemsSurfaces: Yup.array().of(
                                 {/* Quantity Input */}
                                 <Col md={1}>
                                   <Form.Group>
-                                    <Form.Label>Quantité</Form.Label>
+                                    <Form.Label>Quantity</Form.Label>
                                     <InputGroup>
                                       <Field
                                         type="number"
@@ -1453,19 +2055,24 @@ itemsSurfaces: Yup.array().of(
                                             `itemsSurfaces[${index}].quantity`,
                                             quantity
                                           );
+                                          const subtotal = calculateSubtotal(
+                                            item.price,
+                                            quantity
+                                          );
+                                          const discountedPrice =
+                                            calculateDiscountedPrice(
+                                              subtotal,
+                                              item.discountRate || 0
+                                            );
                                           setFieldValue(
-                                            `itemsSurfaces[${index}].vatIncludedPrice`,
-                                            calculateVATIncludedPrice(
-                                              item.price,
-                                              item.taxRate,
-                                              quantity
-                                            )
+                                            `itemsSurfaces[${index}].discountedPrice`,
+                                            discountedPrice
                                           );
                                           setFieldValue(
-                                            `itemsSurfaces[${index}].subtotal`,
-                                            calculateSubtotal(
-                                              item.price,
-                                              quantity
+                                            `itemsSurfaces[${index}].vatIncludedPrice`,
+                                            calculateVATIncludedPriceAfterDiscount(
+                                              discountedPrice,
+                                              item.taxRate
                                             )
                                           );
                                         }}
@@ -1482,7 +2089,7 @@ itemsSurfaces: Yup.array().of(
                                 <Col md={2}>
                                   <Form.Group>
                                     <Form.Label className="parent-text">
-                                      Prix unitaire
+                                      Unit price
                                     </Form.Label>
                                     <p className="price-text">{`${item.price}€`}</p>
                                   </Form.Group>
@@ -1491,7 +2098,7 @@ itemsSurfaces: Yup.array().of(
                                 <Col md={2}>
                                   <Form.Group>
                                     <Form.Label className="parent-text">
-                                      Sous total
+                                      Subtotal
                                     </Form.Label>
                                     <p className="price-text">{`${
                                       item.subtotal
@@ -1500,10 +2107,72 @@ itemsSurfaces: Yup.array().of(
                                     }€`}</p>
                                   </Form.Group>
                                 </Col>
+
+                                <Col md={2}>
+                                  <Form.Group>
+                                    <Form.Label>Discount Rate</Form.Label>
+                                    <Field
+                                      as="select"
+                                      name={`itemsSurfaces[${index}].discountRate`}
+                                      className="form-control"
+                                      onChange={(e) => {
+                                        const discountRate = e.target.value;
+                                        const subtotal = calculateSubtotal(
+                                          item.price,
+                                          item.quantity
+                                        );
+                                        const discountedPrice =
+                                          calculateDiscountedPrice(
+                                            subtotal,
+                                            discountRate
+                                          );
+                                        setFieldValue(
+                                          `itemsSurfaces[${index}].discountRate`,
+                                          discountRate
+                                        );
+                                        setFieldValue(
+                                          `itemsSurfaces[${index}].discountedPrice`,
+                                          discountedPrice
+                                        );
+                                        setFieldValue(
+                                          `itemsSurfaces[${index}].vatIncludedPrice`,
+                                          calculateVATIncludedPriceAfterDiscount(
+                                            discountedPrice,
+                                            item.taxRate
+                                          )
+                                        );
+                                      }}
+                                    >
+                                      <option value="">
+                                        Select Discount Rate
+                                      </option>
+                                      {discountRatesSurfaces.map((rate) => (
+                                        <option
+                                          key={rate}
+                                          value={rate}
+                                        >{`${rate}%`}</option>
+                                      ))}
+                                    </Field>
+                                  </Form.Group>
+                                </Col>
+
+                                <Col md={2}>
+                                  <Form.Group>
+                                    <Form.Label className="parent-text">
+                                      Discounted Price
+                                    </Form.Label>
+                                    <p className="price-text">{`${
+                                      item.discountedPrice
+                                        ? item.discountedPrice.toFixed(2)
+                                        : "0.00"
+                                    }€`}</p>
+                                  </Form.Group>
+                                </Col>
+
                                 {/* Tax Rate Selection */}
                                 <Col md={2}>
                                   <Form.Group>
-                                    <Form.Label>TVA</Form.Label>
+                                    <Form.Label>TAX Rate</Form.Label>
                                     <Field
                                       as="select"
                                       name={`itemsSurfaces[${index}].taxRate`}
@@ -1514,19 +2183,24 @@ itemsSurfaces: Yup.array().of(
                                           `itemsSurfaces[${index}].taxRate`,
                                           taxRate
                                         );
+                                        const subtotal = calculateSubtotal(
+                                          item.price,
+                                          item.quantity
+                                        );
+                                        const discountedPrice =
+                                          calculateDiscountedPrice(
+                                            subtotal,
+                                            item.discountRate || 0
+                                          );
                                         setFieldValue(
-                                          `itemsSurfaces[${index}].vatIncludedPrice`,
-                                          calculateVATIncludedPrice(
-                                            item.price,
-                                            taxRate,
-                                            item.quantity
-                                          )
+                                          `itemsSurfaces[${index}].discountedPrice`,
+                                          discountedPrice
                                         );
                                         setFieldValue(
-                                          `itemsSurfaces[${index}].subtotal`,
-                                          calculateSubtotal(
-                                            item.price,
-                                            item.quantity
+                                          `itemsSurfaces[${index}].vatIncludedPrice`,
+                                          calculateVATIncludedPriceAfterDiscount(
+                                            discountedPrice,
+                                            taxRate
                                           )
                                         );
                                       }}
@@ -1550,7 +2224,7 @@ itemsSurfaces: Yup.array().of(
                                 <Col md={2}>
                                   <Form.Group>
                                     <Form.Label className="parent-text">
-                                      TVA incluse
+                                      VAT Included Prıce
                                     </Form.Label>
                                     <p className="price-text">
                                       {item.taxRate
@@ -1592,9 +2266,9 @@ itemsSurfaces: Yup.array().of(
 
                       {isTaxRateSelectedSurfaces && (
                         <div className="mt-2" style={{ color: "#9f0f0f" }}>
-                        <h5>Total des PDT Solid Surfaces: €{totalFeeSurfaces}</h5>
-                      </div>
-              )}
+                          <h5>Total des Surfaces: €{totalFeeSurfaces}</h5>
+                        </div>
+                      )}
                     </Accordion.Body>
                   </Accordion.Item>
 
@@ -1612,7 +2286,7 @@ itemsSurfaces: Yup.array().of(
                                 {/* Product Selection */}
                                 <Col md={2}>
                                   <Form.Group>
-                                    <Form.Label>Produit</Form.Label>
+                                    <Form.Label>Product</Form.Label>
                                     <SearchableSelectDivers
                                       name={`itemsDivers[${index}].productId`}
                                       data={divers}
@@ -1655,7 +2329,7 @@ itemsSurfaces: Yup.array().of(
                                 {/* Quantity Input */}
                                 <Col md={1}>
                                   <Form.Group>
-                                    <Form.Label>Quantité</Form.Label>
+                                    <Form.Label>Quantity</Form.Label>
                                     <InputGroup>
                                       <Field
                                         type="number"
@@ -1667,19 +2341,24 @@ itemsSurfaces: Yup.array().of(
                                             `itemsDivers[${index}].quantity`,
                                             quantity
                                           );
+                                          const subtotal = calculateSubtotal(
+                                            item.price,
+                                            quantity
+                                          );
+                                          const discountedPrice =
+                                            calculateDiscountedPrice(
+                                              subtotal,
+                                              item.discountRate || 0
+                                            );
                                           setFieldValue(
-                                            `itemsDivers[${index}].vatIncludedPrice`,
-                                            calculateVATIncludedPrice(
-                                              item.price,
-                                              item.taxRate,
-                                              quantity
-                                            )
+                                            `itemsDivers[${index}].discountedPrice`,
+                                            discountedPrice
                                           );
                                           setFieldValue(
-                                            `itemsDivers[${index}].subtotal`,
-                                            calculateSubtotal(
-                                              item.price,
-                                              quantity
+                                            `itemsDivers[${index}].vatIncludedPrice`,
+                                            calculateVATIncludedPriceAfterDiscount(
+                                              discountedPrice,
+                                              item.taxRate
                                             )
                                           );
                                         }}
@@ -1696,7 +2375,7 @@ itemsSurfaces: Yup.array().of(
                                 <Col md={2}>
                                   <Form.Group>
                                     <Form.Label className="parent-text">
-                                      Prix unitaire
+                                      Unit price
                                     </Form.Label>
                                     <p className="price-text">{`${item.price}€`}</p>
                                   </Form.Group>
@@ -1705,7 +2384,7 @@ itemsSurfaces: Yup.array().of(
                                 <Col md={2}>
                                   <Form.Group>
                                     <Form.Label className="parent-text">
-                                      Sous total
+                                      Subtotal
                                     </Form.Label>
                                     <p className="price-text">{`${
                                       item.subtotal
@@ -1714,10 +2393,72 @@ itemsSurfaces: Yup.array().of(
                                     }€`}</p>
                                   </Form.Group>
                                 </Col>
+
+                                <Col md={2}>
+                                  <Form.Group>
+                                    <Form.Label>Discount Rate</Form.Label>
+                                    <Field
+                                      as="select"
+                                      name={`itemsDivers[${index}].discountRate`}
+                                      className="form-control"
+                                      onChange={(e) => {
+                                        const discountRate = e.target.value;
+                                        const subtotal = calculateSubtotal(
+                                          item.price,
+                                          item.quantity
+                                        );
+                                        const discountedPrice =
+                                          calculateDiscountedPrice(
+                                            subtotal,
+                                            discountRate
+                                          );
+                                        setFieldValue(
+                                          `itemsDivers[${index}].discountRate`,
+                                          discountRate
+                                        );
+                                        setFieldValue(
+                                          `itemsDivers[${index}].discountedPrice`,
+                                          discountedPrice
+                                        );
+                                        setFieldValue(
+                                          `itemsDivers[${index}].vatIncludedPrice`,
+                                          calculateVATIncludedPriceAfterDiscount(
+                                            discountedPrice,
+                                            item.taxRate
+                                          )
+                                        );
+                                      }}
+                                    >
+                                      <option value="">
+                                        Select Discount Rate
+                                      </option>
+                                      {discountRatesDivers.map((rate) => (
+                                        <option
+                                          key={rate}
+                                          value={rate}
+                                        >{`${rate}%`}</option>
+                                      ))}
+                                    </Field>
+                                  </Form.Group>
+                                </Col>
+
+                                <Col md={2}>
+                                  <Form.Group>
+                                    <Form.Label className="parent-text">
+                                      Discounted Price
+                                    </Form.Label>
+                                    <p className="price-text">{`${
+                                      item.discountedPrice
+                                        ? item.discountedPrice.toFixed(2)
+                                        : "0.00"
+                                    }€`}</p>
+                                  </Form.Group>
+                                </Col>
+
                                 {/* Tax Rate Selection */}
                                 <Col md={2}>
                                   <Form.Group>
-                                    <Form.Label>TVA</Form.Label>
+                                    <Form.Label>TAX Rate</Form.Label>
                                     <Field
                                       as="select"
                                       name={`itemsDivers[${index}].taxRate`}
@@ -1728,19 +2469,24 @@ itemsSurfaces: Yup.array().of(
                                           `itemsDivers[${index}].taxRate`,
                                           taxRate
                                         );
+                                        const subtotal = calculateSubtotal(
+                                          item.price,
+                                          item.quantity
+                                        );
+                                        const discountedPrice =
+                                          calculateDiscountedPrice(
+                                            subtotal,
+                                            item.discountRate || 0
+                                          );
                                         setFieldValue(
-                                          `itemsDivers[${index}].vatIncludedPrice`,
-                                          calculateVATIncludedPrice(
-                                            item.price,
-                                            taxRate,
-                                            item.quantity
-                                          )
+                                          `itemsDivers[${index}].discountedPrice`,
+                                          discountedPrice
                                         );
                                         setFieldValue(
-                                          `itemsDivers[${index}].subtotal`,
-                                          calculateSubtotal(
-                                            item.price,
-                                            item.quantity
+                                          `itemsDivers[${index}].vatIncludedPrice`,
+                                          calculateVATIncludedPriceAfterDiscount(
+                                            discountedPrice,
+                                            taxRate
                                           )
                                         );
                                       }}
@@ -1764,7 +2510,7 @@ itemsSurfaces: Yup.array().of(
                                 <Col md={2}>
                                   <Form.Group>
                                     <Form.Label className="parent-text">
-                                      TVA incluse
+                                      VAT Included Prıce
                                     </Form.Label>
                                     <p className="price-text">
                                       {item.taxRate
@@ -1806,9 +2552,9 @@ itemsSurfaces: Yup.array().of(
 
                       {isTaxRateSelectedDivers && (
                         <div className="mt-2" style={{ color: "#9f0f0f" }}>
-                        <h5>Total des Divers: €{totalFeeDivers}</h5>
-                      </div>
-              )}
+                          <h5>Total des Divers: €{totalFeeDivers}</h5>
+                        </div>
+                      )}
                     </Accordion.Body>
                   </Accordion.Item>
                 </Accordion>
@@ -1828,10 +2574,9 @@ itemsSurfaces: Yup.array().of(
                   borderColor: "#9f0f0f",
                   width: "200px",
                 }}
-                // as={MaskedInput}
-                // mask="(111) 111-1111"
                 placeholder="Frais de livraison"
-                {...formik.getFieldProps("deliveryFee")}
+                value={values.deliveryFee}
+                onChange={(e) => setFieldValue("deliveryFee", e.target.value)}
                 isInvalid={!!formik.errors.deliveryFee}
               />
               <Form.Control.Feedback type="invalid">
@@ -1852,14 +2597,56 @@ itemsSurfaces: Yup.array().of(
                   borderColor: "#9f0f0f",
                   width: "200px",
                 }}
-                // as={MaskedInput}
-                // mask="(111) 111-1111"
                 placeholder="Frais de pose"
-                {...formik.getFieldProps("montageFee")}
+                value={values.montageFee}
+                onChange={(e) => setFieldValue("montageFee", e.target.value)}
                 isInvalid={!!formik.errors.montageFee}
               />
               <Form.Control.Feedback type="invalid">
                 {formik.errors.montageFee}
+              </Form.Control.Feedback>
+            </Form.Group>
+
+            <Form.Group className="mb-3">
+              <Form.Label>Code:</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter code"
+                value={formik.values.code}
+                onChange={handleCodeChange}
+                isInvalid={isCodeValid === false}
+                isValid={isCodeValid === true}
+              />
+              <Form.Control.Feedback type="invalid">
+                Invalid code.
+              </Form.Control.Feedback>
+              <Form.Control.Feedback type="valid">
+                Code is valid!
+              </Form.Control.Feedback>
+            </Form.Group>
+
+            <Form.Group
+              className="pose mb-5"
+              style={{ display: "flex", gap: "65px" }}
+            >
+              <Form.Label as="h3">Global Remise:</Form.Label>
+              <Form.Control
+                type="number"
+                style={{
+                  color: "#9f0f0f",
+                  borderColor: "#9f0f0f",
+                  width: "200px",
+                }}
+                placeholder="Global Remise:"
+                value={values.globaldiscount}
+                onChange={(e) =>
+                  setFieldValue("globaldiscount", e.target.value)
+                }
+                isInvalid={!!formik.errors.globaldiscount}
+                disabled={isCodeValid !== true}
+              />
+              <Form.Control.Feedback type="invalid">
+                {formik.errors.globaldiscount}
               </Form.Control.Feedback>
             </Form.Group>
 
@@ -1873,7 +2660,7 @@ itemsSurfaces: Yup.array().of(
                   color: "#9f0f0f",
                 }}
               >
-                TOTAL TVAC:
+                TOTAL TVAC: {/* €{grandTotal} */}
               </Form.Label>
 
               <Form.Control
@@ -1884,7 +2671,7 @@ itemsSurfaces: Yup.array().of(
                   width: "170px",
                 }}
                 placeholder="Total TVAC"
-                value={formik.values.totalFee} // Display calculated total fee
+                value={`${calculateGrandTotal()}€`} // Genel toplamı hesapla ve göster
                 readOnly
               />
             </Form.Group>
@@ -1898,6 +2685,5 @@ itemsSurfaces: Yup.array().of(
     </Formik>
   );
 };
-
 
 export default CreateNewDevisCommande;
