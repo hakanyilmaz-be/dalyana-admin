@@ -10,7 +10,7 @@ import './element-list-table.css';
 
 const ElementListTable = () => {
    
- 
+  
     // Merge all data into a single array
     const allData = [...accessoires, ...divers, ...electromenagers, ...sanitaires, ...surfaces];
     const [records, setRecords] = useState(allData);

@@ -5,7 +5,10 @@
     "price":"520",
     "value": "Électroménager1",
     "label": "Électroménager 1",
-    "name" :  "Électroménager 1"
+    "name" :  "Électroménager 1",
+    "quantity" : 1,
+    "note" : "",
+    "category": "Électroménager"
     
   },
   {
@@ -14,7 +17,10 @@
     "price":"400",
     "value": "Électroménager2",
     "label": "Électroménager 2",
-    "name" :  "Électroménager 2"
+    "name" :  "Électroménager 2",
+    "quantity" : 4,
+    "note" : "",
+    "category": "Électroménager"
   },
   {
     "id": "EL-003",
@@ -22,6 +28,9 @@
     "price":"335",
     "value": "Électroménager3",
     "label": "Électroménager 3",
-    "name" :  "Électroménager 3"
+    "name" :  "Électroménager 3",
+    "quantity" : 1,
+    "note" : "",
+    "category": "Électroménager"
   }
 ]

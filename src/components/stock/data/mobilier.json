@@ -1,0 +1,35 @@
+[
+  {
+    "id": "MO-001",
+    "description":"meuble TV vintage avec 2 portes coulissantes", 
+    "price":"120",
+    "value": "meuble1",
+    "label": "Meuble 1",
+    "name" :  "Meuble 1",
+    "quantity" : 3,
+    "note" : "",
+    "category": "Meuble"
+  },
+  {
+    "id": "MO-002",
+    "description":"Les poignées en métal en coloris laiton est une finition qui sublime ce majestueux dressing 3 portes",
+    "price":"200",
+    "value": "meuble2",
+    "label": "Meuble 2",
+    "name" :  "Meuble 2",
+    "quantity" : 1,
+    "note" : "",
+    "category": "Meuble"
+  },
+  {
+    "id": "MO-003",
+    "description":"Le bois de noyer confère à cette bibliothèque une belle couleur chaude naturelle unique, apportant une sensation chaleureuse et accueillante à votre intérieur.",
+    "price":"135",
+    "value": "meuble3",
+    "label": "Meuble 3",
+    "name" :  "Meuble 3",
+    "quantity" : 1,
+    "note" : "",
+    "category": "Meuble"
+  }
+]

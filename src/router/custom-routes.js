@@ -40,6 +40,7 @@ import CreateCustomer from "../pages/CreateCustomer";
 import CreateDevisCommande from "../pages/CreateDevisCommande";
 import ProductForm from "../kodtesti";
 import Uygulama from "../components/create-new-devis-commande/uygulama";
+import Stock from "../pages/Stock";
 
 
 const CustomRoutes = () => {
@@ -86,6 +87,8 @@ const CustomRoutes = () => {
               <Route path=":clientId" element={<AdminTemplate><ClientsEditPage/></AdminTemplate>}/>
             </Route>
           <Route path="elements-produits" element={<AdminTemplate><ElementsProduits /></AdminTemplate>} />
+          <Route path="stock" element={<AdminTemplate><Stock /></AdminTemplate>} />
+
           
           <Route path="kodtest" element={<AdminTemplate><ProductForm /></AdminTemplate>} />
 

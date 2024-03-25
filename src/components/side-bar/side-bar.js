@@ -9,7 +9,7 @@ import {
 } from "react-icons/ri";
 import { AiOutlineCalendar, AiFillEdit, AiFillFolderOpen } from 'react-icons/ai';
 import { IoMdContacts } from 'react-icons/io';
-import { BsKanban, BsBarChartFill } from 'react-icons/bs';
+import { BsKanban, BsBarChartFill, BsBoxSeamFill } from 'react-icons/bs';
 
 
 /* import { useStore } from "../../../store";
@@ -57,6 +57,9 @@ const SideBar = () => {
             </Nav.Link>
             <Nav.Link as={Link} to="/elements-produits" className={currentPath === "/elements-produits" ? "active" : ""}>
               <RiDashboardLine /> Elements & Produits
+            </Nav.Link>
+            <Nav.Link as={Link} to="/stock" className={currentPath === "/stock" ? "active" : ""}>
+            <BsBoxSeamFill /> Stock
             </Nav.Link>
             <Nav.Link as={Link} to="/factures" className={currentPath === "/factures" ? "active" : ""}>
               <AiFillEdit /> Factures
