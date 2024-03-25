@@ -6,3 +6,7 @@
    margin-top: 3rem;
     text-align: center;
 }
+.button-group-new-product{
+    display: flex;
+    justify-content: space-between;
+}
