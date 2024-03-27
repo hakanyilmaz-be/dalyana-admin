@@ -5,7 +5,7 @@ import StockListTable from '../components/stock/stock-list-table'
 const Stock = () => {
   return (
     <Container>
-    <h2 style={{ textAlign: 'center', color: '#112e3b' }}>Stock</h2>
+    <h2 style={{ textAlign: 'center', color: '#112e3b' }}>Gestion de Stock</h2>
     <StockListTable/>
     
     </Container>

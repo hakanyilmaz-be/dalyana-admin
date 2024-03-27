@@ -8,7 +8,8 @@
     "name" :  "Accessoire 1",
     "quantity" : 3,
     "note" : "",
-    "category": "Accessoire"
+    "category": "Accessoires",
+    "image" : "photo-01.jpg"
   },
   {
     "id": "AC-002",
@@ -19,7 +20,8 @@
     "name" :  "Accessoire 2",
     "quantity" : 1,
     "note" : "",
-    "category": "Accessoire"
+    "category": "Accessoires",
+    "image" : "photo-02.jpg"
   },
   {
     "id": "AC-003",
@@ -30,6 +32,7 @@
     "name" :  "Accessoire 3",
     "quantity" : 1,
     "note" : "",
-    "category": "Accessoire"
+    "category": "Accessoires",
+    "image" : "photo-03.jpg"
   }
 ]

@@ -8,7 +8,8 @@
     "name" :  "Électroménager 1",
     "quantity" : 1,
     "note" : "",
-    "category": "Électroménager"
+    "category": "Electromenagers",
+    "image" : "photo-04.jpg"
     
   },
   {
@@ -20,7 +21,8 @@
     "name" :  "Électroménager 2",
     "quantity" : 4,
     "note" : "",
-    "category": "Électroménager"
+    "category": "Electromenagers",
+    "image" : "photo-05.jpg"
   },
   {
     "id": "EL-003",
@@ -31,6 +33,7 @@
     "name" :  "Électroménager 3",
     "quantity" : 1,
     "note" : "",
-    "category": "Électroménager"
+    "category": "Electromenagers",
+    "image" : "photo-06.jpg"
   }
 ]

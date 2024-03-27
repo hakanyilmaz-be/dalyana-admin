@@ -8,7 +8,8 @@
     "name" :  "Sanitaire 1",
     "quantity" : 1,
     "note" : "",
-    "category": "Sanitaire"
+    "category": "Sanitaires",
+    "image" : "photo-15.jpg"
   },
   {
     "id": "SA-002",
@@ -19,7 +20,8 @@
     "name" :  "Sanitaire 2",
     "quantity" : 1,
     "note" : "",
-    "category": "Sanitaire"
+    "category": "Sanitaires",
+    "image" : "photo-16.jpg"
   },
   {
     "id": "SA-003",
@@ -30,6 +32,7 @@
     "name" :  "Sanitaire 3",
     "quantity" : 1,
     "note" : "",
-    "category": "Sanitaire"
+    "category": "Sanitaires",
+    "image" : ""
   }
 ]

@@ -8,7 +8,8 @@
     "name" :  "Divers 1",
     "quantity" : 1,
     "note" : "",
-    "category": "Divers"
+    "category": "Divers",
+    "image" : "photo-11.jpg"
   },
   {
     "id": "DI-002",
@@ -19,7 +20,8 @@
     "name" :  "Divers 2",
     "quantity" : 1,
     "note" : "",
-    "category": "Divers"
+    "category": "Divers",
+    "image" : "photo-12.jpg"
   },
   {
     "id": "DI-003",
@@ -30,6 +32,7 @@
     "name" :  "Divers 3",
     "quantity" : 1,
     "note" : "",
-    "category": "Divers"
+    "category": "Divers",
+    "image" : "photo-13.jpg"
   }
 ]
