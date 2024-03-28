@@ -64,9 +64,7 @@ const SearchableSelectAccessoires = ({
   placeholder,
   isProduct,
   index,
-  setPrice,
   values,
-  calculateVATIncludedPrice,
   calculateSubtotal,
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -148,9 +146,7 @@ const SearchableSelectElectromenagers = ({
   placeholder,
   isProduct,
   index,
-  setPrice,
   values,
-  calculateVATIncludedPrice,
   calculateSubtotal,
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -235,9 +231,7 @@ const SearchableSelectSanitaires = ({
   placeholder,
   isProduct,
   index,
-  setPrice,
   values,
-  calculateVATIncludedPrice,
   calculateSubtotal,
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -319,9 +313,7 @@ const SearchableSelectDivers = ({
   placeholder,
   isProduct,
   index,
-  setPrice,
   values,
-  calculateVATIncludedPrice,
   calculateSubtotal,
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -400,9 +392,7 @@ const SearchableSelectSurfaces = ({
   placeholder,
   isProduct,
   index,
-  setPrice,
   values,
-  calculateVATIncludedPrice,
   calculateSubtotal,
 }) => {
   const [searchTerm, setSearchTerm] = useState("");

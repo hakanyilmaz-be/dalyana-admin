@@ -78,7 +78,7 @@ const CreateNewCustomer = () => {
           as="h3"
           style={{ color: "white", backgroundColor: "#9f0f0f" }}
         >
-          Informations Client
+          Créer un Nouveau Client
         </Card.Header>
         <Card.Body>
           <Row>

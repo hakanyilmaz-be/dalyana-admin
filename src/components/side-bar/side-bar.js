@@ -10,7 +10,7 @@ import {
 import { AiOutlineCalendar, AiFillEdit, AiFillFolderOpen } from 'react-icons/ai';
 import { IoMdContacts } from 'react-icons/io';
 import { BsKanban, BsBarChartFill, BsBoxSeamFill } from 'react-icons/bs';
-
+import { FaNetworkWired } from "react-icons/fa";
 
 /* import { useStore } from "../../../store";
 import alertify from "alertifyjs";
@@ -52,8 +52,11 @@ const SideBar = () => {
             <Nav.Link as={Link} to="/" className={currentPath === "/" ? "active" : ""}>
               <RiHome3Line /> Accueil
             </Nav.Link>
-            <Nav.Link as={Link} to="/projets-clients" className={currentPath === "/projets-clients" ? "active" : ""}>
-              <AiFillFolderOpen /> Projets & Clients
+            <Nav.Link as={Link} to="/projets" className={currentPath === "/projets" ? "active" : ""}>
+              <AiFillFolderOpen /> Projets
+            </Nav.Link>
+            <Nav.Link as={Link} to="/clients" className={currentPath === "/clients" ? "active" : ""}>
+            <IoMdContacts /> Clients
             </Nav.Link>
             <Nav.Link as={Link} to="/elements-produits" className={currentPath === "/elements-produits" ? "active" : ""}>
               <RiDashboardLine /> Elements & Produits
@@ -65,7 +68,7 @@ const SideBar = () => {
               <AiFillEdit /> Factures
             </Nav.Link>
             <Nav.Link as={Link} to="/employees" className={currentPath === "/employees" ? "active" : ""}>
-              <IoMdContacts /> Employees
+            <FaNetworkWired /> Employees
             </Nav.Link>
             <Nav.Link as={Link} to="/calendrier" className={currentPath === "/calendrier" ? "active" : ""}>
               <AiOutlineCalendar /> Calendrier

@@ -1,17 +1,17 @@
 import React, { useState } from "react";
-import data from "./devis-commande.json";
+import data from "./customer.json";
 import { useNavigate } from "react-router-dom";
 import DataTable from "react-data-table-component";
 import { Form } from "react-bootstrap";
-import "./devis-commande-table.css";
+import "./customer-table.css"
 
-const DevisCommandeTable = () => {
+const CustomerTable = () => {
   const navigate = useNavigate(); 
   const [records, setRecords] = useState(data)
 
   const columns = [
     {
-      name: "P. ID",
+      name: "C. ID",
       selector: (row) => row.id,
       width: "80px",
     },
@@ -30,14 +30,6 @@ const DevisCommandeTable = () => {
     {
       name: "Emplacement",
       selector: (row) => row.location,
-    },
-    {
-      name: "Statut",
-      selector: (row) => row.status,
-    },
-    {
-      name: "Date",
-      selector: (row) => row.firstDate,
     },
   ];
 
@@ -62,7 +54,7 @@ const DevisCommandeTable = () => {
   };
 
   const handleEdit = (row) => {
-    navigate(`/projets-clients/${row.id}`);
+    navigate(`/clients/${row.id}`);
   };
 
   const handleFilter = (e) => { 
@@ -72,9 +64,7 @@ const DevisCommandeTable = () => {
         row.name.toLocaleLowerCase().includes(e.target.value.toLocaleLowerCase()) ||
         row.phoneNumber.toLocaleLowerCase().includes(e.target.value.toLocaleLowerCase()) ||
         row.email.toLocaleLowerCase().includes(e.target.value.toLocaleLowerCase()) ||
-        row.location.toLocaleLowerCase().includes(e.target.value.toLocaleLowerCase()) ||
-        row.status.toLocaleLowerCase().includes(e.target.value.toLocaleLowerCase()) ||
-        row.firstDate.toLocaleLowerCase().includes(e.target.value.toLocaleLowerCase()) )
+        row.location.toLocaleLowerCase().includes(e.target.value.toLocaleLowerCase()) )
         
       })
       setRecords(filteredData);
@@ -104,4 +94,4 @@ const DevisCommandeTable = () => {
   );
 };
 
-export default DevisCommandeTable;
+export default CustomerTable;

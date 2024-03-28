@@ -25,7 +25,6 @@ import ProtectedRoute from "./protected-route"; */
 
 import AdminTemplate from "../template/admin-template";
 import AdminDashboardPage from "../pages/AdminDashboardPage";
-import ProjetsClients from "../pages/ProjetsClients";
 import ElementsProduits from "../pages/ElementsProduits";
 import Factures from "../pages/Factures";
 import Employees from "../pages/Employees"; 
@@ -38,17 +37,16 @@ import CreateInvoice from "../pages/CreateInvoice";
 import InvoiceEditPage from "../pages/InvoiceEditPage";
 import CreateCustomer from "../pages/CreateCustomer";
 import CreateDevisCommande from "../pages/CreateDevisCommande";
-import ProductForm from "../kodtesti";
-import Uygulama from "../components/create-new-devis-commande/uygulama";
 import Stock from "../pages/Stock";
+import DevisEditPage from "../pages/DevisEditPage";
+import Projets from "../pages/Projets";
+import Clients from "../pages/Clients";
 
 
 const CustomRoutes = () => {
   return (
-    <BrowserRouter>
-       
+    <BrowserRouter>       
       <Routes>
-
         <Route path="/">
 
           {/* ADMIN ROUTES */}
@@ -75,27 +73,21 @@ const CustomRoutes = () => {
           
           <Route index element={<AdminTemplate><AdminDashboardPage /></AdminTemplate>} />
          
-            <Route path="projets-clients">
-              <Route index element={<AdminTemplate><ProjetsClients /></AdminTemplate>}/>
-              <Route path="creer-client" element={<AdminTemplate><CreateCustomer/></AdminTemplate>}/>
+            <Route path="projets">
+              <Route index element={<AdminTemplate><Projets /></AdminTemplate>}/>
               <Route path="creer-devis-commande" element={<AdminTemplate><CreateDevisCommande/></AdminTemplate>}/>
+              <Route path=":devisId" element={<AdminTemplate> <DevisEditPage /></AdminTemplate>}/>
+            </Route>
 
-              <Route path="uygulama" element={<AdminTemplate><Uygulama/></AdminTemplate>}/>
-           
-
-
+            <Route path="clients">
+              <Route index element={<AdminTemplate><Clients/></AdminTemplate>}/>
+              <Route path="creer-client" element={<AdminTemplate><CreateCustomer/></AdminTemplate>}/>
               <Route path=":clientId" element={<AdminTemplate><ClientsEditPage/></AdminTemplate>}/>
             </Route>
+
           <Route path="elements-produits" element={<AdminTemplate><ElementsProduits /></AdminTemplate>} />
           <Route path="stock" element={<AdminTemplate><Stock /></AdminTemplate>} />
-
           
-          <Route path="kodtest" element={<AdminTemplate><ProductForm /></AdminTemplate>} />
-
-
-  
-
-
 
           <Route path="factures"> 
             <Route index element={<AdminTemplate><Factures /></AdminTemplate>} />

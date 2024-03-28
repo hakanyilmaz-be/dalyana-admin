@@ -11,7 +11,7 @@ const DevisCommandeTableForCustomerPage = () => {
 
   const columns = [
     {
-      name: "ID",
+      name: "P. ID",
       selector: (row) => row.id,
       width: "120px",
     },
@@ -50,7 +50,7 @@ const DevisCommandeTableForCustomerPage = () => {
   };
 
   const handleEdit = (row) => {
-    navigate(`/projets-clients/${row.id}`);
+    navigate(`/projets/${row.id}`);
   };
 
   const handleFilter = (e) => { 

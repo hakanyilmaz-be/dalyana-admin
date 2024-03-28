@@ -6,13 +6,13 @@ import DevisCommandeTable from '../components/devis-commande-table/devis-command
 import { Link } from 'react-router-dom'
 
 
-const ProjetsClients = () => {
+const Projets = () => {
   return (
 
     <Container>
-     <Link to="/projets-clients/creer-client">
+     <Link to="/projets/creer-devis-commande">
       <CreateNew
-        title= "Créer Nouveau Client en Devis"
+        title= "Créer un Nouveau Projet"
       />
       </Link>
       <Status/>
@@ -23,4 +23,4 @@ const ProjetsClients = () => {
   )
 }
 
-export default ProjetsClients
+export default Projets
