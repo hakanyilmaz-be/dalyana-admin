@@ -27,17 +27,16 @@ import validCodes from "../../assets/data/discountCodes.json";
 //import { createUser } from "../../../api/admin-user-service";
 
 const taxRates = [0, 6, 10, 20, 21];
-const discountRatesElectromenagers = Array.from(
-  { length: 31 },
-  (_, index) => index
-); // 0'dan 30'a kadar olan sayılar
-const discountRatesAccessoires = Array.from(
-  { length: 31 },
-  (_, index) => index
-); // 0'dan 30'a kadar olan sayılar
-const discountRatesSanitaires = Array.from({ length: 31 }, (_, index) => index); // 0'dan 30'a kadar olan sayılar
-const discountRatesDivers = Array.from({ length: 31 }, (_, index) => index); // 0'dan 30'a kadar olan sayılar
-const discountRatesSurfaces = Array.from({ length: 31 }, (_, index) => index); // 0'dan 30'a kadar olan sayılar
+// Adım 1: Yardımcı fonksiyon
+const createDiscountRates = (length) => Array.from({ length }, (_, index) => index);
+
+// Adım 2: Fonksiyonu kullanarak dizi oluşturma
+const discountRatesElectromenagers = createDiscountRates(31);
+const discountRatesAccessoires = createDiscountRates(31);
+const discountRatesSanitaires = createDiscountRates(31);
+const discountRatesDivers = createDiscountRates(31);
+const discountRatesSurfaces = createDiscountRates(31);
+
 
 const calculateVATIncludedPrice = (price, taxRate, quantity) => {
   return price * quantity * (1 + taxRate / 100);
