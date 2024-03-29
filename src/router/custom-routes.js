@@ -42,6 +42,7 @@ import DevisEditPage from "../pages/DevisEditPage";
 import Projets from "../pages/Projets";
 import Clients from "../pages/Clients";
 import Uygulama from "../components/create-new-devis-commande/uygulama";
+import Uygulama2 from "../components/create-new-devis-commande/uygulama2";
 
 
 const CustomRoutes = () => {
@@ -78,6 +79,8 @@ const CustomRoutes = () => {
               <Route index element={<AdminTemplate><Projets /></AdminTemplate>}/>
               <Route path="creer-devis-commande" element={<AdminTemplate><CreateDevisCommande/></AdminTemplate>}/>
               <Route path="uygulama" element={<AdminTemplate><Uygulama/></AdminTemplate>}/>
+              <Route path="uygulama2" element={<AdminTemplate><Uygulama2/></AdminTemplate>}/>
+
 
               <Route path=":devisId" element={<AdminTemplate> <DevisEditPage /></AdminTemplate>}/>
             </Route>
