@@ -1,0 +1,93 @@
+{
+    "floor": "etage-1",
+    "elevator": "ascenseur-non",
+    "status": "Bon de commande",
+    "articles": [
+        {
+            "name": "Cuisine sur Mesure",
+            "furnitureListPrice": 12000,
+            "price": 10800,
+            "quantity": 1,
+            "taxRate": 6,
+            "vatIncludedPrice": 11448,
+            "subtotal": 0,
+            "discountRate": 10
+        },
+        {
+            "name": "Cusinie deuxieme",
+            "furnitureListPrice": 10000,
+            "price": 8000,
+            "quantity": 1,
+            "taxRate": 10,
+            "vatIncludedPrice": 8800,
+            "subtotal": 0,
+            "discountRate": 20
+        }
+    ],
+    "furnitureListPrice": "",
+    "itemsAccessoires": [
+        {
+            "productId": "AC-002",
+            "quantity": 1,
+            "price": "200",
+            "taxRate": "10",
+            "vatIncludedPrice": 154,
+            "subtotal": 200,
+            "discountedPrice": 140,
+            "discountRate": "30"
+        }
+    ],
+    "itemsElectromenagers": [
+        {
+            "productId": "EL-002",
+            "quantity": "2",
+            "price": "400",
+            "taxRate": "6",
+            "vatIncludedPrice": 831.0400000000001,
+            "subtotal": 400,
+            "discountedPrice": 784,
+            "discountRate": "2"
+        }
+    ],
+    "itemsSanitaires": [
+        {
+            "productId": "SA-003",
+            "quantity": 1,
+            "price": "235",
+            "taxRate": "20",
+            "vatIncludedPrice": 273.53999999999996,
+            "subtotal": 235,
+            "discountedPrice": 227.95,
+            "discountRate": "3"
+        }
+    ],
+    "itemsDivers": [
+        {
+            "productId": "DI-002",
+            "quantity": 1,
+            "price": "300",
+            "taxRate": "10",
+            "vatIncludedPrice": 323.40000000000003,
+            "subtotal": 300,
+            "discountedPrice": 294,
+            "discountRate": "2"
+        }
+    ],
+    "itemsSurfaces": [
+        {
+            "productId": "SU-003",
+            "quantity": 1,
+            "price": "235",
+            "taxRate": "20",
+            "vatIncludedPrice": 276.35999999999996,
+            "subtotal": 235,
+            "discountedPrice": 230.29999999999998,
+            "discountRate": "2"
+        }
+    ],
+    "deliveryFee": "400",
+    "montageFee": "300",
+    "totalFee": "",
+    "globaldiscount": "806",
+    "code": ""
+}

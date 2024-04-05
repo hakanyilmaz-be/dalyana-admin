@@ -418,7 +418,7 @@ const Uygulama = () => {
                     <Form.Select
                       name="status"
                       value={values.status}
-                    onChange={(e) => setFieldValue("status", e.target.value)}
+                      onChange={(e) => setFieldValue("status", e.target.value)}
                       isInvalid={!!formik.errors.status}
                     >
                       <option value="" disabled>
@@ -428,7 +428,11 @@ const Uygulama = () => {
                       <option value="Bon de commande">Bon de commande</option>
                     </Form.Select>
                     {/* ErrorMessage bileşenini kullanarak hata mesajını göster */}
-                    <ErrorMessage name="status" component="div" className="error-message" />
+                    <ErrorMessage
+                      name="status"
+                      component="div"
+                      className="error-message"
+                    />
                   </Form.Group>
 
                   <Form.Group as={Col} md={4} lg={4} className="mb-3">
@@ -436,7 +440,7 @@ const Uygulama = () => {
                     <Form.Select
                       name="floor"
                       value={values.floor}
-                    onChange={(e) => setFieldValue("floor", e.target.value)}
+                      onChange={(e) => setFieldValue("floor", e.target.value)}
                       isInvalid={!!formik.errors.floor}
                     >
                       <option value="" disabled>
@@ -449,8 +453,12 @@ const Uygulama = () => {
                       <option value="etage-4">4</option>
                       <option value="etage 5 ou plus">5 ou plus</option>
                     </Form.Select>
-                     {/* ErrorMessage bileşenini kullanarak hata mesajını göster */}
-                     <ErrorMessage name="floor" component="div" className="error-message" />
+                    {/* ErrorMessage bileşenini kullanarak hata mesajını göster */}
+                    <ErrorMessage
+                      name="floor"
+                      component="div"
+                      className="error-message"
+                    />
                   </Form.Group>
 
                   <Form.Group as={Col} md={4} lg={4} className="mb-3">
@@ -458,23 +466,29 @@ const Uygulama = () => {
                     <Form.Select
                       name="elevator"
                       value={values.elevator}
-                      onChange={(e) => setFieldValue("elevator", e.target.value)}
-                      isInvalid={
-                        !!formik.errors.elevator
+                      onChange={(e) =>
+                        setFieldValue("elevator", e.target.value)
                       }
+                      isInvalid={!!formik.errors.elevator}
                     >
                       <option value="" disabled>
                         --Sélectionnez--
                       </option>
                       <option value="ascenseur-oui">Oui</option>
                       <option value="ascenseur-non">Non</option>
-                      <option value="ascenseuroulift-pasbesoin">Pas Besoin</option>
+                      <option value="ascenseuroulift-pasbesoin">
+                        Pas Besoin
+                      </option>
                       <option value="lift-liftnecessaire">
                         Lift nécessaire
                       </option>
                     </Form.Select>
-                     {/* ErrorMessage bileşenini kullanarak hata mesajını göster */}
-                     <ErrorMessage name="elevator" component="div" className="error-message" />
+                    {/* ErrorMessage bileşenini kullanarak hata mesajını göster */}
+                    <ErrorMessage
+                      name="elevator"
+                      component="div"
+                      className="error-message"
+                    />
                   </Form.Group>
                 </Row>
               </Card.Body>
@@ -782,17 +796,17 @@ const Uygulama = () => {
                                   <Form.Group>
                                     <Form.Label>Product</Form.Label>
                                     <SearchableSelect
-  name={`itemsAccessoires[${index}].productId`}
-  data={accessoires}
-  setFieldValue={setFieldValue}
-  value={item.productId}
-  placeholder="Select Accessoire"
-  isProduct={true}
-  index={index}
-  values={values}
-  calculateSubtotal={calculateSubtotal}
-  dataType="Accessoires" // Specific for accessoires
-/>
+                                      name={`itemsAccessoires[${index}].productId`}
+                                      data={accessoires}
+                                      setFieldValue={setFieldValue}
+                                      value={item.productId}
+                                      placeholder="Select Accessoire"
+                                      isProduct={true}
+                                      index={index}
+                                      values={values}
+                                      calculateSubtotal={calculateSubtotal}
+                                      dataType="Accessoires" // Specific for accessoires
+                                    />
 
                                     <ErrorMessage
                                       name={`itemsAccessoires[${index}].productId`}
@@ -1049,17 +1063,17 @@ const Uygulama = () => {
                                   <Form.Group>
                                     <Form.Label>Product</Form.Label>
                                     <SearchableSelect
-  name={`itemsElectromenagers[${index}].productId`}
-  data={electromenagers}
-  setFieldValue={setFieldValue}
-  value={item.productId}
-  placeholder="Select Électroménager"
-  isProduct={true}
-  index={index}
-  values={values}
-  calculateSubtotal={calculateSubtotal}
-  dataType="Electromenagers"
-/>
+                                      name={`itemsElectromenagers[${index}].productId`}
+                                      data={electromenagers}
+                                      setFieldValue={setFieldValue}
+                                      value={item.productId}
+                                      placeholder="Select Électroménager"
+                                      isProduct={true}
+                                      index={index}
+                                      values={values}
+                                      calculateSubtotal={calculateSubtotal}
+                                      dataType="Electromenagers"
+                                    />
 
                                     <ErrorMessage
                                       name={`itemsElectromenagers[${index}].productId`}
@@ -1321,17 +1335,17 @@ const Uygulama = () => {
                                   <Form.Group>
                                     <Form.Label>Product</Form.Label>
                                     <SearchableSelect
-  name={`itemsSanitaires[${index}].productId`}
-  data={sanitaires}
-  setFieldValue={setFieldValue}
-  value={item.productId}
-  placeholder="Select Sanitaire"
-  isProduct={true}
-  index={index}
-  values={values}
-  calculateSubtotal={calculateSubtotal}
-  dataType="Sanitaires"
-/>
+                                      name={`itemsSanitaires[${index}].productId`}
+                                      data={sanitaires}
+                                      setFieldValue={setFieldValue}
+                                      value={item.productId}
+                                      placeholder="Select Sanitaire"
+                                      isProduct={true}
+                                      index={index}
+                                      values={values}
+                                      calculateSubtotal={calculateSubtotal}
+                                      dataType="Sanitaires"
+                                    />
 
                                     <ErrorMessage
                                       name={`itemsSanitaires[${index}].productId`}
@@ -1588,17 +1602,17 @@ const Uygulama = () => {
                                   <Form.Group>
                                     <Form.Label>Product</Form.Label>
                                     <SearchableSelect
-  name={`itemsSurfaces[${index}].productId`}
-  data={surfaces}
-  setFieldValue={setFieldValue}
-  value={item.productId}
-  placeholder="Select Surface"
-  isProduct={true}
-  index={index}
-  values={values}
-  calculateSubtotal={calculateSubtotal}
-  dataType="Surfaces"
-/>
+                                      name={`itemsSurfaces[${index}].productId`}
+                                      data={surfaces}
+                                      setFieldValue={setFieldValue}
+                                      value={item.productId}
+                                      placeholder="Select Surface"
+                                      isProduct={true}
+                                      index={index}
+                                      values={values}
+                                      calculateSubtotal={calculateSubtotal}
+                                      dataType="Surfaces"
+                                    />
 
                                     <ErrorMessage
                                       name={`itemsSurfaces[${index}].productId`}
@@ -1855,17 +1869,17 @@ const Uygulama = () => {
                                   <Form.Group>
                                     <Form.Label>Product</Form.Label>
                                     <SearchableSelect
-  name={`itemsDivers[${index}].productId`}
-  data={divers}
-  setFieldValue={setFieldValue}
-  value={item.productId}
-  placeholder="Select Divers"
-  isProduct={true}
-  index={index}
-  values={values}
-  calculateSubtotal={calculateSubtotal}
-  dataType="Divers"
-/>
+                                      name={`itemsDivers[${index}].productId`}
+                                      data={divers}
+                                      setFieldValue={setFieldValue}
+                                      value={item.productId}
+                                      placeholder="Select Divers"
+                                      isProduct={true}
+                                      index={index}
+                                      values={values}
+                                      calculateSubtotal={calculateSubtotal}
+                                      dataType="Divers"
+                                    />
 
                                     <ErrorMessage
                                       name={`itemsDivers[${index}].productId`}
@@ -2229,7 +2243,7 @@ const Uygulama = () => {
             </Button>
           </Form>
         );
-      }}
+      }} 
     </Formik>
   );
 };

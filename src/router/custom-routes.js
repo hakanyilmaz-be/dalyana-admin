@@ -41,8 +41,8 @@ import Stock from "../pages/Stock";
 import DevisEditPage from "../pages/DevisEditPage";
 import Projets from "../pages/Projets";
 import Clients from "../pages/Clients";
-import Uygulama from "../components/create-new-devis-commande/uygulama";
-import Uygulama2 from "../components/create-new-devis-commande/uygulama2";
+import UzunVersionCreateNewDevisCommande from "../components/create-new-devis-commande/uzun-version-create-new-devis-commande";
+import ProjetEditPage from "../pages/ProjetEditPage";
 
 
 const CustomRoutes = () => {
@@ -78,8 +78,10 @@ const CustomRoutes = () => {
             <Route path="projets">
               <Route index element={<AdminTemplate><Projets /></AdminTemplate>}/>
               <Route path="creer-devis-commande" element={<AdminTemplate><CreateDevisCommande/></AdminTemplate>}/>
-              <Route path="uygulama" element={<AdminTemplate><Uygulama/></AdminTemplate>}/>
-              <Route path="uygulama2" element={<AdminTemplate><Uygulama2/></AdminTemplate>}/>
+              <Route path="edit" element={<AdminTemplate><ProjetEditPage /></AdminTemplate>}/>
+
+          
+              <Route path="uzun-version" element={<AdminTemplate><UzunVersionCreateNewDevisCommande/></AdminTemplate>}/>
 
 
               <Route path=":devisId" element={<AdminTemplate> <DevisEditPage /></AdminTemplate>}/>

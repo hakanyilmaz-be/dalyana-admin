@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import "./create-new-devis-commande.css";
+import "./projet-edit.css";
 import * as Yup from "yup";
 import { toast } from "react-toastify";
 import { AiOutlinePlus, AiTwotoneDelete, AiFillEdit } from "react-icons/ai";
@@ -24,6 +24,7 @@ import sanitaires from "../../assets/data/sanitaires.json";
 import divers from "../../assets/data/divers.json";
 import surfaces from "../../assets/data/surfaces.json";
 import validCodes from "../../assets/data/discountCodes.json";
+import initialValues from "./formInitialValues.json"
 //import { createUser } from "../../../api/admin-user-service";
 
 const taxRates = [0, 6, 10, 20, 21];
@@ -123,27 +124,11 @@ const calculateTotalVATIncludedPrice = (articles) => {
   );
 };
 
-const Uygulama2 = () => {
+const ProjetEdit = () => {
   const [isCodeValid, setIsCodeValid] = useState(null);
   const [creating, setCreating] = useState(false);
 
-  const initialValues = {
-    floor: "",
-    elevator: "",
-    status: "",
-    articles: [],
-    furnitureListPrice: "",
-    itemsAccessoires: [],
-    itemsElectromenagers: [],
-    itemsSanitaires: [],
-    itemsDivers: [],
-    itemsSurfaces: [],
-    deliveryFee: "",
-    montageFee: "",
-    totalFee: "",
-    globaldiscount: "",
-    code: "",
-  };
+  
 
   const validationSchema = Yup.object({
     floor: Yup.string().required("Obligatoire"),
@@ -287,13 +272,15 @@ const Uygulama2 = () => {
           );
           const deliveryFee = parseFloat(values.deliveryFee || 0); // deliveryFee değerini çek ve float'a çevir
           const montageFee = parseFloat(values.montageFee || 0); // montageFee değerini çek ve float'a çevir
-          let globaldiscount = parseFloat(values.globaldiscount || 0); // Doğrudan indirim miktarı olarak al
+          let globaldiscountValue = values.globaldiscount; // Doğrudan string olarak al
 
-          // globaldiscount doğrudan toplam maliyetten çıkarılacak
-          // Kod geçerli değilse veya globaldiscount değeri girilmemişse, globaldiscount'u 0 olarak kabul et
-          if (!isCodeValid || !globaldiscount) {
-            globaldiscount = 0;
-          }
+    // globaldiscount'ın sayısal bir değere sahip olup olmadığını kontrol et
+    let globaldiscount = globaldiscountValue && !isNaN(globaldiscountValue) ? parseFloat(globaldiscountValue) : 0;
+
+    // Kod geçerli değilse ve globaldiscount başlangıç değeri 0 ise (ya da sayısal değilse), globaldiscount'u 0 olarak kabul et
+    if (!isCodeValid && globaldiscount === 0) {
+        globaldiscount = 0;
+    }
 
           // Formun altında gösterilecek genel toplamı hesapla
           const grandTotal =
@@ -323,26 +310,84 @@ const Uygulama2 = () => {
           );
         };
 
-       // General function to calculate total fees and check tax rate selection
-const calculateTotalFeeAndTaxRateSelection = (itemsArray) => {
-  const totalFee = itemsArray.reduce((total, item) => total + (item.vatIncludedPrice || 0), 0).toFixed(2);
-  const isTaxRateSelected = itemsArray.some(item => item.taxRate);
+        const calculateTotalFeeAccessoires = () => {
+          return values.itemsAccessoires
+            .reduce((total, item) => total + (item.vatIncludedPrice || 0), 0)
+            .toFixed(2); // Convert to a fixed 2 decimal places
+        };
 
-  return {
-    totalFee: isTaxRateSelected ? totalFee : null, // Return total fee only if tax rate is selected
-    isTaxRateSelected
-  };
-};
+        // Check if any item has a tax rate selected
+        const isTaxRateSelectedAccessoires = values.itemsAccessoires.some(
+          (item) => item.taxRate
+        );
 
-// Calculate total fees and check tax rate selection for each category
-const { totalFee: totalFeeAccessoires, isTaxRateSelected: isTaxRateSelectedAccessoires } = calculateTotalFeeAndTaxRateSelection(values.itemsAccessoires);
-const { totalFee: totalFeeElectromenagers, isTaxRateSelected: isTaxRateSelectedElectromenagers } = calculateTotalFeeAndTaxRateSelection(values.itemsElectromenagers);
-const { totalFee: totalFeeSanitaires, isTaxRateSelected: isTaxRateSelectedSanitaires } = calculateTotalFeeAndTaxRateSelection(values.itemsSanitaires);
-const { totalFee: totalFeeDivers, isTaxRateSelected: isTaxRateSelectedDivers } = calculateTotalFeeAndTaxRateSelection(values.itemsDivers);
-const { totalFee: totalFeeSurfaces, isTaxRateSelected: isTaxRateSelectedSurfaces } = calculateTotalFeeAndTaxRateSelection(values.itemsSurfaces);
+        // Calculate the total fee only if tax rate is selected
+        const totalFeeAccessoires = isTaxRateSelectedAccessoires
+          ? calculateTotalFeeAccessoires()
+          : null;
 
-// Now you can use these calculated totals and checks directly in your JSX for rendering or logic
+        const calculateTotalFeeElectromenagers = () => {
+          return values.itemsElectromenagers
+            .reduce((total, item) => total + (item.vatIncludedPrice || 0), 0)
+            .toFixed(2); // Convert to a fixed 2 decimal places
+        };
 
+        // Check if any item has a tax rate selected
+        const isTaxRateSelectedElectromenagers =
+          values.itemsElectromenagers.some((item) => item.taxRate);
+
+        // Calculate the total fee only if tax rate is selected
+        const totalFeeElectromenagers = isTaxRateSelectedElectromenagers
+          ? calculateTotalFeeElectromenagers()
+          : null;
+
+        const calculateTotalFeeSanitaires = () => {
+          return values.itemsSanitaires
+            .reduce((total, item) => total + (item.vatIncludedPrice || 0), 0)
+            .toFixed(2); // Convert to a fixed 2 decimal places
+        };
+
+        // Check if any item has a tax rate selected
+        const isTaxRateSelectedSanitaires = values.itemsSanitaires.some(
+          (item) => item.taxRate
+        );
+
+        // Calculate the total fee only if tax rate is selected
+        const totalFeeSanitaires = isTaxRateSelectedSanitaires
+          ? calculateTotalFeeSanitaires()
+          : null;
+
+        const calculateTotalFeeDivers = () => {
+          return values.itemsDivers
+            .reduce((total, item) => total + (item.vatIncludedPrice || 0), 0)
+            .toFixed(2); // Convert to a fixed 2 decimal places
+        };
+
+        // Check if any item has a tax rate selected
+        const isTaxRateSelectedDivers = values.itemsDivers.some(
+          (item) => item.taxRate
+        );
+
+        // Calculate the total fee only if tax rate is selected
+        const totalFeeDivers = isTaxRateSelectedDivers
+          ? calculateTotalFeeDivers()
+          : null;
+
+        const calculateTotalFeeSurfaces = () => {
+          return values.itemsSurfaces
+            .reduce((total, item) => total + (item.vatIncludedPrice || 0), 0)
+            .toFixed(2); // Convert to a fixed 2 decimal places
+        };
+
+        // Check if any item has a tax rate selected
+        const isTaxRateSelectedSurfaces = values.itemsSurfaces.some(
+          (item) => item.taxRate
+        );
+
+        // Calculate the total fee only if tax rate is selected
+        const totalFeeSurfaces = isTaxRateSelectedSurfaces
+          ? calculateTotalFeeSurfaces()
+          : null;
 
         return (
           <Form noValidate onSubmit={handleSubmit}>
@@ -360,7 +405,7 @@ const { totalFee: totalFeeSurfaces, isTaxRateSelected: isTaxRateSelectedSurfaces
                     <Form.Select
                       name="status"
                       value={values.status}
-                    onChange={(e) => setFieldValue("status", e.target.value)}
+                      onChange={(e) => setFieldValue("status", e.target.value)}
                       isInvalid={!!formik.errors.status}
                     >
                       <option value="" disabled>
@@ -370,7 +415,11 @@ const { totalFee: totalFeeSurfaces, isTaxRateSelected: isTaxRateSelectedSurfaces
                       <option value="Bon de commande">Bon de commande</option>
                     </Form.Select>
                     {/* ErrorMessage bileşenini kullanarak hata mesajını göster */}
-                    <ErrorMessage name="status" component="div" className="error-message" />
+                    <ErrorMessage
+                      name="status"
+                      component="div"
+                      className="error-message"
+                    />
                   </Form.Group>
 
                   <Form.Group as={Col} md={4} lg={4} className="mb-3">
@@ -378,7 +427,7 @@ const { totalFee: totalFeeSurfaces, isTaxRateSelected: isTaxRateSelectedSurfaces
                     <Form.Select
                       name="floor"
                       value={values.floor}
-                    onChange={(e) => setFieldValue("floor", e.target.value)}
+                      onChange={(e) => setFieldValue("floor", e.target.value)}
                       isInvalid={!!formik.errors.floor}
                     >
                       <option value="" disabled>
@@ -391,8 +440,12 @@ const { totalFee: totalFeeSurfaces, isTaxRateSelected: isTaxRateSelectedSurfaces
                       <option value="etage-4">4</option>
                       <option value="etage 5 ou plus">5 ou plus</option>
                     </Form.Select>
-                     {/* ErrorMessage bileşenini kullanarak hata mesajını göster */}
-                     <ErrorMessage name="floor" component="div" className="error-message" />
+                    {/* ErrorMessage bileşenini kullanarak hata mesajını göster */}
+                    <ErrorMessage
+                      name="floor"
+                      component="div"
+                      className="error-message"
+                    />
                   </Form.Group>
 
                   <Form.Group as={Col} md={4} lg={4} className="mb-3">
@@ -400,23 +453,29 @@ const { totalFee: totalFeeSurfaces, isTaxRateSelected: isTaxRateSelectedSurfaces
                     <Form.Select
                       name="elevator"
                       value={values.elevator}
-                      onChange={(e) => setFieldValue("elevator", e.target.value)}
-                      isInvalid={
-                        !!formik.errors.elevator
+                      onChange={(e) =>
+                        setFieldValue("elevator", e.target.value)
                       }
+                      isInvalid={!!formik.errors.elevator}
                     >
                       <option value="" disabled>
                         --Sélectionnez--
                       </option>
                       <option value="ascenseur-oui">Oui</option>
                       <option value="ascenseur-non">Non</option>
-                      <option value="ascenseuroulift-pasbesoin">Pas Besoin</option>
+                      <option value="ascenseuroulift-pasbesoin">
+                        Pas Besoin
+                      </option>
                       <option value="lift-liftnecessaire">
                         Lift nécessaire
                       </option>
                     </Form.Select>
-                     {/* ErrorMessage bileşenini kullanarak hata mesajını göster */}
-                     <ErrorMessage name="elevator" component="div" className="error-message" />
+                    {/* ErrorMessage bileşenini kullanarak hata mesajını göster */}
+                    <ErrorMessage
+                      name="elevator"
+                      component="div"
+                      className="error-message"
+                    />
                   </Form.Group>
                 </Row>
               </Card.Body>
@@ -724,17 +783,17 @@ const { totalFee: totalFeeSurfaces, isTaxRateSelected: isTaxRateSelectedSurfaces
                                   <Form.Group>
                                     <Form.Label>Product</Form.Label>
                                     <SearchableSelect
-  name={`itemsAccessoires[${index}].productId`}
-  data={accessoires}
-  setFieldValue={setFieldValue}
-  value={item.productId}
-  placeholder="Select Accessoire"
-  isProduct={true}
-  index={index}
-  values={values}
-  calculateSubtotal={calculateSubtotal}
-  dataType="Accessoires" // Specific for accessoires
-/>
+                                      name={`itemsAccessoires[${index}].productId`}
+                                      data={accessoires}
+                                      setFieldValue={setFieldValue}
+                                      value={item.productId}
+                                      placeholder="Select Accessoire"
+                                      isProduct={true}
+                                      index={index}
+                                      values={values}
+                                      calculateSubtotal={calculateSubtotal}
+                                      dataType="Accessoires" // Specific for accessoires
+                                    />
 
                                     <ErrorMessage
                                       name={`itemsAccessoires[${index}].productId`}
@@ -991,17 +1050,17 @@ const { totalFee: totalFeeSurfaces, isTaxRateSelected: isTaxRateSelectedSurfaces
                                   <Form.Group>
                                     <Form.Label>Product</Form.Label>
                                     <SearchableSelect
-  name={`itemsElectromenagers[${index}].productId`}
-  data={electromenagers}
-  setFieldValue={setFieldValue}
-  value={item.productId}
-  placeholder="Select Électroménager"
-  isProduct={true}
-  index={index}
-  values={values}
-  calculateSubtotal={calculateSubtotal}
-  dataType="Electromenagers"
-/>
+                                      name={`itemsElectromenagers[${index}].productId`}
+                                      data={electromenagers}
+                                      setFieldValue={setFieldValue}
+                                      value={item.productId}
+                                      placeholder="Select Électroménager"
+                                      isProduct={true}
+                                      index={index}
+                                      values={values}
+                                      calculateSubtotal={calculateSubtotal}
+                                      dataType="Electromenagers"
+                                    />
 
                                     <ErrorMessage
                                       name={`itemsElectromenagers[${index}].productId`}
@@ -1263,17 +1322,17 @@ const { totalFee: totalFeeSurfaces, isTaxRateSelected: isTaxRateSelectedSurfaces
                                   <Form.Group>
                                     <Form.Label>Product</Form.Label>
                                     <SearchableSelect
-  name={`itemsSanitaires[${index}].productId`}
-  data={sanitaires}
-  setFieldValue={setFieldValue}
-  value={item.productId}
-  placeholder="Select Sanitaire"
-  isProduct={true}
-  index={index}
-  values={values}
-  calculateSubtotal={calculateSubtotal}
-  dataType="Sanitaires"
-/>
+                                      name={`itemsSanitaires[${index}].productId`}
+                                      data={sanitaires}
+                                      setFieldValue={setFieldValue}
+                                      value={item.productId}
+                                      placeholder="Select Sanitaire"
+                                      isProduct={true}
+                                      index={index}
+                                      values={values}
+                                      calculateSubtotal={calculateSubtotal}
+                                      dataType="Sanitaires"
+                                    />
 
                                     <ErrorMessage
                                       name={`itemsSanitaires[${index}].productId`}
@@ -1530,17 +1589,17 @@ const { totalFee: totalFeeSurfaces, isTaxRateSelected: isTaxRateSelectedSurfaces
                                   <Form.Group>
                                     <Form.Label>Product</Form.Label>
                                     <SearchableSelect
-  name={`itemsSurfaces[${index}].productId`}
-  data={surfaces}
-  setFieldValue={setFieldValue}
-  value={item.productId}
-  placeholder="Select Surface"
-  isProduct={true}
-  index={index}
-  values={values}
-  calculateSubtotal={calculateSubtotal}
-  dataType="Surfaces"
-/>
+                                      name={`itemsSurfaces[${index}].productId`}
+                                      data={surfaces}
+                                      setFieldValue={setFieldValue}
+                                      value={item.productId}
+                                      placeholder="Select Surface"
+                                      isProduct={true}
+                                      index={index}
+                                      values={values}
+                                      calculateSubtotal={calculateSubtotal}
+                                      dataType="Surfaces"
+                                    />
 
                                     <ErrorMessage
                                       name={`itemsSurfaces[${index}].productId`}
@@ -1797,17 +1856,17 @@ const { totalFee: totalFeeSurfaces, isTaxRateSelected: isTaxRateSelectedSurfaces
                                   <Form.Group>
                                     <Form.Label>Product</Form.Label>
                                     <SearchableSelect
-  name={`itemsDivers[${index}].productId`}
-  data={divers}
-  setFieldValue={setFieldValue}
-  value={item.productId}
-  placeholder="Select Divers"
-  isProduct={true}
-  index={index}
-  values={values}
-  calculateSubtotal={calculateSubtotal}
-  dataType="Divers"
-/>
+                                      name={`itemsDivers[${index}].productId`}
+                                      data={divers}
+                                      setFieldValue={setFieldValue}
+                                      value={item.productId}
+                                      placeholder="Select Divers"
+                                      isProduct={true}
+                                      index={index}
+                                      values={values}
+                                      calculateSubtotal={calculateSubtotal}
+                                      dataType="Divers"
+                                    />
 
                                     <ErrorMessage
                                       name={`itemsDivers[${index}].productId`}
@@ -2171,9 +2230,11 @@ const { totalFee: totalFeeSurfaces, isTaxRateSelected: isTaxRateSelectedSurfaces
             </Button>
           </Form>
         );
-      }}
+      }} 
     </Formik>
   );
 };
 
-export default Uygulama2;
+
+
+export default ProjetEdit;

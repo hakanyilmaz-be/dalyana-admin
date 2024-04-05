@@ -6,7 +6,7 @@ import {Form, Button, Spinner, Row, Col, Card} from "react-bootstrap";
 import clientsData from "../assets/data/clients.json"
 import DevisCommandeTableForCustomerPage from "../components/devis-commande-table-for-customer-page/devis-commande-table-for-customer-page";
 
-const ClientsEditPage = () => {
+const ClientsEditPage = ({ showProjectList=true }) => {
   const [creating, setCreating] = useState(false);
   
   // İlk müşterinin verilerini başlangıç değerleri olarak kullan
@@ -206,10 +206,12 @@ const ClientsEditPage = () => {
         </Card.Body>
       </Card>
     </Form>
-    <div>
-      <h2 className="mb-4 mt-4" style={{ textAlign: 'center', color: '#112e3b' }}>Listes de Devis & Projets</h2>
-    <DevisCommandeTableForCustomerPage/>
-    </div>
+    {showProjectList && (
+        <div>
+          <h2 className="mb-4 mt-4" style={{ textAlign: 'center', color: '#112e3b' }}>Listes de Devis & Projets</h2>
+          <DevisCommandeTableForCustomerPage />
+        </div>
+      )}
     </>
   );
 };

@@ -55,7 +55,7 @@ const calculateVATIncludedPriceAfterDiscount = (discountedPrice, taxRate) => {
   return discountedPrice * (1 + taxRate / 100);
 };
 
-const SearchableSelect = ({
+const SearchableSelectAccessoires = ({
   name,
   data,
   setFieldValue,
@@ -65,47 +65,69 @@ const SearchableSelect = ({
   index,
   values,
   calculateSubtotal,
-  dataType // Additional prop to differentiate data types
 }) => {
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
-  const selectedItem = data.find(item => item.id === value);
-
-  const handleSelect = (item) => {
-    setFieldValue(name, item.id);
-    setSearchTerm('');
-
-    if (isProduct) {
-      const currentQuantity = values[`items${dataType}`][index].quantity || 1;
-      const selectedProduct = data.find(p => p.id === item.id);
-      const price = selectedProduct ? selectedProduct.price : 0;
-      const subtotal = calculateSubtotal(price, currentQuantity);
-      const discountRate = values[`items${dataType}`][index].discountRate || 0;
-      const discountedPrice = calculateDiscountedPrice(subtotal, discountRate);
-      const vatIncludedPrice = calculateVATIncludedPriceAfterDiscount(discountedPrice, values[`items${dataType}`][index].taxRate);
-
-      setFieldValue(`items${dataType}[${index}].price`, price);
-      setFieldValue(`items${dataType}[${index}].subtotal`, subtotal);
-      setFieldValue(`items${dataType}[${index}].discountedPrice`, discountedPrice);
-      setFieldValue(`items${dataType}[${index}].vatIncludedPrice`, vatIncludedPrice);
-    }
-  };
+  const selectedItem = data.find((item) => item.id === value);
 
   return (
     <div>
       <FormControl
         placeholder={placeholder}
-        value={searchTerm || (selectedItem ? selectedItem.name : '')}
-        onChange={e => setSearchTerm(e.target.value)}
+        value={searchTerm || (selectedItem ? selectedItem.name : "")}
+        onChange={(e) => setSearchTerm(e.target.value)}
         onFocus={() => setShowDropdown(true)}
         onBlur={() => setTimeout(() => setShowDropdown(false), 300)}
       />
       {showDropdown && (
         <Dropdown.Menu show>
           {data
-            .filter(item => item.name.toLowerCase().includes(searchTerm.toLowerCase()))
-            .map(item => (
-              <Dropdown.Item key={item.id} onClick={() => handleSelect(item)}>
+            .filter((item) =>
+              item.name.toLowerCase().includes(searchTerm.toLowerCase())
+            )
+            .map((item) => (
+              <Dropdown.Item
+                key={item.id}
+                onClick={() => {
+                  setFieldValue(name, item.id);
+                  setSearchTerm("");
+
+                  if (isProduct) {
+                    const currentQuantity =
+                      values.itemsAccessoires[index].quantity || 1;
+                    const selectedProduct = accessoires.find(
+                      (p) => p.id === item.id
+                    );
+                    const price = selectedProduct ? selectedProduct.price : 0;
+                    const subtotal = calculateSubtotal(price, currentQuantity);
+                    const discountRate =
+                      values.itemsAccessoires[index].discountRate || 0;
+                    const discountedPrice = calculateDiscountedPrice(
+                      subtotal,
+                      discountRate
+                    );
+                    const vatIncludedPrice =
+                      calculateVATIncludedPriceAfterDiscount(
+                        discountedPrice,
+                        values.itemsAccessoires[index].taxRate
+                      );
+
+                    setFieldValue(`itemsAccessoires[${index}].price`, price);
+                    setFieldValue(
+                      `itemsAccessoires[${index}].subtotal`,
+                      subtotal
+                    );
+                    setFieldValue(
+                      `itemsAccessoires[${index}].discountedPrice`,
+                      discountedPrice
+                    );
+                    setFieldValue(
+                      `itemsAccessoires[${index}].vatIncludedPrice`,
+                      vatIncludedPrice
+                    );
+                  }
+                }}
+              >
                 {item.name}
               </Dropdown.Item>
             ))}
@@ -115,6 +137,330 @@ const SearchableSelect = ({
   );
 };
 
+const SearchableSelectElectromenagers = ({
+  name,
+  data,
+  setFieldValue,
+  value,
+  placeholder,
+  isProduct,
+  index,
+  values,
+  calculateSubtotal,
+}) => {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [showDropdown, setShowDropdown] = useState(false);
+  const selectedItem = data.find((item) => item.id === value);
+
+  return (
+    <div>
+      <FormControl
+        placeholder={placeholder}
+        value={searchTerm || (selectedItem ? selectedItem.name : "")}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        onFocus={() => setShowDropdown(true)}
+        onBlur={() => setTimeout(() => setShowDropdown(false), 300)}
+      />
+      {showDropdown && (
+        <Dropdown.Menu show>
+          {data
+            .filter((item) =>
+              item.name.toLowerCase().includes(searchTerm.toLowerCase())
+            )
+            .map((item) => (
+              <Dropdown.Item
+                key={item.id}
+                onClick={() => {
+                  setFieldValue(name, item.id);
+                  setSearchTerm("");
+
+                  if (isProduct) {
+                    const currentQuantity =
+                      values.itemsElectromenagers[index].quantity || 1;
+                    const selectedProduct = electromenagers.find(
+                      (p) => p.id === item.id
+                    );
+                    const price = selectedProduct ? selectedProduct.price : 0;
+                    const subtotal = calculateSubtotal(price, currentQuantity);
+                    const discountRate =
+                      values.itemsElectromenagers[index].discountRate || 0;
+                    const discountedPrice = calculateDiscountedPrice(
+                      subtotal,
+                      discountRate
+                    );
+                    const vatIncludedPrice =
+                      calculateVATIncludedPriceAfterDiscount(
+                        discountedPrice,
+                        values.itemsElectromenagers[index].taxRate
+                      );
+
+                    setFieldValue(
+                      `itemsElectromenagers[${index}].price`,
+                      price
+                    );
+                    setFieldValue(
+                      `itemsElectromenagers[${index}].subtotal`,
+                      subtotal
+                    );
+                    setFieldValue(
+                      `itemsElectromenagers[${index}].discountedPrice`,
+                      discountedPrice
+                    );
+                    setFieldValue(
+                      `itemsElectromenagers[${index}].vatIncludedPrice`,
+                      vatIncludedPrice
+                    );
+                  }
+                }}
+              >
+                {item.name}
+              </Dropdown.Item>
+            ))}
+        </Dropdown.Menu>
+      )}
+    </div>
+  );
+};
+
+const SearchableSelectSanitaires = ({
+  name,
+  data,
+  setFieldValue,
+  value,
+  placeholder,
+  isProduct,
+  index,
+  values,
+  calculateSubtotal,
+}) => {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [showDropdown, setShowDropdown] = useState(false);
+  const selectedItem = data.find((item) => item.id === value);
+
+  return (
+    <div>
+      <FormControl
+        placeholder={placeholder}
+        value={searchTerm || (selectedItem ? selectedItem.name : "")}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        onFocus={() => setShowDropdown(true)}
+        onBlur={() => setTimeout(() => setShowDropdown(false), 300)}
+      />
+      {showDropdown && (
+        <Dropdown.Menu show>
+          {data
+            .filter((item) =>
+              item.name.toLowerCase().includes(searchTerm.toLowerCase())
+            )
+            .map((item) => (
+              <Dropdown.Item
+                key={item.id}
+                onClick={() => {
+                  setFieldValue(name, item.id);
+                  setSearchTerm("");
+
+                  if (isProduct) {
+                    const currentQuantity =
+                      values.itemsSanitaires[index].quantity || 1;
+                    const selectedProduct = sanitaires.find(
+                      (p) => p.id === item.id
+                    );
+                    const price = selectedProduct ? selectedProduct.price : 0;
+                    const subtotal = calculateSubtotal(price, currentQuantity);
+                    const discountRate =
+                      values.itemsSanitaires[index].discountRate || 0;
+                    const discountedPrice = calculateDiscountedPrice(
+                      subtotal,
+                      discountRate
+                    );
+                    const vatIncludedPrice =
+                      calculateVATIncludedPriceAfterDiscount(
+                        discountedPrice,
+                        values.itemsSanitaires[index].taxRate
+                      );
+
+                    setFieldValue(`itemsSanitaires[${index}].price`, price);
+                    setFieldValue(
+                      `itemsSanitaires[${index}].subtotal`,
+                      subtotal
+                    );
+                    setFieldValue(
+                      `itemsSanitaires[${index}].discountedPrice`,
+                      discountedPrice
+                    );
+                    setFieldValue(
+                      `itemsSanitaires[${index}].vatIncludedPrice`,
+                      vatIncludedPrice
+                    );
+                  }
+                }}
+              >
+                {item.name}
+              </Dropdown.Item>
+            ))}
+        </Dropdown.Menu>
+      )}
+    </div>
+  );
+};
+
+const SearchableSelectDivers = ({
+  name,
+  data,
+  setFieldValue,
+  value,
+  placeholder,
+  isProduct,
+  index,
+  values,
+  calculateSubtotal,
+}) => {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [showDropdown, setShowDropdown] = useState(false);
+  const selectedItem = data.find((item) => item.id === value);
+
+  return (
+    <div>
+      <FormControl
+        placeholder={placeholder}
+        value={searchTerm || (selectedItem ? selectedItem.name : "")}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        onFocus={() => setShowDropdown(true)}
+        onBlur={() => setTimeout(() => setShowDropdown(false), 300)}
+      />
+      {showDropdown && (
+        <Dropdown.Menu show>
+          {data
+            .filter((item) =>
+              item.name.toLowerCase().includes(searchTerm.toLowerCase())
+            )
+            .map((item) => (
+              <Dropdown.Item
+                key={item.id}
+                onClick={() => {
+                  setFieldValue(name, item.id);
+                  setSearchTerm("");
+
+                  if (isProduct) {
+                    const currentQuantity =
+                      values.itemsDivers[index].quantity || 1;
+                    const selectedProduct = divers.find(
+                      (p) => p.id === item.id
+                    );
+                    const price = selectedProduct ? selectedProduct.price : 0;
+                    const subtotal = calculateSubtotal(price, currentQuantity);
+                    const discountRate =
+                      values.itemsDivers[index].discountRate || 0;
+                    const discountedPrice = calculateDiscountedPrice(
+                      subtotal,
+                      discountRate
+                    );
+                    const vatIncludedPrice =
+                      calculateVATIncludedPriceAfterDiscount(
+                        discountedPrice,
+                        values.itemsDivers[index].taxRate
+                      );
+
+                    setFieldValue(`itemsDivers[${index}].price`, price);
+                    setFieldValue(`itemsDivers[${index}].subtotal`, subtotal);
+                    setFieldValue(
+                      `itemsDivers[${index}].discountedPrice`,
+                      discountedPrice
+                    );
+                    setFieldValue(
+                      `itemsDivers[${index}].vatIncludedPrice`,
+                      vatIncludedPrice
+                    );
+                  }
+                }}
+              >
+                {item.name}
+              </Dropdown.Item>
+            ))}
+        </Dropdown.Menu>
+      )}
+    </div>
+  );
+};
+
+const SearchableSelectSurfaces = ({
+  name,
+  data,
+  setFieldValue,
+  value,
+  placeholder,
+  isProduct,
+  index,
+  values,
+  calculateSubtotal,
+}) => {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [showDropdown, setShowDropdown] = useState(false);
+  const selectedItem = data.find((item) => item.id === value);
+
+  return (
+    <div>
+      <FormControl
+        placeholder={placeholder}
+        value={searchTerm || (selectedItem ? selectedItem.name : "")}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        onFocus={() => setShowDropdown(true)}
+        onBlur={() => setTimeout(() => setShowDropdown(false), 300)}
+      />
+      {showDropdown && (
+        <Dropdown.Menu show>
+          {data
+            .filter((item) =>
+              item.name.toLowerCase().includes(searchTerm.toLowerCase())
+            )
+            .map((item) => (
+              <Dropdown.Item
+                key={item.id}
+                onClick={() => {
+                  setFieldValue(name, item.id);
+                  setSearchTerm("");
+
+                  if (isProduct) {
+                    const currentQuantity =
+                      values.itemsSurfaces[index].quantity || 1;
+                    const selectedProduct = surfaces.find(
+                      (p) => p.id === item.id
+                    );
+                    const price = selectedProduct ? selectedProduct.price : 0;
+                    const subtotal = calculateSubtotal(price, currentQuantity);
+                    const discountRate =
+                      values.itemsSurfaces[index].discountRate || 0;
+                    const discountedPrice = calculateDiscountedPrice(
+                      subtotal,
+                      discountRate
+                    );
+                    const vatIncludedPrice =
+                      calculateVATIncludedPriceAfterDiscount(
+                        discountedPrice,
+                        values.itemsSurfaces[index].taxRate
+                      );
+
+                    setFieldValue(`itemsSurfaces[${index}].price`, price);
+                    setFieldValue(`itemsSurfaces[${index}].subtotal`, subtotal);
+                    setFieldValue(
+                      `itemsSurfaces[${index}].discountedPrice`,
+                      discountedPrice
+                    );
+                    setFieldValue(
+                      `itemsSurfaces[${index}].vatIncludedPrice`,
+                      vatIncludedPrice
+                    );
+                  }
+                }}
+              >
+                {item.name}
+              </Dropdown.Item>
+            ))}
+        </Dropdown.Menu>
+      )}
+    </div>
+  );
+};
 
 const calculateTotalVATIncludedPrice = (articles) => {
   return articles.reduce(
@@ -123,7 +469,7 @@ const calculateTotalVATIncludedPrice = (articles) => {
   );
 };
 
-const CreateNewDevisCommande = () => {
+const UzunVersionCreateNewDevisCommande = () => {
   const [isCodeValid, setIsCodeValid] = useState(null);
   const [creating, setCreating] = useState(false);
 
@@ -418,7 +764,7 @@ const CreateNewDevisCommande = () => {
                     <Form.Select
                       name="status"
                       value={values.status}
-                      onChange={(e) => setFieldValue("status", e.target.value)}
+                    onChange={(e) => setFieldValue("status", e.target.value)}
                       isInvalid={!!formik.errors.status}
                     >
                       <option value="" disabled>
@@ -428,11 +774,7 @@ const CreateNewDevisCommande = () => {
                       <option value="Bon de commande">Bon de commande</option>
                     </Form.Select>
                     {/* ErrorMessage bileşenini kullanarak hata mesajını göster */}
-                    <ErrorMessage
-                      name="status"
-                      component="div"
-                      className="error-message"
-                    />
+                    <ErrorMessage name="status" component="div" className="error-message" />
                   </Form.Group>
 
                   <Form.Group as={Col} md={4} lg={4} className="mb-3">
@@ -440,7 +782,7 @@ const CreateNewDevisCommande = () => {
                     <Form.Select
                       name="floor"
                       value={values.floor}
-                      onChange={(e) => setFieldValue("floor", e.target.value)}
+                    onChange={(e) => setFieldValue("floor", e.target.value)}
                       isInvalid={!!formik.errors.floor}
                     >
                       <option value="" disabled>
@@ -453,12 +795,8 @@ const CreateNewDevisCommande = () => {
                       <option value="etage-4">4</option>
                       <option value="etage 5 ou plus">5 ou plus</option>
                     </Form.Select>
-                    {/* ErrorMessage bileşenini kullanarak hata mesajını göster */}
-                    <ErrorMessage
-                      name="floor"
-                      component="div"
-                      className="error-message"
-                    />
+                     {/* ErrorMessage bileşenini kullanarak hata mesajını göster */}
+                     <ErrorMessage name="floor" component="div" className="error-message" />
                   </Form.Group>
 
                   <Form.Group as={Col} md={4} lg={4} className="mb-3">
@@ -466,29 +804,23 @@ const CreateNewDevisCommande = () => {
                     <Form.Select
                       name="elevator"
                       value={values.elevator}
-                      onChange={(e) =>
-                        setFieldValue("elevator", e.target.value)
+                      onChange={(e) => setFieldValue("elevator", e.target.value)}
+                      isInvalid={
+                        !!formik.errors.elevator
                       }
-                      isInvalid={!!formik.errors.elevator}
                     >
                       <option value="" disabled>
                         --Sélectionnez--
                       </option>
                       <option value="ascenseur-oui">Oui</option>
                       <option value="ascenseur-non">Non</option>
-                      <option value="ascenseuroulift-pasbesoin">
-                        Pas Besoin
-                      </option>
+                      <option value="ascenseuroulift-pasbesoin">Pas Besoin</option>
                       <option value="lift-liftnecessaire">
                         Lift nécessaire
                       </option>
                     </Form.Select>
-                    {/* ErrorMessage bileşenini kullanarak hata mesajını göster */}
-                    <ErrorMessage
-                      name="elevator"
-                      component="div"
-                      className="error-message"
-                    />
+                     {/* ErrorMessage bileşenini kullanarak hata mesajını göster */}
+                     <ErrorMessage name="elevator" component="div" className="error-message" />
                   </Form.Group>
                 </Row>
               </Card.Body>
@@ -795,26 +1127,45 @@ const CreateNewDevisCommande = () => {
                                 <Col md={2}>
                                   <Form.Group>
                                     <Form.Label>Product</Form.Label>
-                                    <SearchableSelect
+                                    <SearchableSelectAccessoires
                                       name={`itemsAccessoires[${index}].productId`}
                                       data={accessoires}
                                       setFieldValue={setFieldValue}
                                       value={item.productId}
-                                      placeholder="Select Accessoire"
+                                      placeholder="Sélectionnez"
                                       isProduct={true}
                                       index={index}
+                                      setPrice={(idx, price, quantity) => {
+                                        setFieldValue(
+                                          `itemsAccessoires[${idx}].price`,
+                                          price
+                                        );
+                                        setFieldValue(
+                                          `itemsAccessoires[${idx}].vatIncludedPrice`,
+                                          calculateVATIncludedPrice(
+                                            price,
+                                            item.taxRate,
+                                            quantity
+                                          )
+                                        );
+                                        setFieldValue(
+                                          `itemsAccessoires[${idx}].subtotal`,
+                                          calculateSubtotal(price, quantity)
+                                        );
+                                      }}
                                       values={values}
+                                      calculateVATIncludedPrice={
+                                        calculateVATIncludedPrice
+                                      }
                                       calculateSubtotal={calculateSubtotal}
-                                      dataType="Accessoires" // Specific for accessoires
                                     />
-
                                     <ErrorMessage
                                       name={`itemsAccessoires[${index}].productId`}
                                       component="div"
                                       className="error-message"
                                     />
                                   </Form.Group>
-                                </Col>
+                                </Col> 
                                 {/* Quantity Input */}
                                 <Col md={1}>
                                   <Form.Group>
@@ -1062,19 +1413,38 @@ const CreateNewDevisCommande = () => {
                                 <Col md={2}>
                                   <Form.Group>
                                     <Form.Label>Product</Form.Label>
-                                    <SearchableSelect
+                                    <SearchableSelectElectromenagers
                                       name={`itemsElectromenagers[${index}].productId`}
                                       data={electromenagers}
                                       setFieldValue={setFieldValue}
                                       value={item.productId}
-                                      placeholder="Select Électroménager"
+                                      placeholder="Sélectionnez"
                                       isProduct={true}
                                       index={index}
+                                      setPrice={(idx, price, quantity) => {
+                                        setFieldValue(
+                                          `itemsElectromenagers[${idx}].price`,
+                                          price
+                                        );
+                                        setFieldValue(
+                                          `itemsElectromenagers[${idx}].vatIncludedPrice`,
+                                          calculateVATIncludedPrice(
+                                            price,
+                                            item.taxRate,
+                                            quantity
+                                          )
+                                        );
+                                        setFieldValue(
+                                          `itemsElectromenagers[${idx}].subtotal`,
+                                          calculateSubtotal(price, quantity)
+                                        );
+                                      }}
                                       values={values}
+                                      calculateVATIncludedPrice={
+                                        calculateVATIncludedPrice
+                                      }
                                       calculateSubtotal={calculateSubtotal}
-                                      dataType="Electromenagers"
                                     />
-
                                     <ErrorMessage
                                       name={`itemsElectromenagers[${index}].productId`}
                                       component="div"
@@ -1334,19 +1704,38 @@ const CreateNewDevisCommande = () => {
                                 <Col md={2}>
                                   <Form.Group>
                                     <Form.Label>Product</Form.Label>
-                                    <SearchableSelect
+                                    <SearchableSelectSanitaires
                                       name={`itemsSanitaires[${index}].productId`}
                                       data={sanitaires}
                                       setFieldValue={setFieldValue}
                                       value={item.productId}
-                                      placeholder="Select Sanitaire"
+                                      placeholder="Sélectionnez"
                                       isProduct={true}
                                       index={index}
+                                      setPrice={(idx, price, quantity) => {
+                                        setFieldValue(
+                                          `itemsSanitaires[${idx}].price`,
+                                          price
+                                        );
+                                        setFieldValue(
+                                          `itemsSanitaires[${idx}].vatIncludedPrice`,
+                                          calculateVATIncludedPrice(
+                                            price,
+                                            item.taxRate,
+                                            quantity
+                                          )
+                                        );
+                                        setFieldValue(
+                                          `itemsSanitaires[${idx}].subtotal`,
+                                          calculateSubtotal(price, quantity)
+                                        );
+                                      }}
                                       values={values}
+                                      calculateVATIncludedPrice={
+                                        calculateVATIncludedPrice
+                                      }
                                       calculateSubtotal={calculateSubtotal}
-                                      dataType="Sanitaires"
                                     />
-
                                     <ErrorMessage
                                       name={`itemsSanitaires[${index}].productId`}
                                       component="div"
@@ -1601,19 +1990,38 @@ const CreateNewDevisCommande = () => {
                                 <Col md={2}>
                                   <Form.Group>
                                     <Form.Label>Product</Form.Label>
-                                    <SearchableSelect
+                                    <SearchableSelectSurfaces
                                       name={`itemsSurfaces[${index}].productId`}
                                       data={surfaces}
                                       setFieldValue={setFieldValue}
                                       value={item.productId}
-                                      placeholder="Select Surface"
+                                      placeholder="Sélectionnez"
                                       isProduct={true}
                                       index={index}
+                                      setPrice={(idx, price, quantity) => {
+                                        setFieldValue(
+                                          `itemsSurfaces[${idx}].price`,
+                                          price
+                                        );
+                                        setFieldValue(
+                                          `itemsSurfaces[${idx}].vatIncludedPrice`,
+                                          calculateVATIncludedPrice(
+                                            price,
+                                            item.taxRate,
+                                            quantity
+                                          )
+                                        );
+                                        setFieldValue(
+                                          `itemsSurfaces[${idx}].subtotal`,
+                                          calculateSubtotal(price, quantity)
+                                        );
+                                      }}
                                       values={values}
+                                      calculateVATIncludedPrice={
+                                        calculateVATIncludedPrice
+                                      }
                                       calculateSubtotal={calculateSubtotal}
-                                      dataType="Surfaces"
                                     />
-
                                     <ErrorMessage
                                       name={`itemsSurfaces[${index}].productId`}
                                       component="div"
@@ -1868,19 +2276,38 @@ const CreateNewDevisCommande = () => {
                                 <Col md={2}>
                                   <Form.Group>
                                     <Form.Label>Product</Form.Label>
-                                    <SearchableSelect
+                                    <SearchableSelectDivers
                                       name={`itemsDivers[${index}].productId`}
                                       data={divers}
                                       setFieldValue={setFieldValue}
                                       value={item.productId}
-                                      placeholder="Select Divers"
+                                      placeholder="Sélectionnez"
                                       isProduct={true}
                                       index={index}
+                                      setPrice={(idx, price, quantity) => {
+                                        setFieldValue(
+                                          `itemsDivers[${idx}].price`,
+                                          price
+                                        );
+                                        setFieldValue(
+                                          `itemsDivers[${idx}].vatIncludedPrice`,
+                                          calculateVATIncludedPrice(
+                                            price,
+                                            item.taxRate,
+                                            quantity
+                                          )
+                                        );
+                                        setFieldValue(
+                                          `itemsDivers[${idx}].subtotal`,
+                                          calculateSubtotal(price, quantity)
+                                        );
+                                      }}
                                       values={values}
+                                      calculateVATIncludedPrice={
+                                        calculateVATIncludedPrice
+                                      }
                                       calculateSubtotal={calculateSubtotal}
-                                      dataType="Divers"
                                     />
-
                                     <ErrorMessage
                                       name={`itemsDivers[${index}].productId`}
                                       component="div"
@@ -2243,11 +2670,9 @@ const CreateNewDevisCommande = () => {
             </Button>
           </Form>
         );
-      }} 
+      }}
     </Formik>
   );
 };
 
-
-
-export default CreateNewDevisCommande;
+export default UzunVersionCreateNewDevisCommande;
