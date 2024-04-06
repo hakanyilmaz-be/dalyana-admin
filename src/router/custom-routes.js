@@ -43,6 +43,7 @@ import Projets from "../pages/Projets";
 import Clients from "../pages/Clients";
 import UzunVersionCreateNewDevisCommande from "../components/create-new-devis-commande/uzun-version-create-new-devis-commande";
 import ProjetEditPage from "../pages/ProjetEditPage";
+import Sav from "../components/projet/sav";
 
 
 const CustomRoutes = () => {
@@ -79,6 +80,7 @@ const CustomRoutes = () => {
               <Route index element={<AdminTemplate><Projets /></AdminTemplate>}/>
               <Route path="creer-devis-commande" element={<AdminTemplate><CreateDevisCommande/></AdminTemplate>}/>
               <Route path="edit" element={<AdminTemplate><ProjetEditPage /></AdminTemplate>}/>
+              <Route path="sav" element={<AdminTemplate><Sav /></AdminTemplate>}/>
 
           
               <Route path="uzun-version" element={<AdminTemplate><UzunVersionCreateNewDevisCommande/></AdminTemplate>}/>
