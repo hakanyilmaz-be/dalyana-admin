@@ -15,24 +15,24 @@ const ProjetEditPage = () => {
 
   const downloadPdf = () => {
     const doc = new jsPDF();
-
+  
     // Logo ve firma bilgileri
     doc.addImage(logo, 'PNG', 10, 10, 50, 20);
     doc.setFontSize(9);
     doc.text(`Tél: 065946565\nE-Mail: dalyana.mons@gmail.com\nCoordonnées bancaires:\nCBC BE78732056758286\nBIC CREGBEBB\nTVA: BE0755397594\nwebsite: https://dalyana.com/`, 130, 10);
-
+  
     // Müşteri bilgileri
     doc.setFontSize(9);
     doc.text(`ID: ${clientData.id}\nName: ${clientData.name}\nTVA: ${clientData.tva}\nPhone Number: ${clientData.phoneNumber}\nEmail: ${clientData.email}`, 10, 40);
     doc.text(`Address: ${clientData.address}\nZip Code: ${clientData.zipCode}\nCity: ${clientData.city}\nNote: ${clientData.note}`, 130, 40);
-
+  
     let currentY = 70; // Yeni Y konumunu belirle
-
+  
     // Proje Bilgileri Üst Bilgileri
-    doc.setFontSize(10);
+    doc.setFontSize(9);
     doc.text(`Floor: ${projectData.floor}\nElevator: ${projectData.elevator}\nStatus: ${projectData.status}`, 10, currentY);
     currentY += 10;
-
+  
     // Kategori Başlıkları ve Tablolar
     const categories = [
       { title: "Articles", data: projectData.articles },
@@ -42,9 +42,13 @@ const ProjetEditPage = () => {
       { title: "Items Divers", data: projectData.itemsDivers },
       { title: "Items Surfaces", data: projectData.itemsSurfaces },
     ];
-
+  
     categories.forEach(category => {
-      doc.setFontSize(10);
+      if (doc.internal.pageSize.height - currentY < 20) {
+        doc.addPage();
+        currentY = 10; // Yeni sayfanın başına geri dön
+      }
+      doc.setFontSize(9);
       currentY += 7; // Başlık için boşluk
       doc.text(category.title, 10, currentY);
       currentY += 3; // Tablo öncesi boşluk
@@ -62,31 +66,51 @@ const ProjetEditPage = () => {
           item.subtotal || '',
           item.discountRate,
         ]),
-        margin: { top: 60 },
         didDrawPage: function (data) {
-          currentY = data.cursor.y; // Güncel Y konumunu güncelle
+          currentY = data.cursor.y + 5; // Güncel Y konumunu güncelle ve biraz boşluk bırak
         }
       });
     });
-
-    // Diğer Ücretler için alan kontrolü
-    if (doc.internal.pageSize.height - currentY < 20) {
+  
+    // Diğer Ücretler ve Genel Sözleşme Şartları için yeterli alan kontrolü
+    if (doc.internal.pageSize.height - currentY < 40) {
       doc.addPage();
       currentY = 10; // Yeni sayfanın başına geri dön
     }
-
+  
     // Diğer Ücretler
-    currentY += 10; // Boşluk ekle
-    doc.text(`Delivery Fee: ${projectData.deliveryFee}\nMontage Fee: ${projectData.montageFee}\nTotal Fee: ${projectData.totalFee}\nGlobal Discount: ${projectData.globaldiscount}`, 10, currentY);
-
-    // Genel Sözleşme Şartları için yeni sayfa
-    doc.addPage();
+    doc.setFontSize(9);
+    const feesStartY = currentY + 10; // Diğer ücretler için biraz boşluk bırak
+    doc.text(`Delivery Fee: ${projectData.deliveryFee}\nMontage Fee: ${projectData.montageFee}\nTotal Fee: ${projectData.totalFee}\nGlobal Discount: ${projectData.globaldiscount}`, 10, feesStartY);
+    currentY = feesStartY + 20; // Diğer ücretlerden sonra boşluk bırak
+  
+    // Genel Sözleşme Şartları
+    doc.setFontSize(8);
     terms.terms.forEach((term, index) => {
-      doc.text(`${index + 1}. ${term}`, 10, 10 + (index * 10));
+      if (doc.internal.pageSize.height - currentY < 20) {
+        doc.addPage();
+        currentY = 10; // Yeni sayfanın başına geri dön
+      }
+      doc.text(`${index + 1}. ${term}`, 10, currentY);
+      currentY += 5; // Sonraki terim için boşluk ekleyin
     });
-
+  
+    // Sayfa numaralarını ekleyen fonksiyon
+    const addPageNumbers = () => {
+      const pageCount = doc.internal.getNumberOfPages();
+      for(let i = 1; i <= pageCount; i++) {
+        doc.setPage(i);
+        doc.setFontSize(9);
+        doc.text(`Page ${i} / ${pageCount}`, doc.internal.pageSize.width / 2, doc.internal.pageSize.height - 10, null, null, 'center');
+      }
+    };
+  
+    addPageNumbers(); // Sayfa numaralarını fonksiyonu çağırarak ekleyin
+  
     doc.save("fatura.pdf");
   };
+  
+  
 
   return (
     <>
