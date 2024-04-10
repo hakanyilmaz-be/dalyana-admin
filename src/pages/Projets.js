@@ -6,6 +6,7 @@ import DevisCommandeTable from '../components/devis-commande-table/devis-command
 import { Link } from 'react-router-dom'
 
 
+
 const Projets = () => {
   return (
 
@@ -17,6 +18,7 @@ const Projets = () => {
       </Link>
       <Status/>
       <DevisCommandeTable/>
+    
     </Container>
 
    

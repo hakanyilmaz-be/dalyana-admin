@@ -80,7 +80,7 @@ const CustomRoutes = () => {
               <Route index element={<AdminTemplate><Projets /></AdminTemplate>}/>
               <Route path="creer-devis-commande" element={<AdminTemplate><CreateDevisCommande/></AdminTemplate>}/>
               <Route path="edit" element={<AdminTemplate><ProjetEditPage /></AdminTemplate>}/>
-              <Route path="sav" element={<AdminTemplate><Sav /></AdminTemplate>}/>
+      
 
           
               <Route path="uzun-version" element={<AdminTemplate><UzunVersionCreateNewDevisCommande/></AdminTemplate>}/>

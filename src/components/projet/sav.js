@@ -3,7 +3,7 @@ import { Button, Form, Card, Container, Row, Col, Modal } from 'react-bootstrap'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { v4 as uuidv4 } from 'uuid';
 
-function NoteImageVideoComponent() {
+function Sav() {
   const [items, setItems] = useState([]);
   const [inputText, setInputText] = useState('');
   const [editingId, setEditingId] = useState(null);
@@ -133,11 +133,11 @@ function NoteImageVideoComponent() {
           </Col>
         </Row>
       </Form>
-      <h4>Notlar</h4>
+      <h5>Notlar</h5>
       <Row>{renderItemsByType('text')}</Row>
-      <h4>Resimler</h4>
+      <h5>Resimler</h5>
       <Row>{renderItemsByType('image')}</Row>
-      <h4>Videolar</h4>
+      <h5>Videolar</h5>
       <Row>{renderItemsByType('video')}</Row>
       <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)}>
         <Modal.Header closeButton>
@@ -153,4 +153,4 @@ function NoteImageVideoComponent() {
   );
 }
 
-export default NoteImageVideoComponent;
+export default Sav;
