@@ -310,9 +310,14 @@ const CreateNewDevisCommande = () => {
             deliveryFee +
             montageFee -
             globaldiscount;
-            console.log('Grand Total:', grandTotal);
-          
-          return grandTotal.toFixed(2); // 2 ondalık basamağa yuvarla
+          console.log('Grand Total:', grandTotal);
+
+          if (
+            values.grandTotal !== grandTotal.toFixed(2)
+          ) {
+            setFieldValue("grandTotal", grandTotal.toFixed(2));
+          }
+
         };
 
         // Update articles function using setFieldValue from render props
@@ -407,7 +412,7 @@ const CreateNewDevisCommande = () => {
         const totalFeeSurfaces = isTaxRateSelectedSurfaces
           ? calculateTotalFeeSurfaces()
           : null;
-
+        calculateGrandTotal()
         return (
           <Form noValidate onSubmit={handleSubmit}>
             <Card className="mb-5">
@@ -2239,7 +2244,7 @@ const CreateNewDevisCommande = () => {
                   width: "170px",
                 }}
                 placeholder="Total TVAC"
-                value={`${calculateGrandTotal()}€`} // Genel toplamı hesapla ve göster
+                value={`${values.grandTotal}€`} // Genel toplamı hesapla ve göster
                 readOnly
               />
             </Form.Group>
