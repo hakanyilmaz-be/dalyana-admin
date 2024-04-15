@@ -126,6 +126,7 @@ const calculateTotalVATIncludedPrice = (articles) => {
 const CreateNewDevisCommande = () => {
   const [isCodeValid, setIsCodeValid] = useState(null);
   const [creating, setCreating] = useState(false);
+  
 
   const initialValues = {
     floor: "",
@@ -143,6 +144,7 @@ const CreateNewDevisCommande = () => {
     totalFee: "",
     globaldiscount: "",
     code: "",
+    grandTotal: 0,
   };
 
   const validationSchema = Yup.object({
@@ -153,6 +155,7 @@ const CreateNewDevisCommande = () => {
     deliveryFee: Yup.string(),
     montageFee: Yup.string(),
     totalFee: Yup.string(),
+    grandTotal: Yup.number(),
     globaldiscount: Yup.string(),
     code: Yup.string(),
     articles: Yup.array().of(
@@ -277,6 +280,7 @@ const CreateNewDevisCommande = () => {
     >
       {({ values, setFieldValue, handleSubmit }) => {
         const calculateGrandTotal = () => {
+          console.log('Hesaplama Başlıyor', values);
           const totalAccessoires = parseFloat(totalFeeAccessoires || 0);
           const totalElectromenagers = parseFloat(totalFeeElectromenagers || 0);
           const totalSanitaires = parseFloat(totalFeeSanitaires || 0);
@@ -306,6 +310,8 @@ const CreateNewDevisCommande = () => {
             deliveryFee +
             montageFee -
             globaldiscount;
+            console.log('Grand Total:', grandTotal);
+          
           return grandTotal.toFixed(2); // 2 ondalık basamağa yuvarla
         };
 
