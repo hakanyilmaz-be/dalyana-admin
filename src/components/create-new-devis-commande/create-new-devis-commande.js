@@ -312,9 +312,7 @@ const CreateNewDevisCommande = () => {
             globaldiscount;
           console.log('Grand Total:', grandTotal);
 
-          if (
-            values.grandTotal !== grandTotal.toFixed(2)
-          ) {
+          if (values.grandTotal !== grandTotal.toFixed(2)) {
             setFieldValue("grandTotal", grandTotal.toFixed(2));
           }
 
@@ -412,7 +410,9 @@ const CreateNewDevisCommande = () => {
         const totalFeeSurfaces = isTaxRateSelectedSurfaces
           ? calculateTotalFeeSurfaces()
           : null;
+
         calculateGrandTotal()
+
         return (
           <Form noValidate onSubmit={handleSubmit}>
             <Card className="mb-5">
@@ -861,7 +861,10 @@ const CreateNewDevisCommande = () => {
                                               item.taxRate
                                             )
                                           );
-                                          setFieldValue(`itemsAccessoires[${index}].subtotal`, subtotal);
+                                          setFieldValue(
+                                            `itemsAccessoires[${index}].subtotal`, 
+                                            subtotal
+                                          );
                                         }}
                                       />
                                       <ErrorMessage
