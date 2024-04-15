@@ -861,6 +861,7 @@ const CreateNewDevisCommande = () => {
                                               item.taxRate
                                             )
                                           );
+                                          setFieldValue(`itemsAccessoires[${index}].subtotal`, subtotal);
                                         }}
                                       />
                                       <ErrorMessage
