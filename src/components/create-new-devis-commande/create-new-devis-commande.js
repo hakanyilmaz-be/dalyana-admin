@@ -126,7 +126,7 @@ const calculateTotalVATIncludedPrice = (articles) => {
 const CreateNewDevisCommande = () => {
   const [isCodeValid, setIsCodeValid] = useState(null);
   const [creating, setCreating] = useState(false);
-  
+
 
   const initialValues = {
     floor: "",
@@ -242,6 +242,7 @@ const CreateNewDevisCommande = () => {
   //ASAGIDAKI BOS FONK GEREK YOK, HATA VERMEMESI ICIN YAZDIM
   const onSubmit = (values) => {
     console.log("Form values:", values);
+
     setCreating(true);
     try {
       // Perform submit actions, e.g., API call
@@ -312,9 +313,7 @@ const CreateNewDevisCommande = () => {
             globaldiscount;
           console.log('Grand Total:', grandTotal);
 
-          if (
-            values.grandTotal !== grandTotal.toFixed(2)
-          ) {
+          if (values.grandTotal !== grandTotal.toFixed(2)) {
             setFieldValue("grandTotal", grandTotal.toFixed(2));
           }
 
@@ -340,6 +339,30 @@ const CreateNewDevisCommande = () => {
             .toFixed(2); // Convert to a fixed 2 decimal places
         };
 
+        const calculateTotalFeeElectromenagers = () => {
+          return values.itemsElectromenagers
+            .reduce((total, item) => total + (item.vatIncludedPrice || 0), 0)
+            .toFixed(2); // Convert to a fixed 2 decimal places
+        };
+
+        const calculateTotalFeeSanitaires = () => {
+          return values.itemsSanitaires
+            .reduce((total, item) => total + (item.vatIncludedPrice || 0), 0)
+            .toFixed(2); // Convert to a fixed 2 decimal places
+        };
+
+        const calculateTotalFeeSurfaces = () => {
+          return values.itemsSurfaces
+            .reduce((total, item) => total + (item.vatIncludedPrice || 0), 0)
+            .toFixed(2); // Convert to a fixed 2 decimal places
+        };
+
+        const calculateTotalFeeDivers = () => {
+          return values.itemsDivers
+            .reduce((total, item) => total + (item.vatIncludedPrice || 0), 0)
+            .toFixed(2); // Convert to a fixed 2 decimal places
+        };
+
         // Check if any item has a tax rate selected
         const isTaxRateSelectedAccessoires = values.itemsAccessoires.some(
           (item) => item.taxRate
@@ -350,12 +373,6 @@ const CreateNewDevisCommande = () => {
           ? calculateTotalFeeAccessoires()
           : null;
 
-        const calculateTotalFeeElectromenagers = () => {
-          return values.itemsElectromenagers
-            .reduce((total, item) => total + (item.vatIncludedPrice || 0), 0)
-            .toFixed(2); // Convert to a fixed 2 decimal places
-        };
-
         // Check if any item has a tax rate selected
         const isTaxRateSelectedElectromenagers =
           values.itemsElectromenagers.some((item) => item.taxRate);
@@ -364,12 +381,6 @@ const CreateNewDevisCommande = () => {
         const totalFeeElectromenagers = isTaxRateSelectedElectromenagers
           ? calculateTotalFeeElectromenagers()
           : null;
-
-        const calculateTotalFeeSanitaires = () => {
-          return values.itemsSanitaires
-            .reduce((total, item) => total + (item.vatIncludedPrice || 0), 0)
-            .toFixed(2); // Convert to a fixed 2 decimal places
-        };
 
         // Check if any item has a tax rate selected
         const isTaxRateSelectedSanitaires = values.itemsSanitaires.some(
@@ -381,12 +392,6 @@ const CreateNewDevisCommande = () => {
           ? calculateTotalFeeSanitaires()
           : null;
 
-        const calculateTotalFeeDivers = () => {
-          return values.itemsDivers
-            .reduce((total, item) => total + (item.vatIncludedPrice || 0), 0)
-            .toFixed(2); // Convert to a fixed 2 decimal places
-        };
-
         // Check if any item has a tax rate selected
         const isTaxRateSelectedDivers = values.itemsDivers.some(
           (item) => item.taxRate
@@ -397,12 +402,6 @@ const CreateNewDevisCommande = () => {
           ? calculateTotalFeeDivers()
           : null;
 
-        const calculateTotalFeeSurfaces = () => {
-          return values.itemsSurfaces
-            .reduce((total, item) => total + (item.vatIncludedPrice || 0), 0)
-            .toFixed(2); // Convert to a fixed 2 decimal places
-        };
-
         // Check if any item has a tax rate selected
         const isTaxRateSelectedSurfaces = values.itemsSurfaces.some(
           (item) => item.taxRate
@@ -412,7 +411,19 @@ const CreateNewDevisCommande = () => {
         const totalFeeSurfaces = isTaxRateSelectedSurfaces
           ? calculateTotalFeeSurfaces()
           : null;
+
+        const totalFeeArticles = calculateTotalVATIncludedPrice(values.articles).toFixed(2)
+
+        if (values.totalFeeAccessoires !== totalFeeAccessoires) {
+          setFieldValue("totalFeeAccessoires", totalFeeAccessoires)
+        }
+
+        if (values.totalFeeArticles !== totalFeeArticles) {
+          setFieldValue("totalFeeArticles", totalFeeArticles)
+        }
+
         calculateGrandTotal()
+
         return (
           <Form noValidate onSubmit={handleSubmit}>
             <Card className="mb-5">
@@ -571,7 +582,7 @@ const CreateNewDevisCommande = () => {
                                             newFurnitureListPrice -
                                             (newFurnitureListPrice *
                                               discountRate) /
-                                              100;
+                                            100;
 
                                           updateArticleItem(index, {
                                             ...article,
@@ -587,7 +598,7 @@ const CreateNewDevisCommande = () => {
                                           `articles[${index}].furnitureListPrice`
                                         ] &&
                                           formik.errors[
-                                            `articles[${index}].furnitureListPrice`
+                                          `articles[${index}].furnitureListPrice`
                                           ]}
                                       </Form.Control.Feedback>
                                     </Form.Group>
@@ -724,11 +735,11 @@ const CreateNewDevisCommande = () => {
                                       </Form.Label>
                                       <p className="price-text">
                                         {article.taxRate === "" ||
-                                        article.taxRate === undefined
+                                          article.taxRate === undefined
                                           ? "Entrez taxe"
                                           : `${article.vatIncludedPrice.toFixed(
-                                              2
-                                            )}€`}
+                                            2
+                                          )}€`}
                                       </p>
                                     </Form.Group>
                                   </Col>
@@ -886,11 +897,10 @@ const CreateNewDevisCommande = () => {
                                     <Form.Label className="parent-text">
                                       Subtotal
                                     </Form.Label>
-                                    <p className="price-text">{`${
-                                      item.subtotal
-                                        ? item.subtotal.toFixed(2)
-                                        : "0.00"
-                                    }€`}</p>
+                                    <p className="price-text">{`${item.subtotal
+                                      ? item.subtotal.toFixed(2)
+                                      : "0.00"
+                                      }€`}</p>
                                   </Form.Group>
                                 </Col>
 
@@ -947,11 +957,10 @@ const CreateNewDevisCommande = () => {
                                     <Form.Label className="parent-text">
                                       Discounted Price
                                     </Form.Label>
-                                    <p className="price-text">{`${
-                                      item.discountedPrice
-                                        ? item.discountedPrice.toFixed(2)
-                                        : "0.00"
-                                    }€`}</p>
+                                    <p className="price-text">{`${item.discountedPrice
+                                      ? item.discountedPrice.toFixed(2)
+                                      : "0.00"
+                                      }€`}</p>
                                   </Form.Group>
                                 </Col>
 
@@ -1153,11 +1162,10 @@ const CreateNewDevisCommande = () => {
                                     <Form.Label className="parent-text">
                                       Subtotal
                                     </Form.Label>
-                                    <p className="price-text">{`${
-                                      item.subtotal
-                                        ? item.subtotal.toFixed(2)
-                                        : "0.00"
-                                    }€`}</p>
+                                    <p className="price-text">{`${item.subtotal
+                                      ? item.subtotal.toFixed(2)
+                                      : "0.00"
+                                      }€`}</p>
                                   </Form.Group>
                                 </Col>
 
@@ -1216,11 +1224,10 @@ const CreateNewDevisCommande = () => {
                                     <Form.Label className="parent-text">
                                       Discounted Price
                                     </Form.Label>
-                                    <p className="price-text">{`${
-                                      item.discountedPrice
-                                        ? item.discountedPrice.toFixed(2)
-                                        : "0.00"
-                                    }€`}</p>
+                                    <p className="price-text">{`${item.discountedPrice
+                                      ? item.discountedPrice.toFixed(2)
+                                      : "0.00"
+                                      }€`}</p>
                                   </Form.Group>
                                 </Col>
 
@@ -1425,11 +1432,10 @@ const CreateNewDevisCommande = () => {
                                     <Form.Label className="parent-text">
                                       Subtotal
                                     </Form.Label>
-                                    <p className="price-text">{`${
-                                      item.subtotal
-                                        ? item.subtotal.toFixed(2)
-                                        : "0.00"
-                                    }€`}</p>
+                                    <p className="price-text">{`${item.subtotal
+                                      ? item.subtotal.toFixed(2)
+                                      : "0.00"
+                                      }€`}</p>
                                   </Form.Group>
                                 </Col>
 
@@ -1486,11 +1492,10 @@ const CreateNewDevisCommande = () => {
                                     <Form.Label className="parent-text">
                                       Discounted Price
                                     </Form.Label>
-                                    <p className="price-text">{`${
-                                      item.discountedPrice
-                                        ? item.discountedPrice.toFixed(2)
-                                        : "0.00"
-                                    }€`}</p>
+                                    <p className="price-text">{`${item.discountedPrice
+                                      ? item.discountedPrice.toFixed(2)
+                                      : "0.00"
+                                      }€`}</p>
                                   </Form.Group>
                                 </Col>
 
@@ -1692,11 +1697,10 @@ const CreateNewDevisCommande = () => {
                                     <Form.Label className="parent-text">
                                       Subtotal
                                     </Form.Label>
-                                    <p className="price-text">{`${
-                                      item.subtotal
-                                        ? item.subtotal.toFixed(2)
-                                        : "0.00"
-                                    }€`}</p>
+                                    <p className="price-text">{`${item.subtotal
+                                      ? item.subtotal.toFixed(2)
+                                      : "0.00"
+                                      }€`}</p>
                                   </Form.Group>
                                 </Col>
 
@@ -1753,11 +1757,10 @@ const CreateNewDevisCommande = () => {
                                     <Form.Label className="parent-text">
                                       Discounted Price
                                     </Form.Label>
-                                    <p className="price-text">{`${
-                                      item.discountedPrice
-                                        ? item.discountedPrice.toFixed(2)
-                                        : "0.00"
-                                    }€`}</p>
+                                    <p className="price-text">{`${item.discountedPrice
+                                      ? item.discountedPrice.toFixed(2)
+                                      : "0.00"
+                                      }€`}</p>
                                   </Form.Group>
                                 </Col>
 
@@ -1959,11 +1962,10 @@ const CreateNewDevisCommande = () => {
                                     <Form.Label className="parent-text">
                                       Subtotal
                                     </Form.Label>
-                                    <p className="price-text">{`${
-                                      item.subtotal
-                                        ? item.subtotal.toFixed(2)
-                                        : "0.00"
-                                    }€`}</p>
+                                    <p className="price-text">{`${item.subtotal
+                                      ? item.subtotal.toFixed(2)
+                                      : "0.00"
+                                      }€`}</p>
                                   </Form.Group>
                                 </Col>
 
@@ -2020,11 +2022,10 @@ const CreateNewDevisCommande = () => {
                                     <Form.Label className="parent-text">
                                       Discounted Price
                                     </Form.Label>
-                                    <p className="price-text">{`${
-                                      item.discountedPrice
-                                        ? item.discountedPrice.toFixed(2)
-                                        : "0.00"
-                                    }€`}</p>
+                                    <p className="price-text">{`${item.discountedPrice
+                                      ? item.discountedPrice.toFixed(2)
+                                      : "0.00"
+                                      }€`}</p>
                                   </Form.Group>
                                 </Col>
 
@@ -2254,7 +2255,7 @@ const CreateNewDevisCommande = () => {
             </Button>
           </Form>
         );
-      }} 
+      }}
     </Formik>
   );
 };
