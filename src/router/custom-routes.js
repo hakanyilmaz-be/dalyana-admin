@@ -38,13 +38,11 @@ import InvoiceEditPage from "../pages/InvoiceEditPage";
 import CreateCustomer from "../pages/CreateCustomer";
 import CreateDevisCommande from "../pages/CreateDevisCommande";
 import Stock from "../pages/Stock";
-import DevisEditPage from "../pages/DevisEditPage";
 import Projets from "../pages/Projets";
 import Clients from "../pages/Clients";
-import UzunVersionCreateNewDevisCommande from "../components/create-new-devis-commande/uzun-version-create-new-devis-commande";
 import ProjetEditPage from "../pages/ProjetEditPage";
 import Uygulama from "../components/create-new-devis-commande/uygulama";
-import Uygulama2 from "../components/create-new-devis-commande/uygulama2";
+
 
 
 
@@ -71,7 +69,7 @@ const CustomRoutes = () => {
               <Route index element={<ProtectedRoute isAdmin={true}><AdminTemplate><AdminReservationsPage/></AdminTemplate></ProtectedRoute>}/>
               <Route path=":reservationId" element={<ProtectedRoute isAdmin={true}><AdminTemplate><AdminReservationEditPage/></AdminTemplate></ProtectedRoute>}/>
             </Route>
-          </Route> */}
+          </Route> */} 
 
 
           {/* USER ROUTES */}
@@ -83,18 +81,7 @@ const CustomRoutes = () => {
               <Route path="creer-devis-commande" element={<AdminTemplate><CreateDevisCommande/></AdminTemplate>}/>
               <Route path="edit" element={<AdminTemplate><ProjetEditPage /></AdminTemplate>}/>
               <Route path="uygulama" element={<AdminTemplate><Uygulama/></AdminTemplate>}/>
-         
-
-           
-              <Route path="uygulama2" element={<AdminTemplate><Uygulama2/></AdminTemplate>}/>
-
-      
-
-          
-              <Route path="uzun-version" element={<AdminTemplate><UzunVersionCreateNewDevisCommande/></AdminTemplate>}/>
-
-
-              <Route path=":devisId" element={<AdminTemplate> <DevisEditPage /></AdminTemplate>}/>
+              <Route path=":projetId" element={<AdminTemplate> <ProjetEditPage /></AdminTemplate>}/>
             </Route>
 
             <Route path="clients">

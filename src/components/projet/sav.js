@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Button, Form, Card, Container, Row, Col, Modal } from 'react-bootstrap';
-import 'bootstrap/dist/css/bootstrap.min.css';
 import { v4 as uuidv4 } from 'uuid';
 
 function Sav() {
@@ -68,15 +67,15 @@ function Sav() {
                     onChange={(e) => setEditingText(e.target.value)}
                   />
                   <Button variant="success" onClick={() => handleSaveEdit(item.id)} className="mt-2">
-                    Kaydet
+                  Sauvegarder
                   </Button>
                 </div>
               ) : (
                 <div>
                   <Card.Text>{item.content}</Card.Text>
                   <div className="d-flex justify-content-between">
-                    <Button variant="secondary" onClick={() => handleEditClick(item)}>Düzenle</Button>
-                    <Button variant="danger" onClick={() => handleDeleteConfirmation(item.id)}>Sil</Button>
+                    <Button variant="secondary" onClick={() => handleEditClick(item)}>Modifier</Button>
+                    <Button variant="danger" onClick={() => handleDeleteConfirmation(item.id)}>Supprimer</Button>
                   </div>
                 </div>
               )
@@ -85,7 +84,7 @@ function Sav() {
               <>
                 <Card.Img variant="top" src={item.content} />
                 <div className="d-flex justify-content-end mt-2">
-                  <Button variant="danger" onClick={() => handleDeleteConfirmation(item.id)}>Sil</Button>
+                  <Button variant="danger" onClick={() => handleDeleteConfirmation(item.id)}>Supprimer</Button>
                 </div>
               </>
             )}
@@ -93,7 +92,7 @@ function Sav() {
               <>
                 <video controls src={item.content} style={{ width: '100%' }} />
                 <div className="d-flex justify-content-end mt-2">
-                  <Button variant="danger" onClick={() => handleDeleteConfirmation(item.id)}>Sil</Button>
+                  <Button variant="danger" onClick={() => handleDeleteConfirmation(item.id)}>Supprimer</Button>
                 </div>
               </>
             )}
@@ -112,7 +111,7 @@ function Sav() {
               <Form.Control
                 as="textarea"
                 rows={3}
-                placeholder="Notunuzu buraya yazın..."
+                placeholder="Écrivez votre note ici..."
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
               />
@@ -120,7 +119,7 @@ function Sav() {
           </Col>
           <Col md={3}>
             <Button variant="primary" onClick={handleAddText}>
-              Not Ekle
+            Ajouter une note
             </Button>
           </Col>
           <Col md={9}>
@@ -133,19 +132,19 @@ function Sav() {
           </Col>
         </Row>
       </Form>
-      <h5>Notlar</h5>
+      <h5>Notes</h5>
       <Row>{renderItemsByType('text')}</Row>
-      <h5>Resimler</h5>
+      <h5>Photos</h5>
       <Row>{renderItemsByType('image')}</Row>
-      <h5>Videolar</h5>
+      <h5>Vidéos</h5>
       <Row>{renderItemsByType('video')}</Row>
       <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)}>
         <Modal.Header closeButton>
-          <Modal.Title>Silme Onayı</Modal.Title>
+          <Modal.Title>Confirmation de Suppression</Modal.Title>
         </Modal.Header>
-        <Modal.Body>Silmek istediğinizden emin misiniz?</Modal.Body>
+        <Modal.Body>Etes-vous sûr que vous voulez supprimer?</Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>İptal</Button>
+          <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>Annuler</Button>
           <Button variant="danger" onClick={handleDelete}>Sil</Button>
         </Modal.Footer>
       </Modal>

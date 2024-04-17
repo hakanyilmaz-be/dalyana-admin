@@ -1,10 +1,10 @@
 [
     {
         "id" : "C-001",
-        "name":"Dona Emmie",
+        "name":"François Martin", 
         "tva": "BE100442189",
         "phoneNumber": "0489332172",
-        "email": "dona@gmail.com",
+        "email": "francois@gmail.com",
         "address" : "Av. Wilson 315",
         "zipCode": "7012",
         "city": "Mons",

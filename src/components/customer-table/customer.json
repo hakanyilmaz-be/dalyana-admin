@@ -1,10 +1,10 @@
 [
     {
         "id" : "C-1",
-        "name":"Dona Emmie",
+        "name":"François Martin",
         "location":"Mons",
         "phoneNumber": "0489332172",
-        "email": "dona@gmail.com"
+        "email": "francois@gmail.com"
     },
     {
         "id" : "C-2",

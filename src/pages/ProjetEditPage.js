@@ -81,7 +81,7 @@ const ProjetEditPage = () => {
     // Diğer Ücretler
     doc.setFontSize(9);
     const feesStartY = currentY + 10; // Diğer ücretler için biraz boşluk bırak
-    doc.text(`Delivery Fee: ${projectData.deliveryFee}\nMontage Fee: ${projectData.montageFee}\nTotal Fee: ${projectData.totalFee}\nGlobal Discount: ${projectData.globaldiscount}`, 10, feesStartY);
+    doc.text(`Delivery Fee: ${projectData.deliveryFee}\nMontage Fee: ${projectData.montageFee}\nGrand Total: ${projectData.grandTotal}\nGlobal Discount: ${projectData.globaldiscount}`, 10, feesStartY);
     currentY = feesStartY + 20; // Diğer ücretlerden sonra boşluk bırak
   
     // Genel Sözleşme Şartları
@@ -107,22 +107,23 @@ const ProjetEditPage = () => {
   
     addPageNumbers(); // Sayfa numaralarını fonksiyonu çağırarak ekleyin
   
-    doc.save("fatura.pdf");
+    doc.save("projet.pdf");
   };
   
-  
+   
 
   return (
     <>
+    <div style={{ textAlign: 'left', marginBottom: '20px' }}>
+        <Button onClick={downloadPdf}>Télécharger le PDF</Button>
+      </div>
       <ClientsEditPage showProjectList={false} />
       <ProjetEdit />
       <div className='mt-5'>
         <h3 className='my-5' style={{ textAlign: 'center' }}>Le service après-vente (SAV)</h3>
         <Sav />
       </div>
-      <div style={{ textAlign: 'center', margin: '20px' }}>
-        <Button onClick={downloadPdf}>PDF İndir</Button>
-      </div>
+      
     </>
   );
 };

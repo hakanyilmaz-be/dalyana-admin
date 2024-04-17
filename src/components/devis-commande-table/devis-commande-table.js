@@ -62,7 +62,7 @@ const DevisCommandeTable = () => {
   };
 
   const handleEdit = (row) => {
-    navigate(`/projets-clients/${row.id}`);
+    navigate(`/projets/${row.id}`);
   };
 
   const handleFilter = (e) => { 
