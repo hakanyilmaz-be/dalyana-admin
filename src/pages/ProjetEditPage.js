@@ -17,20 +17,64 @@ const ProjetEditPage = () => {
     const doc = new jsPDF();
   
     // Logo ve firma bilgileri
-    doc.addImage(logo, 'PNG', 10, 10, 50, 20);
+    doc.addImage(logo, 'PNG', 16, 17, 66, 18);
     doc.setFontSize(9);
-    doc.text(`Tél: 065946565\nE-Mail: dalyana.mons@gmail.com\nCoordonnées bancaires:\nCBC BE78732056758286\nBIC CREGBEBB\nTVA: BE0755397594\nwebsite: https://dalyana.com/`, 130, 10);
-  
+
+  // Bold başlıklar ve detayların yazılması için metinlerin koordinatları ayarlanmalıdır
+  doc.setFont("helvetica", "bold"); // Bold font ayarı
+  doc.text("Tél:", 16, 46);
+  doc.setFont("helvetica", "normal"); // Detaylar için normal fonta dönülür
+  doc.text("065946565", 30, 46);
+
+  doc.setFont("helvetica", "bold");
+  doc.text("E-Mail:", 16, 50);
+  doc.setFont("helvetica", "normal");
+  doc.text("dalyana.mons@gmail.com", 30, 50);
+
+  doc.setFont("helvetica", "bold");
+  doc.text("Website:", 16, 54);
+  doc.setFont("helvetica", "normal");
+  doc.text("www.dalyana.com", 30, 54);
+
+  doc.setFont("helvetica", "bold");
+  doc.text("TVA:", 16, 58);
+  doc.setFont("helvetica", "normal");
+  doc.text("BE0755397594", 30, 58);
+
+  doc.setFont("helvetica", "bold");
+  doc.text("Coordonnées Bancaires:", 16, 62);
+  doc.setFont("helvetica", "normal");
+  doc.text("CBC BE78732056758286", 16, 66);
+  doc.text("BIC CREGBEBB", 16, 70);
+
+// Proje Statusu
+// Projenin durumunu gösteren bir metin kutusu çizin
+doc.setFontSize(24);  // Metin boyutunu ayarla
+const statusText = `${projectData.status}`;
+const textWidth = doc.getTextWidth(statusText);
+
+// Kutu için padding
+const paddingX = 2; // Yatay padding
+const boxWidth = textWidth + 2 * paddingX;  // Kutunun genişliğini hesapla
+const boxHeight = 14; // Kutunun yüksekliğini azalt
+
+// Çerçeve çiz
+doc.rect(160, 16, boxWidth, boxHeight);  // Çerçevenin üst çizgisini yukarı çek
+
+// Metni çerçevenin içine yerleştir
+doc.text(statusText, 160 + paddingX, 26); // Metni dikey olarak kutunun içine ortala
+
+
+
     // Müşteri bilgileri
     doc.setFontSize(9);
-    doc.text(`ID: ${clientData.id}\nName: ${clientData.name}\nTVA: ${clientData.tva}\nPhone Number: ${clientData.phoneNumber}\nEmail: ${clientData.email}`, 10, 40);
-    doc.text(`Address: ${clientData.address}\nZip Code: ${clientData.zipCode}\nCity: ${clientData.city}\nNote: ${clientData.note}`, 130, 40);
+    doc.text(`ID: ${clientData.id}\nName: ${clientData.name}\nTVA: ${clientData.tva}\nPhone Number: ${clientData.phoneNumber}\nEmail: ${clientData.email}\nAddress: ${clientData.address}\nZip Code: ${clientData.zipCode}\nCity: ${clientData.city}`, 150, 46);
   
     let currentY = 70; // Yeni Y konumunu belirle
   
     // Proje Bilgileri Üst Bilgileri
     doc.setFontSize(9);
-    doc.text(`Floor: ${projectData.floor}\nElevator: ${projectData.elevator}\nStatus: ${projectData.status}`, 10, currentY);
+
     currentY += 10;
   
     // Kategori Başlıkları ve Tablolar
