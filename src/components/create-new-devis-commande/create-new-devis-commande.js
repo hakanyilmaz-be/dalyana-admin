@@ -177,6 +177,7 @@ const CreateNewDevisCommande = () => {
         taxRate: Yup.string().required("Obligatoire"),
         discountRate: Yup.string(),
         discountedPrice: Yup.number(),
+        
       })
     ),
     itemsElectromenagers: Yup.array().of(
@@ -280,7 +281,7 @@ const CreateNewDevisCommande = () => {
     >
       {({ values, setFieldValue, handleSubmit }) => {
         const calculateGrandTotal = () => {
-          console.log('Hesaplama Başlıyor', values);
+         
           const totalAccessoires = parseFloat(totalFeeAccessoires || 0);
           const totalElectromenagers = parseFloat(totalFeeElectromenagers || 0);
           const totalSanitaires = parseFloat(totalFeeSanitaires || 0);
@@ -310,9 +311,13 @@ const CreateNewDevisCommande = () => {
             deliveryFee +
             montageFee -
             globaldiscount;
-            console.log('Grand Total:', grandTotal);
+            
           
-          return grandTotal.toFixed(2); // 2 ondalık basamağa yuvarla
+            if (
+            values.grandTotal !== grandTotal.toFixed(2)
+          ) {
+            setFieldValue("grandTotal", grandTotal.toFixed(2));
+          }
         };
 
         // Update articles function using setFieldValue from render props
@@ -408,6 +413,33 @@ const CreateNewDevisCommande = () => {
           ? calculateTotalFeeSurfaces()
           : null;
 
+        const totalFeeArticles = calculateTotalVATIncludedPrice(values.articles).toFixed(2)
+
+        if (values.totalFeeArticles !== totalFeeArticles) {
+          setFieldValue("totalFeeArticles", totalFeeArticles)
+        }
+
+        if (values.totalFeeAccessoires !== totalFeeAccessoires) {
+          setFieldValue("totalFeeAccessoires", totalFeeAccessoires)
+        }
+
+        if (values.totalFeeElectromenagers !== totalFeeElectromenagers) {
+          setFieldValue("totalFeeElectromenagers", totalFeeElectromenagers)
+        }
+
+        if (values.totalFeeSanitaires !== totalFeeSanitaires) {
+          setFieldValue("totalFeeSanitaires", totalFeeSanitaires)
+        }
+
+        if (values.totalFeeSurfaces !== totalFeeSurfaces) {
+          setFieldValue("totalFeeSurfaces", totalFeeSurfaces)
+        }
+
+        if (values.totalFeeDivers !== totalFeeDivers) {
+          setFieldValue("totalFeeDivers", totalFeeDivers)
+        }
+       
+        calculateGrandTotal()
         return (
           <Form noValidate onSubmit={handleSubmit}>
             <Card className="mb-5">
@@ -856,6 +888,7 @@ const CreateNewDevisCommande = () => {
                                               item.taxRate
                                             )
                                           );
+                                          setFieldValue(`itemsAccessoires[${index}].subtotal`, subtotal);
                                         }}
                                       />
                                       <ErrorMessage
@@ -1123,6 +1156,8 @@ const CreateNewDevisCommande = () => {
                                               item.taxRate
                                             )
                                           );
+                                          setFieldValue(`itemsElectromenagers[${index}].subtotal`, subtotal);
+
                                         }}
                                       />
                                       <ErrorMessage
@@ -1395,6 +1430,8 @@ const CreateNewDevisCommande = () => {
                                               item.taxRate
                                             )
                                           );
+                                          setFieldValue(`itemsSanitaires[${index}].subtotal`, subtotal);
+                                          
                                         }}
                                       />
                                       <ErrorMessage
@@ -1662,6 +1699,8 @@ const CreateNewDevisCommande = () => {
                                               item.taxRate
                                             )
                                           );
+                                          setFieldValue(`itemsSurfaces[${index}].subtotal`, subtotal);
+
                                         }}
                                       />
                                       <ErrorMessage
@@ -1929,6 +1968,8 @@ const CreateNewDevisCommande = () => {
                                               item.taxRate
                                             )
                                           );
+                                          setFieldValue(`itemsDivers[${index}].subtotal`, subtotal);
+
                                         }}
                                       />
                                       <ErrorMessage
@@ -2239,7 +2280,7 @@ const CreateNewDevisCommande = () => {
                   width: "170px",
                 }}
                 placeholder="Total TVAC"
-                value={`${calculateGrandTotal()}€`} // Genel toplamı hesapla ve göster
+                value={`${values.grandTotal}€`} // Genel toplamı hesapla ve göster
                 readOnly
               />
             </Form.Group>
