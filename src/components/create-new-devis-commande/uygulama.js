@@ -133,7 +133,6 @@ const Uygulama = () => {
     elevator: "",
     status: "",
     articles: [],
-    furnitureListPrice: "",
     itemsAccessoires: [],
     itemsElectromenagers: [],
     itemsSanitaires: [],
@@ -151,7 +150,6 @@ const Uygulama = () => {
     floor: Yup.string().required("Obligatoire"),
     elevator: Yup.string().required("Obligatoire"),
     status: Yup.string().required("Obligatoire"),
-    furnitureListPrice: Yup.string(),
     deliveryFee: Yup.string(),
     montageFee: Yup.string(),
     totalFee: Yup.string(),
@@ -320,19 +318,7 @@ const Uygulama = () => {
           }
         };
 
-        // Update articles function using setFieldValue from render props
-        const updateArticleItem = (index, updatedValues) => {
-          const newArticles = [...values.articles];
-          newArticles[index] = { ...newArticles[index], ...updatedValues };
-          setFieldValue("articles", newArticles);
-        };
-
-        const allArticlesHaveTaxRateSelected = (articles) => {
-          // taxRate'in tanımlı olup olmadığını kontrol et
-          return articles.every(
-            (article) => article.taxRate !== undefined && article.taxRate !== ""
-          );
-        };
+       
 
         const calculateTotalFeeAccessoires = () => {
           return values.itemsAccessoires
@@ -413,11 +399,40 @@ const Uygulama = () => {
           ? calculateTotalFeeSurfaces()
           : null;
 
-        const totalFeeArticles = calculateTotalVATIncludedPrice(values.articles).toFixed(2)
 
-        if (values.totalFeeArticles !== totalFeeArticles) {
-          setFieldValue("totalFeeArticles", totalFeeArticles)
-        }
+
+          const updateArticleItem = (index, updatedValues) => {
+  const newArticles = [...values.articles];
+  const currentArticle = { ...newArticles[index], ...updatedValues };
+
+  // Vergi oranı undefined veya null değilse ve fiyat bilgisi varsa KDV dahil fiyatı hesapla
+  if (currentArticle.taxRate !== undefined && currentArticle.taxRate !== null && currentArticle.price !== undefined) {
+    const vatIncludedPrice = calculateVATIncludedPrice(
+      currentArticle.price,
+      currentArticle.taxRate,
+      currentArticle.quantity
+    );
+    currentArticle.vatIncludedPrice = vatIncludedPrice;
+  }
+
+  newArticles[index] = currentArticle;
+  setFieldValue("articles", newArticles);
+
+  // Toplam ve diğer bağlı değerleri güncelle
+  calculateGrandTotal();
+};
+
+const allArticlesHaveTaxRateSelected = (articles) => {
+  return articles.every(
+    (article) => article.taxRate !== undefined && article.taxRate !== ""
+  );
+};
+
+const totalFeeArticles = calculateTotalVATIncludedPrice(values.articles).toFixed(2);
+if (values.totalFeeArticles !== totalFeeArticles) {
+  setFieldValue("totalFeeArticles", totalFeeArticles);
+}
+
 
         if (values.totalFeeAccessoires !== totalFeeAccessoires) {
           setFieldValue("totalFeeAccessoires", totalFeeAccessoires)
