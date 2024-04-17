@@ -3,7 +3,6 @@ import "./create-new-devis-commande.css";
 import * as Yup from "yup";
 import { toast } from "react-toastify";
 import { AiOutlinePlus, AiTwotoneDelete, AiFillEdit } from "react-icons/ai";
-//import { toast } from "react-toastify";
 import { Formik, ErrorMessage, Field, FieldArray, useFormik } from "formik";
 import { NumericFormat } from 'react-number-format';
 import {
@@ -21,7 +20,6 @@ import {
 import accessoires from "../../assets/data/accessoires.json";
 import electromenagers from "../../assets/data/electromenagers.json";
 import sanitaires from "../../assets/data/sanitaires.json";
-import divers from "../../assets/data/divers.json";
 import surfaces from "../../assets/data/surfaces.json";
 import validCodes from "../../assets/data/discountCodes.json";
 //import { createUser } from "../../../api/admin-user-service";
@@ -34,7 +32,6 @@ const createDiscountRates = (length) => Array.from({ length }, (_, index) => ind
 const discountRatesElectromenagers = createDiscountRates(31);
 const discountRatesAccessoires = createDiscountRates(31);
 const discountRatesSanitaires = createDiscountRates(31);
-const discountRatesDivers = createDiscountRates(31);
 const discountRatesSurfaces = createDiscountRates(31);
 
 
@@ -123,6 +120,18 @@ const calculateTotalVATIncludedPrice = (articles) => {
   );
 };
 
+const calculateTotalVATIncludedPriceDivers = (itemsDivers) => {
+  // itemsDivers'ın dizi olduğundan ve boş olmadığından emin olun
+  if (Array.isArray(itemsDivers) && itemsDivers.length > 0) {
+    return itemsDivers.reduce(
+      (total, itemsDiver) => total + (itemsDiver.vatIncludedPrice || 0),
+      0
+    );
+  }
+  return 0; // Eğer itemsDivers uygun bir dizi değilse, 0 dön
+};
+
+
 const CreateNewDevisCommande = () => {
   const [isCodeValid, setIsCodeValid] = useState(null);
   const [creating, setCreating] = useState(false);
@@ -166,6 +175,16 @@ const CreateNewDevisCommande = () => {
         taxRate: Yup.string().required("Obligatoire"),
       })
     ),
+    itemsDivers: Yup.array().of(
+      Yup.object().shape({
+        name: Yup.string().required("Obligatoire"),
+        price: Yup.number().required("Obligatoire"),
+        quantity: Yup.number()
+          .min(1, "La quantité doit être minimum 1")
+          .required("La quantité est requise"),
+        taxRate: Yup.string().required("Obligatoire"),
+      })
+    ),
     itemsAccessoires: Yup.array().of(
       Yup.object().shape({
         productId: Yup.string().required("Le produit est requis"),
@@ -190,17 +209,6 @@ const CreateNewDevisCommande = () => {
       })
     ),
     itemsSanitaires: Yup.array().of(
-      Yup.object().shape({
-        productId: Yup.string().required("Le produit est requis"),
-        quantity: Yup.number()
-          .min(1, "La quantité doit être minimum 1")
-          .required("La quantité est requise"),
-        taxRate: Yup.string().required("Obligatoire"),
-        discountRate: Yup.string(),
-        discountedPrice: Yup.number(),
-      })
-    ),
-    itemsDivers: Yup.array().of(
       Yup.object().shape({
         productId: Yup.string().required("Le produit est requis"),
         quantity: Yup.number()
@@ -283,8 +291,10 @@ const CreateNewDevisCommande = () => {
           const totalAccessoires = parseFloat(totalFeeAccessoires || 0);
           const totalElectromenagers = parseFloat(totalFeeElectromenagers || 0);
           const totalSanitaires = parseFloat(totalFeeSanitaires || 0);
-          const totalDivers = parseFloat(totalFeeDivers || 0);
           const totalSurfaces = parseFloat(totalFeeSurfaces || 0);
+          const totalDivers = parseFloat(
+            calculateTotalVATIncludedPriceDivers(values.itemsDivers) || 0
+          );
           const totalArticles = parseFloat(
             calculateTotalVATIncludedPrice(values.articles) || 0
           );
@@ -292,7 +302,7 @@ const CreateNewDevisCommande = () => {
           const montageFee = parseFloat(values.montageFee || 0); // montageFee değerini çek ve float'a çevir
           let globaldiscount = parseFloat(values.globaldiscount || 0); // Doğrudan indirim miktarı olarak al
 
-          // globaldiscount doğrudan toplam maliyetten çıkarılacak
+       
           // Kod geçerli değilse veya globaldiscount değeri girilmemişse, globaldiscount'u 0 olarak kabul et
           if (!isCodeValid || !globaldiscount) {
             globaldiscount = 0;
@@ -367,22 +377,6 @@ const CreateNewDevisCommande = () => {
           ? calculateTotalFeeSanitaires()
           : null;
 
-        const calculateTotalFeeDivers = () => {
-          return values.itemsDivers
-            .reduce((total, item) => total + (item.vatIncludedPrice || 0), 0)
-            .toFixed(2); // Convert to a fixed 2 decimal places
-        };
-
-        // Check if any item has a tax rate selected
-        const isTaxRateSelectedDivers = values.itemsDivers.some(
-          (item) => item.taxRate
-        );
-
-        // Calculate the total fee only if tax rate is selected
-        const totalFeeDivers = isTaxRateSelectedDivers
-          ? calculateTotalFeeDivers()
-          : null;
-
         const calculateTotalFeeSurfaces = () => {
           return values.itemsSurfaces
             .reduce((total, item) => total + (item.vatIncludedPrice || 0), 0)
@@ -398,6 +392,47 @@ const CreateNewDevisCommande = () => {
         const totalFeeSurfaces = isTaxRateSelectedSurfaces
           ? calculateTotalFeeSurfaces()
           : null;
+
+
+ const updateDiverItem = (index, updatedValues) => {
+            const newItemsDivers = [...values.itemsDivers];
+            const currentItemsDiver = { ...newItemsDivers[index], ...updatedValues };
+
+            // Vergi oranı undefined veya null değilse ve fiyat bilgisi varsa KDV dahil fiyatı hesapla
+            if (
+              currentItemsDiver.taxRate !== undefined &&
+              currentItemsDiver.taxRate !== null &&
+              currentItemsDiver.price !== undefined
+            ) {
+              const vatIncludedPrice = calculateVATIncludedPrice(
+                currentItemsDiver.price,
+                currentItemsDiver.taxRate,
+                currentItemsDiver.quantity
+              );
+              currentItemsDiver.vatIncludedPrice = vatIncludedPrice;
+            }
+
+            newItemsDivers[index] = currentItemsDiver;
+            setFieldValue("itemsDivers", newItemsDivers);
+
+            // Toplam ve diğer bağlı değerleri güncelle
+            calculateGrandTotal();
+          };
+
+          const allArticlesHaveTaxRateSelectedDivers = (itemsDivers) => {
+            return itemsDivers.every(
+              (itemsDiver) =>
+              itemsDiver.taxRate !== undefined && itemsDiver.taxRate !== ""
+            );
+          };
+
+          const totalFeeItemsDivers = calculateTotalVATIncludedPriceDivers(
+            values.itemsDivers
+          ).toFixed(2);
+          if (values.totalFeeItemsDivers !== totalFeeItemsDivers) {
+            setFieldValue("totalFeeItemsDivers", totalFeeItemsDivers);
+          }
+
 
 
           const updateArticleItem = (index, updatedValues) => {
@@ -455,9 +490,7 @@ const CreateNewDevisCommande = () => {
           setFieldValue("totalFeeSurfaces", totalFeeSurfaces)
         }
 
-        if (values.totalFeeDivers !== totalFeeDivers) {
-          setFieldValue("totalFeeDivers", totalFeeDivers)
-        }
+     
        
         calculateGrandTotal()
         return (
@@ -1933,273 +1966,284 @@ const CreateNewDevisCommande = () => {
                   </Accordion.Item>
 
                   <Accordion.Item eventKey="5">
-                    <Accordion.Header>Divers</Accordion.Header>
+                    <Accordion.Header
+                      style={{
+                        backgroundColor: "var(--bs-accordion-active-bg)",
+                      }}
+                    >
+                      Divers
+                    </Accordion.Header>
                     <Accordion.Body>
-                      <FieldArray name="itemsDivers">
-                        {({ remove, push }) => (
-                          <>
-                            {values.itemsDivers.map((item, index) => (
-                              <Row
-                                key={index}
-                                className="mb-3 align-items-center"
-                              >
-                                {/* Product Selection */}
-                                <Col md={2}>
-                                  <Form.Group>
-                                    <Form.Label>Produit</Form.Label>
-                                    <SearchableSelect
-                                      name={`itemsDivers[${index}].productId`}
-                                      data={divers}
-                                      setFieldValue={setFieldValue}
-                                      value={item.productId}
-                                      placeholder="Sélectionnez"
-                                      isProduct={true}
-                                      index={index}
-                                      values={values}
-                                      calculateSubtotal={calculateSubtotal}
-                                      dataType="Divers"
-                                    />
-
-                                    <ErrorMessage
-                                      name={`itemsDivers[${index}].productId`}
-                                      component="div"
-                                      className="error-message"
-                                    />
-                                  </Form.Group>
-                                </Col>
-                                {/* Quantity Input */}
-                                <Col md={1}>
-                                  <Form.Group>
-                                    <Form.Label>Quantity</Form.Label>
-                                    <InputGroup>
+                      <Row>
+                        <FieldArray name="itemsDivers">
+                          {({ remove, push }) => (
+                            <>
+                              {values.itemsDivers.map((itemsDiver, index) => (
+                                <Row
+                                  key={index}
+                                  className="mb-3 align-items-center"
+                                >
+                                  <Col md={12}>
+                                    <Form.Group>
+                                      <Form.Label>Divers</Form.Label>
                                       <Field
-                                        type="number"
-                                        name={`itemsDivers[${index}].quantity`}
+                                        name={`itemsDivers[${index}].name`}
                                         as={Form.Control}
+                                        placeholder="Entrez divers"
                                         onChange={(e) => {
-                                          const quantity = e.target.value;
-                                          setFieldValue(
-                                            `itemsDivers[${index}].quantity`,
-                                            quantity
-                                          );
-                                          const subtotal = calculateSubtotal(
-                                            item.price,
-                                            quantity
-                                          );
-                                          const discountedPrice =
-                                            calculateDiscountedPrice(
-                                              subtotal,
-                                              item.discountRate || 0
-                                            );
-                                          setFieldValue(
-                                            `itemsDivers[${index}].discountedPrice`,
-                                            discountedPrice
-                                          );
-                                          setFieldValue(
-                                            `itemsDivers[${index}].vatIncludedPrice`,
-                                            calculateVATIncludedPriceAfterDiscount(
-                                              discountedPrice,
-                                              item.taxRate
-                                            )
-                                          );
-                                          setFieldValue(
-                                            `itemsDivers[${index}].subtotal`,
-                                            subtotal
-                                          );
+                                          updateDiverItem(index, {
+                                            name: e.target.value,
+                                          });
                                         }}
                                       />
                                       <ErrorMessage
-                                        name={`itemsDivers[${index}].quantity`}
+                                        name={`itemsDivers[${index}].name`}
                                         component="div"
                                         className="error-message"
                                       />
-                                    </InputGroup>
-                                  </Form.Group>
-                                </Col>
-                                {/* Price Display */}
-                                <Col md={2}>
-                                  <Form.Group>
-                                    <Form.Label className="parent-text">
-                                      Prix ​​unitaire
-                                    </Form.Label>
-                                    <p className="price-text">{`${item.price}€`}</p>
-                                  </Form.Group>
-                                </Col>
-                                {/* Subtotal Price Display */}
-                                <Col md={2}>
-                                  <Form.Group>
-                                    <Form.Label className="parent-text">
-                                      Sous-total
-                                    </Form.Label>
-                                    <p className="price-text">{`${
-                                      item.subtotal
-                                        ? item.subtotal.toFixed(2)
-                                        : "0.00"
-                                    }€`}</p>
-                                  </Form.Group>
-                                </Col>
+                                    </Form.Group>
+                                  </Col>
 
-                                <Col md={2}>
-                                  <Form.Group>
-                                    <Form.Label>Remise</Form.Label>
-                                    <Field
-                                      as="select"
-                                      name={`itemsDivers[${index}].discountRate`}
-                                      className="form-control"
-                                      onChange={(e) => {
-                                        const discountRate = e.target.value;
-                                        const subtotal = calculateSubtotal(
-                                          item.price,
-                                          item.quantity
-                                        );
-                                        const discountedPrice =
-                                          calculateDiscountedPrice(
-                                            subtotal,
-                                            discountRate
+                                  <Col>
+                                    <Form.Group>
+                                      <Form.Label>
+                                        Tarif Catalogue HTVA
+                                      </Form.Label>
+                                      <NumericFormat
+                                        thousandSeparator=","
+                                        decimalSeparator="."
+                                        decimalScale={2}
+                                        fixedDecimalScale={true}
+                                        prefix={"€"} // Para birimi olarak Euro
+                                        allowNegative={false}
+                                        className="form-control"
+                                        placeholder="Entrez tarif catalogue"
+                                        value={itemsDiver.diversListPrice || ""}
+                                        onValueChange={(values) => {
+                                          const { floatValue } = values;
+                                          const newDiversListPrice =
+                                            floatValue || 0;
+                                          const discountRate =
+                                          itemsDiver.discountRate ?? 0;
+                                          const discountedPrice =
+                                          newDiversListPrice -
+                                            (newDiversListPrice *
+                                              discountRate) /
+                                              100;
+
+                                          updateDiverItem(index, {
+                                            ...itemsDiver,
+                                            diversListPrice:
+                                              newDiversListPrice,
+                                            price: discountedPrice,
+                                          });
+                                        }}
+                                      />
+
+                                      <Form.Control.Feedback type="invalid">
+                                        {formik.touched[
+                                          `itemsDivers[${index}].diversListPrice`
+                                        ] &&
+                                          formik.errors[
+                                            `itemsDivers[${index}].diversListPrice`
+                                          ]}
+                                      </Form.Control.Feedback>
+                                    </Form.Group>
+                                  </Col>
+
+                                  {/* İndirim Oranı Seçimi */}
+                                  <Col md={2}>
+                                    <Form.Group>
+                                      <Form.Label>Remise (%)</Form.Label>
+                                      <Form.Select
+                                        value={itemsDiver.discountRate ?? "0"} // Eğer discountRate undefined ise, default olarak '0' kullan
+                                        onChange={(e) => {
+                                          const newDiscountRate = parseFloat(
+                                            e.target.value || 0
+                                          ); // Eğer e.target.value boş ise, 0 kullan
+                                          const listPrice = parseFloat(
+                                            itemsDiver.diversListPrice || 0
                                           );
-                                        setFieldValue(
-                                          `itemsDivers[${index}].discountRate`,
-                                          discountRate
-                                        );
-                                        setFieldValue(
-                                          `itemsDivers[${index}].discountedPrice`,
-                                          discountedPrice
-                                        );
-                                        setFieldValue(
-                                          `itemsDivers[${index}].vatIncludedPrice`,
-                                          calculateVATIncludedPriceAfterDiscount(
-                                            discountedPrice,
-                                            item.taxRate
-                                          )
-                                        );
-                                      }}
-                                    >
-                                      <option value="">
-                                        Select Discount Rate
-                                      </option>
-                                      {discountRatesDivers.map((rate) => (
-                                        <option
-                                          key={rate}
-                                          value={rate}
-                                        >{`${rate}%`}</option>
-                                      ))}
-                                    </Field>
-                                  </Form.Group>
-                                </Col>
+                                          const discountedPrice =
+                                            listPrice -
+                                            (listPrice * newDiscountRate) / 100;
 
-                                <Col md={2}>
-                                  <Form.Group>
-                                    <Form.Label className="parent-text">
-                                      Prix Réduit
-                                    </Form.Label>
-                                    <p className="price-text">{`${
-                                      item.discountedPrice
-                                        ? item.discountedPrice.toFixed(2)
-                                        : "0.00"
-                                    }€`}</p>
-                                  </Form.Group>
-                                </Col>
+                                          updateDiverItem(index, {
+                                            ...itemsDiver,
+                                            discountRate: newDiscountRate, // Yeni indirim oranı
+                                            price: discountedPrice, // İndirimli fiyat
+                                          });
+                                        }}
+                                      >
+                                        <option value="0">0%</option>
+                                        {[...Array(35).keys()].map((i) => (
+                                          <option key={i + 1} value={i + 1}>
+                                            {i + 1}%
+                                          </option>
+                                        ))}
+                                      </Form.Select>
+                                    </Form.Group>
+                                  </Col>
 
-                                {/* Tax Rate Selection */}
-                                <Col md={2}>
-                                  <Form.Group>
-                                    <Form.Label>TVA</Form.Label>
-                                    <Field
-                                      as="select"
-                                      name={`itemsDivers[${index}].taxRate`}
-                                      className="form-control"
-                                      onChange={(e) => {
-                                        const taxRate = e.target.value;
-                                        setFieldValue(
-                                          `itemsDivers[${index}].taxRate`,
-                                          taxRate
-                                        );
-                                        const subtotal = calculateSubtotal(
-                                          item.price,
-                                          item.quantity
-                                        );
-                                        const discountedPrice =
-                                          calculateDiscountedPrice(
-                                            subtotal,
-                                            item.discountRate || 0
-                                          );
-                                        setFieldValue(
-                                          `itemsDivers[${index}].discountedPrice`,
-                                          discountedPrice
-                                        );
-                                        setFieldValue(
-                                          `itemsDivers[${index}].vatIncludedPrice`,
-                                          calculateVATIncludedPriceAfterDiscount(
-                                            discountedPrice,
-                                            taxRate
-                                          )
-                                        );
-                                      }}
+                                
+                                  <Col>
+                                    <Form.Group>
+                                      <Form.Label
+                                        style={{
+                                          color: "#9f0f0f",
+                                          fontWeight: "bold",
+                                        }}
+                                      >
+                                        Tarif Divers HTVA
+                                      </Form.Label>
+                                      <NumericFormat
+                                        thousandSeparator=","
+                                        decimalSeparator="."
+                                        decimalScale={2}
+                                        fixedDecimalScale={true}
+                                        prefix="€" // Para birimi olarak Euro
+                                        allowNegative={false}
+                                        className={`form-control ${
+                                          formik.errors.itemsDivers &&
+                                          formik.errors.itemsDivers[index] &&
+                                          formik.errors.itemsDivers[index].price &&
+                                          formik.touched.itemsDivers &&
+                                          formik.touched.itemsDivers[index] &&
+                                          formik.touched.itemsDivers[index].price
+                                            ? "is-invalid"
+                                            : ""
+                                        }`}
+                                        style={{
+                                          color: "#9f0f0f",
+                                          borderColor: "#9f0f0f",
+                                        }}
+                                        name={`itemsDivers[${index}].price`}
+                                        value={itemsDiver.price || 0}
+                                        readOnly={true}
+                                        displayType="text" // 'input' yerine 'text' olarak ayarladık, çünkü bu alan sadece okunabilir
+                                      />
+                                      <ErrorMessage
+                                        name={`itemsDivers[${index}].price`}
+                                        component="div"
+                                        className="error-message"
+                                      />
+                                    </Form.Group>
+                                  </Col>
+
+                                  {/* Tax Rate Selection */}
+                                  <Col md={2}>
+                                    <Form.Group>
+                                      <Form.Label>TVA</Form.Label>
+                                      <Field
+                                        as="select"
+                                        name={`itemsDivers[${index}].taxRate`}
+                                        className="form-control"
+                                        onChange={(e) => {
+                                          const newTaxRate =
+                                            parseInt(e.target.value, 10) || 0;
+                                          const { price = 0, quantity = 1 } =
+                                            values.itemsDivers[index];
+                                          const vatIncludedPrice =
+                                            calculateVATIncludedPrice(
+                                              price,
+                                              newTaxRate,
+                                              quantity
+                                            );
+
+                                          updateDiverItem(index, {
+                                            taxRate: newTaxRate,
+                                            vatIncludedPrice,
+                                          });
+                                        }}
+                                      >
+                                        <option value="">Sélectionnez</option>
+                                        {taxRates.map((rate) => (
+                                          <option
+                                            key={rate}
+                                            value={rate}
+                                          >{`${rate}%`}</option>
+                                        ))}
+                                      </Field>
+                                      <ErrorMessage
+                                        name={`itemsDivers[${index}].taxRate`}
+                                        component="div"
+                                        className="error-message"
+                                      />
+                                    </Form.Group>
+                                  </Col>
+
+                                  {/* Display VAT Included Price */}
+                                  <Col md={2}>
+                                    <Form.Group>
+                                      <Form.Label className="parent-text">
+                                        TVA incluse
+                                      </Form.Label>
+                                      <p className="price-text">
+                                        {itemsDiver.taxRate === "" ||
+                                        itemsDiver.taxRate === undefined
+                                          ? "Entrez taxe"
+                                          : `${itemsDiver.vatIncludedPrice.toFixed(
+                                              2
+                                            )}€`}
+                                      </p>
+                                    </Form.Group>
+                                  </Col>
+
+                                  <Col xs="auto">
+                                    <Button
+                                      variant="outline-danger"
+                                      onClick={() => remove(index)}
                                     >
-                                      <option value="">Select Tax Rate</option>
-                                      {taxRates.map((rate) => (
-                                        <option
-                                          key={rate}
-                                          value={rate}
-                                        >{`${rate}%`}</option>
-                                      ))}
-                                    </Field>
-                                    <ErrorMessage
-                                      name={`itemsDivers[${index}].taxRate`}
-                                      component="div"
-                                      className="error-message"
-                                    />
-                                  </Form.Group>
-                                </Col>
-                                {/* VAT Included Price Display */}
-                                <Col md={2}>
-                                  <Form.Group>
-                                    <Form.Label className="parent-text">
-                                      TVA incluse
-                                    </Form.Label>
-                                    <p className="price-text">
-                                      {item.taxRate
-                                        ? `${item.vatIncludedPrice.toFixed(2)}€`
-                                        : "Entrez taxe"}
-                                    </p>
-                                  </Form.Group>
-                                </Col>
-                                {/* Remove Item Button */}
-                                <Col xs="auto">
+                                      <AiTwotoneDelete />
+                                    </Button>
+                                  </Col>
+                                </Row>
+                              ))}
+
+                              <Row className="mb-2">
+                                <Col>
                                   <Button
-                                    variant="outline-danger"
-                                    onClick={() => remove(index)}
+                                    variant="outline-primary"
+                                    onClick={() => {
+                                      push({
+                                        name: "",
+                                        diversListPrice: "",
+                                        price: "",
+                                        quantity: 1,
+                                        taxRate: "",
+                                        vatIncludedPrice: 0,
+                                        subtotal: 0,
+                                      });
+                                    }}
                                   >
-                                    <AiTwotoneDelete />
+                                    <AiFillEdit /> Écrivez-vous
                                   </Button>
                                 </Col>
                               </Row>
-                            ))}
-                            <Button
-                              variant="outline-primary"
-                              onClick={() => {
-                                push({
-                                  productId: "",
-                                  quantity: 1,
-                                  price: 0,
-                                  taxRate: "",
-                                  vatIncludedPrice: 0,
-                                  subtotal: 0,
-                                });
-                                //   console.log('Added new product item', values);
-                              }}
-                            >
-                              <AiOutlinePlus /> Ajouter un produit
-                            </Button>
-                          </>
-                        )}
-                      </FieldArray>
-
-                      {isTaxRateSelectedDivers && (
-                        <div className="mt-2" style={{ color: "#9f0f0f" }}>
-                          <h5>Total des Divers: €{totalFeeDivers}</h5>
-                        </div>
-                      )}
+                              {/* Toplam KDV Dahil Fiyatı Koşullu Olarak Göster */}
+                              {values.itemsDivers.length > 0 &&
+                                allArticlesHaveTaxRateSelectedDivers(
+                                  values.itemsDivers
+                                ) && (
+                                  <Row
+                                    className="mt-2"
+                                    style={{ color: "#9f0f0f" }}
+                                  >
+                                    <Col>
+                                      <h5>
+                                       Prix Total  Divers:{" "}
+                                        {calculateTotalVATIncludedPriceDivers(
+                                          values.itemsDivers
+                                        ).toFixed(2)}
+                                        €
+                                      </h5>
+                                    </Col>
+                                  </Row>
+                                )}
+                            </>
+                          )}
+                        </FieldArray>
+                      </Row>
                     </Accordion.Body>
                   </Accordion.Item>
                 </Accordion>

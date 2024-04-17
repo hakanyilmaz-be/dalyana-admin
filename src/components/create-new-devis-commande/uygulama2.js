@@ -683,34 +683,47 @@ const Uygulama2 = () => {
 
                                   {/* Tarif Mobilier € - HTVA Input */}
                                   <Col>
-                                  <Form.Group>
-  <Form.Label style={{ color: "#9f0f0f", fontWeight: "bold" }}>
-    Tarif Mobilier HTVA
-  </Form.Label>
-  <NumericFormat
-    thousandSeparator=","
-    decimalSeparator="."
-    decimalScale={2}
-    fixedDecimalScale={true}
-    prefix="€"  // Para birimi olarak Euro
-    allowNegative={false}
-    className={`form-control ${formik.errors.articles && formik.errors.articles[index] && formik.errors.articles[index].price && formik.touched.articles && formik.touched.articles[index] && formik.touched.articles[index].price ? 'is-invalid' : ''}`}
-    style={{
-      color: "#9f0f0f",
-      borderColor: "#9f0f0f",
-    }}
-    name={`articles[${index}].price`}
-    value={article.price || 0}
-    readOnly={true}
-    displayType="text"  // 'input' yerine 'text' olarak ayarladık, çünkü bu alan sadece okunabilir
-  />
-  <ErrorMessage
-    name={`articles[${index}].price`}
-    component="div"
-    className="error-message"
-  />
-</Form.Group>
-
+                                    <Form.Group>
+                                      <Form.Label
+                                        style={{
+                                          color: "#9f0f0f",
+                                          fontWeight: "bold",
+                                        }}
+                                      >
+                                        Tarif Mobilier HTVA
+                                      </Form.Label>
+                                      <NumericFormat
+                                        thousandSeparator=","
+                                        decimalSeparator="."
+                                        decimalScale={2}
+                                        fixedDecimalScale={true}
+                                        prefix="€" // Para birimi olarak Euro
+                                        allowNegative={false}
+                                        className={`form-control ${
+                                          formik.errors.articles &&
+                                          formik.errors.articles[index] &&
+                                          formik.errors.articles[index].price &&
+                                          formik.touched.articles &&
+                                          formik.touched.articles[index] &&
+                                          formik.touched.articles[index].price
+                                            ? "is-invalid"
+                                            : ""
+                                        }`}
+                                        style={{
+                                          color: "#9f0f0f",
+                                          borderColor: "#9f0f0f",
+                                        }}
+                                        name={`articles[${index}].price`}
+                                        value={article.price || 0}
+                                        readOnly={true}
+                                        displayType="text" // 'input' yerine 'text' olarak ayarladık, çünkü bu alan sadece okunabilir
+                                      />
+                                      <ErrorMessage
+                                        name={`articles[${index}].price`}
+                                        component="div"
+                                        className="error-message"
+                                      />
+                                    </Form.Group>
                                   </Col>
 
                                   {/* Tax Rate Selection */}
@@ -2193,61 +2206,73 @@ const Uygulama2 = () => {
               </Card.Body>
             </Card>
 
-            <Form.Group className="livraison mb-3" style={{ display: "flex", gap: "15px" }}>
-  <Form.Label as="h3">Livraison:</Form.Label>
-  <NumericFormat
-    thousandSeparator=","
-    decimalSeparator="."
-    decimalScale={2}
-    fixedDecimalScale={true}
-    prefix={"€"} // Para birimi olarak Euro
-    allowNegative={false}
-    className={`form-control ${formik.errors.deliveryFee && formik.touched.deliveryFee ? 'is-invalid' : ''}`}
-    style={{
-      color: "#9f0f0f",
-      borderColor: "#9f0f0f",
-      width: "200px",
-    }}
-    placeholder="Frais de livraison"
-    value={values.deliveryFee}
-    onValueChange={(values) => {
-      const { floatValue } = values;
-      setFieldValue("deliveryFee", floatValue || 0);
-    }}
-  />
-  <Form.Control.Feedback type="invalid">
-    {formik.errors.deliveryFee}
-  </Form.Control.Feedback>
-</Form.Group>
+            <Form.Group
+              className="livraison mb-3"
+              style={{ display: "flex", gap: "15px" }}
+            >
+              <Form.Label as="h3">Livraison:</Form.Label>
+              <NumericFormat
+                thousandSeparator=","
+                decimalSeparator="."
+                decimalScale={2}
+                fixedDecimalScale={true}
+                prefix={"€"} // Para birimi olarak Euro
+                allowNegative={false}
+                className={`form-control ${
+                  formik.errors.deliveryFee && formik.touched.deliveryFee
+                    ? "is-invalid"
+                    : ""
+                }`}
+                style={{
+                  color: "#9f0f0f",
+                  borderColor: "#9f0f0f",
+                  width: "200px",
+                }}
+                placeholder="Frais de livraison"
+                value={values.deliveryFee}
+                onValueChange={(values) => {
+                  const { floatValue } = values;
+                  setFieldValue("deliveryFee", floatValue || 0);
+                }}
+              />
+              <Form.Control.Feedback type="invalid">
+                {formik.errors.deliveryFee}
+              </Form.Control.Feedback>
+            </Form.Group>
 
-
-<Form.Group className="pose mb-5" style={{ display: "flex", gap: "65px" }}>
-  <Form.Label as="h3">Pose:</Form.Label>
-  <NumericFormat
-    thousandSeparator=","
-    decimalSeparator="."
-    decimalScale={2}
-    fixedDecimalScale={true}
-    prefix={"€"} // Para birimi olarak Euro
-    allowNegative={false}
-    className={`form-control ${formik.errors.montageFee && formik.touched.montageFee ? 'is-invalid' : ''}`}
-    style={{
-      color: "#9f0f0f",
-      borderColor: "#9f0f0f",
-      width: "200px",
-    }}
-    placeholder="Frais de pose"
-    value={values.montageFee}
-    onValueChange={(values) => {
-      const { floatValue } = values;
-      setFieldValue("montageFee", floatValue || 0);
-    }}
-  />
-  <Form.Control.Feedback type="invalid">
-    {formik.errors.montageFee}
-  </Form.Control.Feedback>
-</Form.Group>
-
+            <Form.Group
+              className="pose mb-5"
+              style={{ display: "flex", gap: "65px" }}
+            >
+              <Form.Label as="h3">Pose:</Form.Label>
+              <NumericFormat
+                thousandSeparator=","
+                decimalSeparator="."
+                decimalScale={2}
+                fixedDecimalScale={true}
+                prefix={"€"} // Para birimi olarak Euro
+                allowNegative={false}
+                className={`form-control ${
+                  formik.errors.montageFee && formik.touched.montageFee
+                    ? "is-invalid"
+                    : ""
+                }`}
+                style={{
+                  color: "#9f0f0f",
+                  borderColor: "#9f0f0f",
+                  width: "200px",
+                }}
+                placeholder="Frais de pose"
+                value={values.montageFee}
+                onValueChange={(values) => {
+                  const { floatValue } = values;
+                  setFieldValue("montageFee", floatValue || 0);
+                }}
+              />
+              <Form.Control.Feedback type="invalid">
+                {formik.errors.montageFee}
+              </Form.Control.Feedback>
+            </Form.Group>
 
             <Form.Group className="mb-3">
               <Form.Label>Code:</Form.Label>
