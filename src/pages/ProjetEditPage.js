@@ -59,17 +59,55 @@ const boxWidth = textWidth + 2 * paddingX;  // Kutunun genişliğini hesapla
 const boxHeight = 14; // Kutunun yüksekliğini azalt
 
 // Çerçeve çiz
-doc.rect(160, 16, boxWidth, boxHeight);  // Çerçevenin üst çizgisini yukarı çek
+doc.rect(150, 16, boxWidth, boxHeight);  // Çerçevenin üst çizgisini yukarı çek
 
 // Metni çerçevenin içine yerleştir
-doc.text(statusText, 160 + paddingX, 26); // Metni dikey olarak kutunun içine ortala
+doc.text(statusText, 150 + paddingX, 26); // Metni dikey olarak kutunun içine ortala
 
 
 
-    // Müşteri bilgileri
-    doc.setFontSize(9);
-    doc.text(`ID: ${clientData.id}\nName: ${clientData.name}\nTVA: ${clientData.tva}\nPhone Number: ${clientData.phoneNumber}\nEmail: ${clientData.email}\nAddress: ${clientData.address}\nZip Code: ${clientData.zipCode}\nCity: ${clientData.city}`, 150, 46);
-  
+// Müşteri bilgileri - Başlıklar bold ve detaylar normal fontta yazılacak
+doc.setFontSize(9);
+doc.setFont("helvetica", "bold"); // Başlık için bold font
+doc.text("N° Client:", 130, 46);
+doc.setFont("helvetica", "normal"); // Detay için normal font
+doc.text(clientData.id, 152, 46);
+
+doc.setFont("helvetica", "bold");
+doc.text("Nom:", 130, 50);
+doc.setFont("helvetica", "normal");
+doc.text(clientData.name, 152, 50);
+
+doc.setFont("helvetica", "bold");
+doc.text("Tél:", 130, 54);
+doc.setFont("helvetica", "normal");
+doc.text(clientData.phoneNumber, 152, 54);
+
+doc.setFont("helvetica", "bold");
+doc.text("E-mail:", 130, 58);
+doc.setFont("helvetica", "normal");
+doc.text(clientData.email, 152, 58);
+
+doc.setFont("helvetica", "bold");
+doc.text("Adresse:", 130, 62);
+doc.setFont("helvetica", "normal");
+doc.text(clientData.address, 152, 62);
+
+doc.setFont("helvetica", "bold");
+doc.text("Code Postal:", 130, 66);
+doc.setFont("helvetica", "normal");
+doc.text(clientData.zipCode, 152, 66);
+
+doc.setFont("helvetica", "bold");
+doc.text("Ville:", 130, 70);
+doc.setFont("helvetica", "normal");
+doc.text(clientData.city, 152, 70);
+
+doc.setFont("helvetica", "bold");
+doc.text("TVA:", 130, 74);
+doc.setFont("helvetica", "normal");
+doc.text(clientData.tva, 152, 74);
+
     let currentY = 70; // Yeni Y konumunu belirle
   
     // Proje Bilgileri Üst Bilgileri
