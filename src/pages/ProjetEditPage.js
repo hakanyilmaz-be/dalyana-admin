@@ -125,28 +125,125 @@ doc.text(clientData.tva, 152, 74);
     // Proje Bilgileri Üst Bilgileri
     doc.setFontSize(9);
 
-    currentY += 10;
+    currentY += 30;
   
     // Kategori Başlıkları ve Tablolar
+    // MEUBLES kategorisi için özel değişken
+    const meublesData = projectData.articles;
+
+    // Diğer kategoriler için liste
     const categories = [
-      { title: "MEUBLES", data: projectData.articles },
       { title: "ACCESSOIRES", data: projectData.itemsAccessoires },
       { title: "ÉLECTROMÉNAGERS", data: projectData.itemsElectromenagers },
       { title: "SANITAIRES", data: projectData.itemsSanitaires },
       { title: "PDT SOLID SURFACE", data: projectData.itemsSurfaces },
       { title: "DIVERS", data: projectData.itemsDivers },
     ];
-  
+
+    // MEUBLES kategorisi için özel işlem
+    doc.setFontSize(18);
+    doc.setFont("helvetica", "bold");
+
+    doc.setTextColor(139, 0, 0);  // Koyu kırmızı
+    doc.setFillColor(242, 242, 242);  // Gri arka plan
+    const title = "Meubles";
+    const fontSize = 15;
+    doc.setFontSize(fontSize);
+    
+    // Margin değerlerini ayarla
+    const leftMargin = 18;
+    const rightMargin = 18;
+    const titleWidth = doc.internal.pageSize.width - (leftMargin + rightMargin);  // Genişlik, marginlar çıkarılarak hesaplanıyor
+    
+    // Yüksekliği font boyutuna göre daha uygun bir şekilde ayarla
+    const titleHeight = fontSize * 0.5;  // Font boyutunun yaklaşık %75'i kadar
+    
+    // Başlangıç X koordinatı
+    const titleX = leftMargin;
+    
+    // Dikdörtgeni çiz, marginler ile ayarlanmış genişlik ve yükseklik
+    doc.rect(titleX, currentY, titleWidth, titleHeight, 'F');
+    
+    // Başlığı tam ortada yerleştir
+    const calculatedTextWidth = doc.getStringUnitWidth(title) * fontSize / doc.internal.scaleFactor;
+    const textX = titleX + (titleWidth - calculatedTextWidth) / 2;
+    doc.text(title, textX, currentY + titleHeight * 0.8);  // Metni dikdörtgen içinde daha ortalanmış konumda yazdır
+    
+    // Başlık ve alt metin için yeterli boşluk ayarla
+    currentY += titleHeight + 10;  // Alt metin için boşluk artışını ayarla
+    
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(11); // Metin boyutunu 11 olarak ayarladık, bu yüzden fontSize değeri 11 olarak kullanılmalıdır.
+    doc.setTextColor(0, 0, 0); // Siyah
+    const subText = "- selon détail des éléments meubles en annexe -";
+    
+    // fontSize yerine direkt olarak kullanılan font boyutunu kullanarak genişliği hesaplayalım.
+    const subTextWidth = doc.getStringUnitWidth(subText) * 11 / doc.internal.scaleFactor; // fontSize yerine 11 kullandık.
+    const subTextX = (doc.internal.pageSize.width - subTextWidth) / 2; // Tam ortalanması için hesaplama
+    doc.text(subText, subTextX, currentY);
+    currentY += 10;
+    
+    
+
+    const preDiscountInfo = "Prix mobilier (TVAC):";
+    doc.setFontSize(11);
+    // "articles" içinden gelen değerleri al
+    const furnitureListPrice = projectData.articles[0].furnitureListPrice;
+    const taxRate = projectData.articles[0].taxRate;
+
+    // Indirim öncesi fiyatı hesapla
+    const preDiscountPrice = furnitureListPrice + (furnitureListPrice * (taxRate / 100));
+    const preDiscountText = `${preDiscountInfo} ${preDiscountPrice.toFixed(2)} €`; // Metni ve hesaplanan değeri birleştir
+
+    // Metin genişliğini hesaplamak için tam metni kullan
+    const preDiscountTextWidth = doc.getStringUnitWidth(preDiscountText) * 11;
+    // Sağa yaslanacak şekilde konum hesaplama, sağ tarafta 25 piksel boşluk bırakarak
+    const preDiscountTextX = doc.internal.pageSize.width - preDiscountTextWidth + 75; // Sağ margin olarak 25 piksel kullanıldı
+    doc.text(preDiscountText, preDiscountTextX, currentY); // Birleştirilmiş metni yazdır
+    currentY += 5; // Sonraki içerik için boşluk
+
+    
+    const priceInfo = "Prix mobilier après remise (TVAC) :";
+    doc.setFontSize(11);
+    // "Meubles" kategorisinden "vatIncludedPrice" almak ve metinle birleştirmek
+    const vatIncludedPrice = projectData.articles[0].vatIncludedPrice;
+    const fullText = `${priceInfo} ${vatIncludedPrice.toFixed(2)} €`; // Metni ve değeri birleştir
+    // Metin genişliğini hesaplamak için tam metni kullan
+    const fullTextWidth = doc.getStringUnitWidth(fullText) * 11;
+    // Sağa yaslanacak şekilde konum hesaplama, sağ tarafta 25 piksel boşluk bırakarak
+    // Daha önce tanımlanmış textX varsa, yeni bir ad kullanmamız gerekir. Örneğin, newTextX:
+    const newTextX = doc.internal.pageSize.width - fullTextWidth + 120; // Sağ margin olarak 25 piksel kullanıldı
+    doc.text(fullText, newTextX, currentY); // Birleştirilmiş metni yazdır
+    currentY += 10; // Sonraki içerik için boşluk
+    
+    const subTotalInfo = "Sous-total prix Mobilier (TVAC) :";
+    doc.setFontSize(11);
+    doc.setTextColor(139, 0, 0); // Koyu kırmızı rengi ayarla
+
+    // "totalFeeArticles" değerini almak
+    const totalFeeArticles = projectData.totalFeeArticles;
+    const subTotalText = `${subTotalInfo} ${parseFloat(totalFeeArticles).toFixed(2)} €`; // Metni ve değeri birleştir
+
+    // Metin genişliğini hesaplamak için tam metni kullan
+    const subTotalTextWidth = doc.getStringUnitWidth(subTotalText) * 11;
+    // Sağa yaslanacak şekilde konum hesaplama, sağ tarafta 25 piksel boşluk bırakarak
+    const subTotalTextX = doc.internal.pageSize.width - subTotalTextWidth + 110; // Sağ margin olarak 25 piksel kullanıldı
+    doc.text(subTotalText, subTotalTextX, currentY); // Birleştirilmiş metni yazdır
+    currentY += 15; // Sonraki içerik için boşluk
+
+    
+
+
+    // Diğer kategorileri işle
     categories.forEach(category => {
       if (doc.internal.pageSize.height - currentY < 20) {
         doc.addPage();
-        currentY = 10; // Yeni sayfanın başına geri dön
+        currentY = 10;
       }
       doc.setFontSize(15);
-      currentY += 7; // Başlık için boşluk
+      doc.setTextColor(0, 0, 0);
       doc.text(category.title, 18, currentY);
-      doc.setFontSize(9);
-      currentY += 3; // Tablo öncesi boşluk
+      currentY += 3;
       doc.autoTable({
         startY: currentY,
         margin: { left: 18 },
@@ -163,10 +260,13 @@ doc.text(clientData.tva, 152, 74);
           item.discountRate,
         ]),
         didDrawPage: function (data) {
-          currentY = data.cursor.y + 5; // Güncel Y konumunu güncelle ve biraz boşluk bırak
+          currentY = data.cursor.y + 5;
         }
       });
     });
+
+    
+    
   
     // Diğer Ücretler ve Genel Sözleşme Şartları için yeterli alan kontrolü
     if (doc.internal.pageSize.height - currentY < 40) {
