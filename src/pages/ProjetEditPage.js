@@ -17,35 +17,35 @@ const ProjetEditPage = () => {
     const doc = new jsPDF();
   
     // Logo ve firma bilgileri
-    doc.addImage(logo, 'PNG', 16, 17, 66, 18);
+    doc.addImage(logo, 'PNG', 18, 17, 66, 18);
     doc.setFontSize(9);
 
   // Bold başlıklar ve detayların yazılması için metinlerin koordinatları ayarlanmalıdır
   doc.setFont("helvetica", "bold"); // Bold font ayarı
-  doc.text("Tél:", 16, 46);
+  doc.text("Tél:", 18, 46);
   doc.setFont("helvetica", "normal"); // Detaylar için normal fonta dönülür
-  doc.text("065946565", 30, 46);
+  doc.text("065946565", 33, 46);
 
   doc.setFont("helvetica", "bold");
-  doc.text("E-Mail:", 16, 50);
+  doc.text("E-Mail:", 18, 50);
   doc.setFont("helvetica", "normal");
-  doc.text("dalyana.mons@gmail.com", 30, 50);
+  doc.text("dalyana.mons@gmail.com", 33, 50);
 
   doc.setFont("helvetica", "bold");
-  doc.text("Website:", 16, 54);
+  doc.text("Website:", 18, 54);
   doc.setFont("helvetica", "normal");
-  doc.text("www.dalyana.com", 30, 54);
+  doc.text("www.dalyana.com", 33, 54);
 
   doc.setFont("helvetica", "bold");
-  doc.text("TVA:", 16, 58);
+  doc.text("TVA:", 18, 58);
   doc.setFont("helvetica", "normal");
-  doc.text("BE0755397594", 30, 58);
+  doc.text("BE0755397594", 33, 58);
 
   doc.setFont("helvetica", "bold");
-  doc.text("Coordonnées Bancaires:", 16, 62);
+  doc.text("Coordonnées Bancaires:", 18, 62);
   doc.setFont("helvetica", "normal");
-  doc.text("CBC BE78732056758286", 16, 66);
-  doc.text("BIC CREGBEBB", 16, 70);
+  doc.text("CBC BE78732056758286", 18, 66);
+  doc.text("BIC CREGBEBB", 18, 70);
 
 // Proje Statusu
 // Projenin durumunu gösteren bir metin kutusu çizin
@@ -68,6 +68,18 @@ doc.text(statusText, 150 + paddingX, 26); // Metni dikey olarak kutunun içine o
 
 // Müşteri bilgileri - Başlıklar bold ve detaylar normal fontta yazılacak
 doc.setFontSize(9);
+doc.setFont("helvetica", "bold"); // Fontu ve stili ayarla
+
+// Arka plan dikdörtgenini çiz
+doc.setFillColor(242, 242, 242); // Açık gri renk ayarla (RGB)
+doc.rect(128, 36, 60, 6, 'F'); // (x, y, genişlik, yükseklik) dikdörtgen çiz
+
+// Üzerine metni yaz
+doc.setTextColor(139, 0, 0); // Koyu kırmızı metin rengi
+doc.text("Votre Coordonnées:", 130, 40);
+
+
+doc.setTextColor(0, 0, 0); // Siyah metin rengi
 doc.setFont("helvetica", "bold"); // Başlık için bold font
 doc.text("N° Client:", 130, 46);
 doc.setFont("helvetica", "normal"); // Detay için normal font
@@ -117,12 +129,12 @@ doc.text(clientData.tva, 152, 74);
   
     // Kategori Başlıkları ve Tablolar
     const categories = [
-      { title: "Articles", data: projectData.articles },
-      { title: "Items Accessoires", data: projectData.itemsAccessoires },
-      { title: "Items Electromenagers", data: projectData.itemsElectromenagers },
-      { title: "Items Sanitaires", data: projectData.itemsSanitaires },
-      { title: "Items Divers", data: projectData.itemsDivers },
-      { title: "Items Surfaces", data: projectData.itemsSurfaces },
+      { title: "MEUBLES", data: projectData.articles },
+      { title: "ACCESSOIRES", data: projectData.itemsAccessoires },
+      { title: "ÉLECTROMÉNAGERS", data: projectData.itemsElectromenagers },
+      { title: "SANITAIRES", data: projectData.itemsSanitaires },
+      { title: "PDT SOLID SURFACE", data: projectData.itemsSurfaces },
+      { title: "DIVERS", data: projectData.itemsDivers },
     ];
   
     categories.forEach(category => {
@@ -130,12 +142,14 @@ doc.text(clientData.tva, 152, 74);
         doc.addPage();
         currentY = 10; // Yeni sayfanın başına geri dön
       }
-      doc.setFontSize(9);
+      doc.setFontSize(15);
       currentY += 7; // Başlık için boşluk
-      doc.text(category.title, 10, currentY);
+      doc.text(category.title, 18, currentY);
+      doc.setFontSize(9);
       currentY += 3; // Tablo öncesi boşluk
       doc.autoTable({
         startY: currentY,
+        margin: { left: 18 },
         theme: 'striped',
         head: [['Name', 'List Price', 'Price', 'Quantity', 'Tax Rate', 'VAT Included Price', 'Subtotal', 'Discount Rate']],
         body: category.data.map(item => [
