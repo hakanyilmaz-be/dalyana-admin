@@ -23,7 +23,8 @@
             "vatIncludedPrice": 205.7,
             "subtotal": 200,
             "discountedPrice": 170,
-            "discountRate": "15"
+            "discountRate": "15",
+            "description": "Accessoire Ménager Et De Cuisine - Accessoires Et Matériel Ménagers (Acier Inoxydable, Métal, Cuisinière/Four)"
         }
     ],
     "itemsElectromenagers": [
@@ -35,7 +36,8 @@
             "vatIncludedPrice": 440.96000000000004,
             "subtotal": 520,
             "discountedPrice": 416,
-            "discountRate": "20"
+            "discountRate": "20",
+            "description": "Une planche à découper avec un égouttoir intégré, des rangements pour les verres à pied"
         }
     ],
     "itemsSanitaires": [
@@ -47,7 +49,8 @@
             "vatIncludedPrice": 344.84999999999997,
             "subtotal": 300,
             "discountedPrice": 285,
-            "discountRate": "5"
+            "discountRate": "5",
+            "description": "Accessoire Ménager Et De Cuisine - Accessoires Et Matériel Ménagers (Acier Inoxydable, Métal, Cuisinière/Four)"
         }
     ],
     "itemsDivers": [
@@ -71,7 +74,8 @@
             "vatIncludedPrice": 572,
             "subtotal": 520,
             "discountedPrice": 520,
-            "discountRate": "0"
+            "discountRate": "0",
+            "description": "Une planche à découper avec un égouttoir intégré, des rangements pour les verres à pied"
         } 
     ],
     "deliveryFee": 300,

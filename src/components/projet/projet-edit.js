@@ -74,6 +74,7 @@ const SearchableSelect = ({
     setSearchTerm('');
 
     if (isProduct) {
+      setFieldValue(`items${dataType}[${index}].description`, item.description);
       const currentQuantity = values[`items${dataType}`][index].quantity || 1;
       const selectedProduct = data.find(p => p.id === item.id);
       const price = selectedProduct ? selectedProduct.price : 0;
@@ -895,6 +896,23 @@ const ProjetEdit = () => {
                                     />
                                   </Form.Group>
                                 </Col>
+
+                                {/* Product Description */}
+                                <Col md={5}>
+                                  <Form.Group>
+                                    <Form.Label>Designation</Form.Label>
+                                    <p
+                                      style={{
+                                        fontSize: "12px",
+                                        lineHeight: "14px",
+                                        marginBottom: "0.5rem",
+                                      }}
+                                    >
+                                      {item.description || " "}
+                                    </p>
+                                  </Form.Group>
+                                </Col>
+
                                 {/* Quantity Input */}
                                 <Col md={1}>
                                   <Form.Group>
@@ -1164,6 +1182,21 @@ const ProjetEdit = () => {
                                       component="div"
                                       className="error-message"
                                     />
+                                  </Form.Group>
+                                </Col>
+                                {/* Product Description */}
+                                <Col md={5}>
+                                  <Form.Group>
+                                    <Form.Label>Designation</Form.Label>
+                                    <p
+                                      style={{
+                                        fontSize: "12px",
+                                        lineHeight: "14px",
+                                        marginBottom: "0.5rem",
+                                      }}
+                                    >
+                                      {item.description || " "}
+                                    </p>
                                   </Form.Group>
                                 </Col>
                                 {/* Quantity Input */}
@@ -1442,6 +1475,21 @@ const ProjetEdit = () => {
                                     />
                                   </Form.Group>
                                 </Col>
+                                {/* Product Description */}
+                                <Col md={5}>
+                                  <Form.Group>
+                                    <Form.Label>Designation</Form.Label>
+                                    <p
+                                      style={{
+                                        fontSize: "12px",
+                                        lineHeight: "14px",
+                                        marginBottom: "0.5rem",
+                                      }}
+                                    >
+                                      {item.description || " "}
+                                    </p>
+                                  </Form.Group>
+                                </Col>
                                 {/* Quantity Input */}
                                 <Col md={1}>
                                   <Form.Group>
@@ -1711,6 +1759,21 @@ const ProjetEdit = () => {
                                       component="div"
                                       className="error-message"
                                     />
+                                  </Form.Group>
+                                </Col>
+                                {/* Product Description */}
+                                <Col md={5}>
+                                  <Form.Group>
+                                    <Form.Label>Designation</Form.Label>
+                                    <p
+                                      style={{
+                                        fontSize: "12px",
+                                        lineHeight: "14px",
+                                        marginBottom: "0.5rem",
+                                      }}
+                                    >
+                                      {item.description || " "}
+                                    </p>
                                   </Form.Group>
                                 </Col>
                                 {/* Quantity Input */}
