@@ -131,15 +131,6 @@ doc.text(clientData.tva, 152, 74);
     // MEUBLES kategorisi için özel değişken
     const meublesData = projectData.articles;
 
-    // Diğer kategoriler için liste
-    const categories = [
-      { title: "ACCESSOIRES", data: projectData.itemsAccessoires },
-      { title: "ÉLECTROMÉNAGERS", data: projectData.itemsElectromenagers },
-      { title: "SANITAIRES", data: projectData.itemsSanitaires },
-      { title: "PDT SOLID SURFACE", data: projectData.itemsSurfaces },
-      { title: "DIVERS", data: projectData.itemsDivers },
-    ];
-
     // MEUBLES kategorisi için özel işlem
     doc.setFontSize(18);
     doc.setFont("helvetica", "bold");
@@ -157,13 +148,10 @@ doc.text(clientData.tva, 152, 74);
     
     // Yüksekliği font boyutuna göre daha uygun bir şekilde ayarla
     const titleHeight = fontSize * 0.5;  // Font boyutunun yaklaşık %75'i kadar
-    
     // Başlangıç X koordinatı
     const titleX = leftMargin;
-    
     // Dikdörtgeni çiz, marginler ile ayarlanmış genişlik ve yükseklik
     doc.rect(titleX, currentY, titleWidth, titleHeight, 'F');
-    
     // Başlığı tam ortada yerleştir
     const calculatedTextWidth = doc.getStringUnitWidth(title) * fontSize / doc.internal.scaleFactor;
     const textX = titleX + (titleWidth - calculatedTextWidth) / 2;
@@ -232,38 +220,81 @@ doc.text(clientData.tva, 152, 74);
     currentY += 15; // Sonraki içerik için boşluk
 
     
+   // Diğer kategoriler için liste
+const categories = [
+  { title: "Accessoires", data: projectData.itemsAccessoires },
+  { title: "Électroménagers", data: projectData.itemsElectromenagers },
+  { title: "Sanitaires", data: projectData.itemsSanitaires },
+  { title: "Pdt Solid Surface", data: projectData.itemsSurfaces },
+  { title: "Divers", data: projectData.itemsDivers },
+];
+
+// Diğer kategorileri işle
+categories.forEach(category => {
+  if (doc.internal.pageSize.height - currentY < 20) {
+    doc.addPage();
+    currentY = 10;  // Sayfa başına resetleme
+  }
+
+  // Başlık için font ayarları
+  doc.setFontSize(15);
+  doc.setFont("helvetica", "bold"); // Başlık için bold font
+  doc.setTextColor(139, 0, 0);  // Koyu kırmızı
+  
+  // Başlık genişliği ve yüksekliği hesaplama
+  const titleMargin = 18;
+  const titleWidth = doc.internal.pageSize.width - (2 * titleMargin);  // Başlık için genişlik
+  const titleHeight = 15 * 0.5;  // Yükseklik
+
+  // Başlığı çiz
+  doc.setFillColor(242, 242, 242); // Arka plan rengi (Gri)
+  doc.rect(titleMargin, currentY, titleWidth, titleHeight, 'F'); // Arka planı doldur
+
+  // Başlığı ortalanmış olarak yazdır
+  const titleTextWidth = doc.getStringUnitWidth(category.title) * doc.getFontSize() / doc.internal.scaleFactor;
+  const titleX = titleMargin + (titleWidth - titleTextWidth) / 2;
+  doc.text(category.title, titleX, currentY + titleHeight * 0.8);
 
 
-    // Diğer kategorileri işle
-    categories.forEach(category => {
-      if (doc.internal.pageSize.height - currentY < 20) {
-        doc.addPage();
-        currentY = 10;
-      }
-      doc.setFontSize(15);
-      doc.setTextColor(0, 0, 0);
-      doc.text(category.title, 18, currentY);
-      currentY += 3;
-      doc.autoTable({
-        startY: currentY,
-        margin: { left: 18 },
-        theme: 'striped',
-        head: [['Name', 'List Price', 'Price', 'Quantity', 'Tax Rate', 'VAT Included Price', 'Subtotal', 'Discount Rate']],
-        body: category.data.map(item => [
-          item.name || item.productId,
-          item.furnitureListPrice || '',
-          item.price,
-          item.quantity,
-          item.taxRate,
-          item.vatIncludedPrice,
-          item.subtotal || '',
-          item.discountRate,
-        ]),
-        didDrawPage: function (data) {
-          currentY = data.cursor.y + 5;
-        }
-      });
-    });
+
+
+  currentY += titleHeight + 5; // İçerik için boşluk bırak
+  doc.setTextColor(0, 0, 0);
+
+  // Otomatik tablo ekleme
+  doc.autoTable({
+    startY: currentY,
+    margin: { left: 18, right: 18 },  // Hem sol hem de sağ marjin ayarları
+    theme: 'striped',
+    head: [['Reference', 'Designation', 'PU', 'U', 'Prix de vente']],
+    body: category.data.map(item => {
+      // İndirimli fiyatı ve vergi oranını kullanarak nihai fiyatı hesapla
+      const discountedPrice = item.discountedPrice // Eğer indirimli fiyat mevcut değilse normal fiyatı kullan
+      const taxRate = item.taxRate // Vergi oranı yoksa 0 olarak hesapla
+      const priceWithTax = discountedPrice + (discountedPrice * (taxRate / 100)); // KDV dahil fiyatı hesapla
+  
+      return [
+        item.name || item.productId,
+        item.description || '',
+        priceWithTax.toFixed(2) + '€',  // KDV dahil, indirimli fiyatı iki ondalık basamak ve para birimi ile formatla
+        item.quantity,
+        item.vatIncludedPrice.toFixed(2) + '€'  // KDV dahil fiyatı (mevcutsa) iki ondalık basamak ve para birimi ile formatla
+      ];
+    }),
+    columnStyles: {
+      0: { cellWidth: 30 },  // Reference sütunu için genişlik
+      1: { cellWidth: 'auto', minCellWidth: 40 },  // Designation sütunu için minimum ve otomatik genişlik ayarı
+      2: { cellWidth: 30 },  // Prix ​​unitaire sütunu için genişlik
+      3: { cellWidth: 10 },  // U (Unit) sütunu için genişlik
+      4: { cellWidth: 30 }   // Prix de vente sütunu için genişlik
+    },
+    styles: { overflow: 'linebreak' },  // Uzun metinler için otomatik satır geçişi
+    didDrawPage: function (data) {
+      currentY = data.cursor.y + 5;  // Tablo çizimi sonrası y konumunu güncelle
+    }
+  });
+});
+
 
     
     
