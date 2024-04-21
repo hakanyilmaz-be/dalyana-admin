@@ -73,6 +73,7 @@ const SearchableSelect = ({
     setSearchTerm('');
 
     if (isProduct) {
+      setFieldValue(`items${dataType}[${index}].description`, item.description);
       const currentQuantity = values[`items${dataType}`][index].quantity || 1;
       const selectedProduct = data.find(p => p.id === item.id);
       const price = selectedProduct ? selectedProduct.price : 0;
@@ -911,6 +912,23 @@ const CreateNewDevisCommande = () => {
                                     />
                                   </Form.Group>
                                 </Col>
+
+                                {/* Product Description */}
+                                <Col md={5}>
+                                  <Form.Group>
+                                    <Form.Label>Designation</Form.Label>
+                                    <p
+                                      style={{
+                                        fontSize: "12px",
+                                        lineHeight: "14px",
+                                        marginBottom: "0.5rem",
+                                      }}
+                                    >
+                                      {item.description || " "}
+                                    </p>
+                                  </Form.Group>
+                                </Col>
+
                                 {/* Quantity Input */}
                                 <Col md={1}>
                                   <Form.Group>
@@ -1182,6 +1200,23 @@ const CreateNewDevisCommande = () => {
                                     />
                                   </Form.Group>
                                 </Col>
+
+                                {/* Product Description */}
+                                <Col md={5}>
+                                  <Form.Group>
+                                    <Form.Label>Designation</Form.Label>
+                                    <p
+                                      style={{
+                                        fontSize: "12px",
+                                        lineHeight: "14px",
+                                        marginBottom: "0.5rem",
+                                      }}
+                                    >
+                                      {item.description || " "}
+                                    </p>
+                                  </Form.Group>
+                                </Col>
+
                                 {/* Quantity Input */}
                                 <Col md={1}>
                                   <Form.Group>
@@ -1458,6 +1493,21 @@ const CreateNewDevisCommande = () => {
                                     />
                                   </Form.Group>
                                 </Col>
+                                {/* Product Description */}
+                                <Col md={5}>
+                                  <Form.Group>
+                                    <Form.Label>Designation</Form.Label>
+                                    <p
+                                      style={{
+                                        fontSize: "12px",
+                                        lineHeight: "14px",
+                                        marginBottom: "0.5rem",
+                                      }}
+                                    >
+                                      {item.description || " "}
+                                    </p>
+                                  </Form.Group>
+                                </Col>
                                 {/* Quantity Input */}
                                 <Col md={1}>
                                   <Form.Group>
@@ -1727,6 +1777,21 @@ const CreateNewDevisCommande = () => {
                                       component="div"
                                       className="error-message"
                                     />
+                                  </Form.Group>
+                                </Col>
+                                {/* Product Description */}
+                                <Col md={5}>
+                                  <Form.Group>
+                                    <Form.Label>Designation</Form.Label>
+                                    <p
+                                      style={{
+                                        fontSize: "12px",
+                                        lineHeight: "14px",
+                                        marginBottom: "0.5rem",
+                                      }}
+                                    >
+                                      {item.description || " "}
+                                    </p>
                                   </Form.Group>
                                 </Col>
                                 {/* Quantity Input */}
@@ -2024,17 +2089,16 @@ const CreateNewDevisCommande = () => {
                                           const newDiversListPrice =
                                             floatValue || 0;
                                           const discountRate =
-                                          itemsDiver.discountRate ?? 0;
+                                            itemsDiver.discountRate ?? 0;
                                           const discountedPrice =
-                                          newDiversListPrice -
+                                            newDiversListPrice -
                                             (newDiversListPrice *
                                               discountRate) /
                                               100;
 
                                           updateDiverItem(index, {
                                             ...itemsDiver,
-                                            diversListPrice:
-                                              newDiversListPrice,
+                                            diversListPrice: newDiversListPrice,
                                             price: discountedPrice,
                                           });
                                         }}
@@ -2085,7 +2149,6 @@ const CreateNewDevisCommande = () => {
                                     </Form.Group>
                                   </Col>
 
-                                
                                   <Col>
                                     <Form.Group>
                                       <Form.Label
@@ -2106,10 +2169,12 @@ const CreateNewDevisCommande = () => {
                                         className={`form-control ${
                                           formik.errors.itemsDivers &&
                                           formik.errors.itemsDivers[index] &&
-                                          formik.errors.itemsDivers[index].price &&
+                                          formik.errors.itemsDivers[index]
+                                            .price &&
                                           formik.touched.itemsDivers &&
                                           formik.touched.itemsDivers[index] &&
-                                          formik.touched.itemsDivers[index].price
+                                          formik.touched.itemsDivers[index]
+                                            .price
                                             ? "is-invalid"
                                             : ""
                                         }`}
@@ -2231,7 +2296,7 @@ const CreateNewDevisCommande = () => {
                                   >
                                     <Col>
                                       <h5>
-                                       Prix Total  Divers:{" "}
+                                        Prix Total Divers:{" "}
                                         {calculateTotalVATIncludedPriceDivers(
                                           values.itemsDivers
                                         ).toFixed(2)}
