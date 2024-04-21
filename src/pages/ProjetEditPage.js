@@ -71,7 +71,7 @@ doc.setFontSize(9);
 doc.setFont("helvetica", "bold"); // Fontu ve stili ayarla
 
 // Arka plan dikdörtgenini çiz
-doc.setFillColor(242, 242, 242); // Açık gri renk ayarla (RGB)
+doc.setFillColor(230, 230, 230); // Açık gri renk ayarla (RGB)
 doc.rect(128, 36, 60, 6, 'F'); // (x, y, genişlik, yükseklik) dikdörtgen çiz
 
 // Üzerine metni yaz
@@ -136,7 +136,7 @@ doc.text(clientData.tva, 152, 74);
     doc.setFont("helvetica", "bold");
 
     doc.setTextColor(139, 0, 0);  // Koyu kırmızı
-    doc.setFillColor(242, 242, 242);  // Gri arka plan
+    doc.setFillColor(230, 230, 230);  // Gri arka plan
     const title = "Meubles";
     const fontSize = 15;
     doc.setFontSize(fontSize);
@@ -247,7 +247,7 @@ categories.forEach(category => {
   const titleHeight = 15 * 0.5;  // Yükseklik
 
   // Başlığı çiz
-  doc.setFillColor(242, 242, 242); // Arka plan rengi (Gri)
+  doc.setFillColor(230, 230, 230); // Arka plan rengi (Gri)
   doc.rect(titleMargin, currentY, titleWidth, titleHeight, 'F'); // Arka planı doldur
 
   // Başlığı ortalanmış olarak yazdır
@@ -281,6 +281,18 @@ categories.forEach(category => {
         item.vatIncludedPrice.toFixed(2) + '€'  // KDV dahil fiyatı (mevcutsa) iki ondalık basamak ve para birimi ile formatla
       ];
     }),
+    headStyles: {
+      fillColor: [242, 242, 242], // Başlıklar için açık gri arka plan rengi
+      textColor: [0, 0, 0], // Veri satırları yazı rengi siyah
+      fontStyle: 'bold' // Başlık fontlarını kalın yap
+  },
+  bodyStyles: {
+      fillColor: [255, 255, 255], // Veri satırları için beyaz arka plan rengi
+      textColor: [0, 0, 0] // Veri satırları yazı rengi siyah
+  },
+  alternateRowStyles: {
+    fillColor: [255, 255, 255]
+  },
     columnStyles: {
       0: { cellWidth: 30 },  // Reference sütunu için genişlik
       1: { cellWidth: 'auto', minCellWidth: 40 },  // Designation sütunu için minimum ve otomatik genişlik ayarı
