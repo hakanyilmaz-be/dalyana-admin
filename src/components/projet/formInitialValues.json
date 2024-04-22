@@ -25,6 +25,17 @@
             "discountedPrice": 170,
             "discountRate": "15",
             "description": "Accessoire Ménager Et De Cuisine - Accessoires Et Matériel Ménagers (Acier Inoxydable, Métal, Cuisinière/Four)"
+        },
+        {
+            "productId": "AC-001",
+            "quantity": 1,
+            "price": "120",
+            "taxRate": "6",
+            "vatIncludedPrice": 125.928,
+            "subtotal": 120,
+            "description": "Une planche à découper avec un égouttoir intégré, des rangements pour les verres à pied.",
+            "discountedPrice": 118.8,
+            "discountRate": "1"
         }
     ],
     "itemsElectromenagers": [
@@ -86,8 +97,9 @@
     "grandTotal": "26000.00",
     "totalFeeItemsDivers": "402.32",
     "totalFeeArticles": "23760.00",
-    "totalFeeAccessoires": "205.70",
+    "totalFeeAccessoires": "331.63",
     "totalFeeElectromenagers": "440.96",
     "totalFeeSanitaires": "344.85",
     "totalFeeSurfaces": "572.00"
 }
+
