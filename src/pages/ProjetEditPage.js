@@ -303,6 +303,230 @@ currentY += 10;
 });
 
 
+// Livraison et Pose kategorisi için özel işlem
+doc.setFontSize(18);
+doc.setFont("helvetica", "bold");
+doc.setTextColor(139, 0, 0);  // Koyu kırmızı
+doc.setFillColor(230, 230, 230);  // Gri arka plan
+const livraisonTitle = "Livraison et Pose";
+const livraisonFontSize = 15;
+doc.setFontSize(livraisonFontSize);
+
+// Margin değerlerini ayarla
+const livraisonLeftMargin = 18;
+const livraisonRightMargin = 18;
+const livraisonTitleWidth = doc.internal.pageSize.width - (livraisonLeftMargin + livraisonRightMargin);  // Genişlik, marginlar çıkarılarak hesaplanıyor
+
+// Yüksekliği font boyutuna göre daha uygun bir şekilde ayarla
+const livraisonTitleHeight = livraisonFontSize * 0.5;  // Font boyutunun yaklaşık %75'i kadar
+// Başlangıç X koordinatı
+const livraisonTitleX = livraisonLeftMargin;
+// Dikdörtgeni çiz, marginler ile ayarlanmış genişlik ve yükseklik
+doc.rect(livraisonTitleX, currentY, livraisonTitleWidth, livraisonTitleHeight, 'F');
+// Başlığı tam ortada yerleştir
+const livraisonTextWidth = doc.getStringUnitWidth(livraisonTitle) * livraisonFontSize / doc.internal.scaleFactor;
+const livraisonTextX = livraisonTitleX + (livraisonTitleWidth - livraisonTextWidth) / 2;
+doc.text(livraisonTitle, livraisonTextX, currentY + livraisonTitleHeight * 0.8);  // Metni dikdörtgen içinde daha ortalanmış konumda yazdır
+
+// Başlık ve alt metin için yeterli boşluk ayarla
+currentY += livraisonTitleHeight + 10;  // Alt metin için boşluk artışını ayarla
+
+
+// Livraison için yazdırma
+const deliveryFee = projectData.deliveryFee;  // JSON dosyasından deliveryFee değeri
+doc.setFont("helvetica", "normal");
+doc.setFontSize(11);
+doc.setTextColor(0, 0, 0);
+doc.text("LIVRAISON", livraisonLeftMargin, currentY);  // Sol tarafta yazdır
+const deliveryFeeText = `${deliveryFee.toFixed(2)} €`;
+const deliveryFeeWidth = doc.getStringUnitWidth(deliveryFeeText) * doc.getFontSize() / doc.internal.scaleFactor;
+const deliveryFeeX = doc.internal.pageSize.width - deliveryFeeWidth - 31; // Sağdan 18 margin
+doc.text(deliveryFeeText, deliveryFeeX, currentY);
+currentY += 7;  // Bir sonraki satır için yüksekliği arttır
+
+// Pose için yazdırma
+const montageFee = projectData.montageFee;  // JSON dosyasından montageFee değeri
+doc.text("POSE", livraisonLeftMargin, currentY);  // Sol tarafta yazdır
+const montageFeeText = `${montageFee.toFixed(2)} €`;
+const montageFeeWidth = doc.getStringUnitWidth(montageFeeText) * doc.getFontSize() / doc.internal.scaleFactor;
+const montageFeeX = doc.internal.pageSize.width - montageFeeWidth - 31; // Sağdan 18 margin
+doc.text(montageFeeText, montageFeeX, currentY);
+currentY += 10;  // Bir sonraki satır için yüksekliği arttır
+
+// Toplam ücretleri hesapla ve yazdır
+const totalLivraisonPose = deliveryFee + montageFee;
+const totalText = `Sous-total Livraison et Pose (TTC): ${totalLivraisonPose.toFixed(2)} €`;
+doc.setFont("helvetica", "bold");
+doc.setTextColor(139, 0, 0);  // Koyu kırmızı
+const totalTextWidth = doc.getStringUnitWidth(totalText) * doc.getFontSize() / doc.internal.scaleFactor;
+const totalTextX = doc.internal.pageSize.width - totalTextWidth - 24; // Sağdan 18 margin
+doc.text(totalText, totalTextX, currentY);
+currentY += 10;  // Bir sonraki içerik için boşluk
+
+doc.setFont("helvetica", "normal");
+doc.setFontSize(8); // Metin boyutunu 9 olarak ayarladık
+doc.setTextColor(0, 0, 0); // Siyah
+const livraisonDetails = "- La prestation de pose ne comprend pas les travaux de plomberie et d'électricité. Seuls sont réalisés les branchements et installation des appareils que nous fournissons sur raccords électriques et arrivées et départs d'eau en place au niveau des meubles concernés -";  // Yeni açıklama metni
+
+const livraisonMargin = 25;  // Hem soldan hem de sağdan margin değeri 25 olarak ayarlanmıştır
+const livraisonPageWidth = doc.internal.pageSize.width;  // Sayfanın tam genişliği
+const livraisonetposeTextWidth = livraisonPageWidth - (2 * livraisonMargin);  // Metin için kullanılabilir genişlik
+
+// Metni belirtilen genişlik içinde ve belirtilen x, y koordinatlarında yazdır
+doc.text(livraisonDetails, livraisonMargin-2, currentY, { maxWidth: livraisonetposeTextWidth, align: "justify" });
+currentY += doc.getTextDimensions(livraisonDetails, { maxWidth: livraisonetposeTextWidth }).h + 10;  // Metin yüksekliğini hesapla ve sonraki içerik için yükseklik artışı yap
+
+
+// Résumé de Projet kategorisi için özel işlem
+doc.setFontSize(18);
+doc.setFont("helvetica", "bold");
+doc.setTextColor(139, 0, 0);  // Koyu kırmızı
+doc.setFillColor(230, 230, 230);  // Gri arka plan
+const resumeTitle = "Résumé de Projet (TTC)";
+const resumeFontSize = 15;
+doc.setFontSize(resumeFontSize);
+
+// Margin değerlerini ayarla
+const resumeLeftMargin = 18;
+const resumeRightMargin = 18;
+const resumeTitleWidth = doc.internal.pageSize.width - (resumeLeftMargin + resumeRightMargin);  // Genişlik, marginlar çıkarılarak hesaplanıyor
+
+// Yüksekliği font boyutuna göre daha uygun bir şekilde ayarla
+const resumeTitleHeight = resumeFontSize * 0.5;  // Font boyutunun yaklaşık %75'i kadar
+// Başlangıç X koordinatı
+const resumeTitleX = resumeLeftMargin;
+// Dikdörtgeni çiz, marginler ile ayarlanmış genişlik ve yükseklik
+doc.rect(resumeTitleX, currentY, resumeTitleWidth, resumeTitleHeight, 'F');
+// Başlığı tam ortada yerleştir
+const resumeTextWidth = doc.getStringUnitWidth(resumeTitle) * resumeFontSize / doc.internal.scaleFactor;
+const resumeTextX = resumeTitleX + (resumeTitleWidth - resumeTextWidth) / 2;
+doc.text(resumeTitle, resumeTextX, currentY + resumeTitleHeight * 0.8);  // Metni dikdörtgen içinde daha ortalanmış konumda yazdır
+
+// Başlık ve alt metin için yeterli boşluk ayarla
+currentY += resumeTitleHeight + 10;  // Alt metin için boşluk artışını ayarla
+
+doc.setFont("helvetica", "bold");
+doc.setTextColor(0, 0, 0);
+doc.setFontSize(12);
+
+
+// "Mobilier:" metnini soldan 100 piksel margin ile belirtilen konumda yazdır
+const leftMarginMobilier = 120;
+doc.text("Mobilier:", leftMarginMobilier, currentY);
+
+// Fiyatı sağa yaslayıp sağdan 18 piksel margin ile yazdır
+const rightMarginMobilier = 18;
+const priceText = `${preDiscountPrice.toFixed(2)} €`;
+const priceTextWidth = doc.getStringUnitWidth(priceText) * doc.getFontSize() / doc.internal.scaleFactor; // Fiyat metninin genişliği
+
+// Sayfanın genişliğinden sağ margine ve fiyat metni genişliğine göre x koordinatını hesapla
+const priceX = doc.internal.pageSize.width - priceTextWidth - rightMarginMobilier;
+doc.text(priceText, priceX, currentY);
+
+
+currentY += 6;  // Bir sonraki içerik için boşluk
+
+// Kategori için toplam liste fiyatını hesaplayan yardımcı fonksiyon
+function calculateTotalListPrice(items, categoryTitle) {
+  return items.reduce((total, item) => {
+    // Divers kategorisi için farklı bir fiyat alanını kullan
+    const price = categoryTitle === "Divers" ? parseFloat(item.diversListPrice) : parseFloat(item.price);
+    const taxRate = parseFloat(item.taxRate) / 100;
+    const quantity = parseInt(item.quantity, 10);
+    return total + price * (1 + taxRate) * quantity;
+  }, 0);
+}
+
+// Her kategori için toplam liste fiyatını hesaplayıp gösteren kısım
+const categoriesResume = [
+  { title: "Accessoires", data: projectData.itemsAccessoires },
+  { title: "Électroménagers", data: projectData.itemsElectromenagers },
+  { title: "Sanitaires", data: projectData.itemsSanitaires },
+  { title: "Pdt Solid Surface", data: projectData.itemsSurfaces },
+  { title: "Divers", data: projectData.itemsDivers },
+];
+
+categoriesResume.forEach(category => {
+  const totalPrice = calculateTotalListPrice(category.data, category.title);
+  doc.setFontSize(12);
+
+  // Yeni Y koordinatı belirle
+  if (doc.internal.pageSize.height - currentY < 20) {
+    doc.addPage();
+    currentY = 10;
+  }
+
+  // Kategori adını soldan 100 margin ile yazdır
+  const categoryTitle = `${category.title}:`;
+  const leftMargin = 120;
+  doc.text(categoryTitle, leftMargin, currentY);
+
+  // Fiyatı sağa yaslayıp sağdan 18 margin ile yazdır
+  const priceText = `${totalPrice.toFixed(2)} €`;
+  const rightMargin = 18;
+  const priceTextWidth = doc.getStringUnitWidth(priceText) * doc.getFontSize() / doc.internal.scaleFactor; // Fiyat metninin genişliği
+  const priceX = doc.internal.pageSize.width - priceTextWidth - rightMargin; // Fiyatın x koordinatını hesapla
+
+  doc.text(priceText, priceX, currentY); // Fiyatı belirlenen x koordinatında yazdır
+  currentY += 6; // Sonraki kategori için y koordinatını artır
+});
+
+const serviceTitle = "Livraison et Pose:";
+const leftMarginService = 120; // Sol taraftan başlangıç noktası
+doc.text(serviceTitle, leftMarginService, currentY); // Servis başlığını yazdır
+
+const servicePrice = `${totalLivraisonPose.toFixed(2)} €`;
+const rightMarginService = 18; // Sağ taraftan boşluk
+const servicePriceWidth = doc.getStringUnitWidth(servicePrice) * doc.getFontSize() / doc.internal.scaleFactor; // Fiyat metninin genişliği
+const servicePriceX = doc.internal.pageSize.width - servicePriceWidth - rightMarginService; // Fiyatın x koordinatını hesapla
+
+doc.text(servicePrice, servicePriceX, currentY); // Fiyatı belirlenen x koordinatında yazdır
+currentY += 6; // Y koordinatını sonraki satır için artır
+
+// Her kategorinin toplamını hesaplayan ve toplamı döndüren fonksiyon
+function calculateTotalProjectPrice(categories) {
+  // "Mobilier" ve "Livraison et Pose" kategorilerinin toplamını da ekleyerek hesapla
+  let totalMobilier = preDiscountPrice;
+  let totalLivraisonPose = deliveryFee + montageFee;
+
+  return categories.reduce((total, category) => {
+    const categoryTotal = calculateTotalListPrice(category.data, category.title);
+    return total + categoryTotal;
+  }, totalMobilier + totalLivraisonPose);
+}
+
+// Proje için toplam fiyatı hesapla
+const totalProjectPrice = calculateTotalProjectPrice(categoriesResume);
+doc.setTextColor(139, 0, 0);  // Koyu kırmızı
+
+// "Sous-total projet avant remise (TTC):" metnini ve hesaplanan toplam fiyatı yazdır
+const projectSummaryTitle = "Sous-total projet avant remise (TTC):";
+const leftMarginSummary = 82; // Soldan başlangıç noktası
+doc.text(projectSummaryTitle, leftMarginSummary, currentY);
+
+// Toplam fiyatı sağa yaslayarak yazdır, sağdan 18 piksel boşluk bırak
+const totalPriceText = `${totalProjectPrice.toFixed(2)} €`;
+const rightMarginSummary = 18; // Sağ taraftan boşluk
+const totalPriceTextWidth = doc.getStringUnitWidth(totalPriceText) * doc.getFontSize() / doc.internal.scaleFactor; // Toplam fiyat metninin genişliği
+const totalPriceX = doc.internal.pageSize.width - totalPriceTextWidth - rightMarginSummary; // Toplam fiyatın x koordinatını hesapla
+
+doc.text(totalPriceText, totalPriceX, currentY);
+currentY += 10; // Y koordinatını sonraki içerik için artır
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     
     
@@ -316,7 +540,7 @@ currentY += 10;
     // Diğer Ücretler
     doc.setFontSize(9);
     const feesStartY = currentY + 10; // Diğer ücretler için biraz boşluk bırak
-    doc.text(`Delivery Fee: ${projectData.deliveryFee}\nMontage Fee: ${projectData.montageFee}\nGrand Total: ${projectData.grandTotal}\nGlobal Discount: ${projectData.globaldiscount}`, 10, feesStartY);
+    doc.text(`Grand Total: ${projectData.grandTotal}\nGlobal Discount: ${projectData.globaldiscount}`, 10, feesStartY);
     currentY = feesStartY + 20; // Diğer ücretlerden sonra boşluk bırak
   
     // Genel Sözleşme Şartları
