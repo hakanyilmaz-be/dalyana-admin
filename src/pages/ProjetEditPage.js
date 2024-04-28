@@ -382,7 +382,7 @@ doc.setFontSize(18);
 doc.setFont("helvetica", "bold");
 doc.setTextColor(139, 0, 0);  // Koyu kırmızı
 doc.setFillColor(230, 230, 230);  // Gri arka plan
-const resumeTitle = "Résumé de Projet (TTC)";
+const resumeTitle = "Résumé de Projet (TTC) avant remise";
 const resumeFontSize = 15;
 doc.setFontSize(resumeFontSize);
 
@@ -514,6 +514,290 @@ doc.text(totalPriceText, totalPriceX, currentY);
 currentY += 10; // Y koordinatını sonraki içerik için artır
 
 
+// Yeni Y koordinatı belirle
+if (doc.internal.pageSize.height - currentY < 20) {
+  doc.addPage();
+  currentY = 10;
+}
+
+
+// Remises et Montant Total kategorisi için özel işlem
+doc.setFontSize(18);
+doc.setFont("helvetica", "bold");
+doc.setTextColor(139, 0, 0);  // Koyu kırmızı
+doc.setFillColor(230, 230, 230);  // Gri arka plan
+const remisesEtMontantTitle = "Remises et Montant Total";
+const remisesEtMontantFontSize = 15;
+doc.setFontSize(remisesEtMontantFontSize);
+
+// Margin değerlerini ayarla
+const remisesEtMontantLeftMargin = 18;
+const remisesEtMontantRightMargin = 18;
+const remisesEtMontantTitleWidth = doc.internal.pageSize.width - (remisesEtMontantLeftMargin + remisesEtMontantRightMargin);  // Genişlik, marginlar çıkarılarak hesaplanıyor
+
+// Yüksekliği font boyutuna göre daha uygun bir şekilde ayarla
+const remisesEtMontantTitleHeight = remisesEtMontantFontSize * 0.5;  // Font boyutunun yaklaşık %75'i kadar
+// Başlangıç X koordinatı
+const remisesEtMontantTitleX = resumeLeftMargin;
+// Dikdörtgeni çiz, marginler ile ayarlanmış genişlik ve yükseklik
+doc.rect(remisesEtMontantTitleX, currentY, remisesEtMontantTitleWidth, remisesEtMontantTitleHeight, 'F');
+// Başlığı tam ortada yerleştir
+const remisesEtMontantTextWidth = doc.getStringUnitWidth(remisesEtMontantTitle) * remisesEtMontantFontSize / doc.internal.scaleFactor;
+const remisesEtMontantTextX = remisesEtMontantTitleX + (remisesEtMontantTitleWidth - remisesEtMontantTextWidth) / 2;
+doc.text(remisesEtMontantTitle, remisesEtMontantTextX, currentY + remisesEtMontantTitleHeight * 0.8);  // Metni dikdörtgen içinde daha ortalanmış konumda yazdır
+
+// Başlık ve alt metin için yeterli boşluk ayarla
+currentY += remisesEtMontantTitleHeight + 10;  // Alt metin için boşluk artışını ayarla
+
+
+const discountMobilierInfo = "Remise sur les Meubles (TTC):";
+    doc.setFontSize(11);
+    doc.setTextColor(0, 0, 0); // Siyah
+    const discountmeubles = preDiscountPrice - vatIncludedPrice;
+
+    doc.text(discountMobilierInfo, leftMargin, currentY);
+    
+    // İndirim miktarını hesapla
+    const discountAmount = `${discountmeubles.toFixed(2)} €`;
+    
+    // İndirim miktarı metni için genişlik hesapla ve sağa yasla
+    const discountAmountWidth = doc.getStringUnitWidth(discountAmount) * 11;
+    
+    const discountAmountX = doc.internal.pageSize.width - discountAmountWidth - rightMargin +24;
+    doc.text(discountAmount, discountAmountX, currentY);
+    currentY += 6;
+    
+
+
+
+    const globalDiscountRaw = projectData.globaldiscount;
+// globalDiscountRaw değeri boş mu kontrol et, boşsa 0 olarak kabul et, değilse parseFloat ile sayıya çevir
+const globalDiscount = globalDiscountRaw ? parseFloat(globalDiscountRaw) : 0;
+// parseFloat sonucu NaN ise globalDiscount'u 0 olarak ayarla
+if (isNaN(globalDiscount)) {
+    console.error('globaldiscount değeri geçerli bir sayı değil, 0 olarak kabul edilecek.');
+}
+
+
+    const categoriesDiscount = [
+      { data: projectData.itemsAccessoires, priceKey: 'price' },
+      { data: projectData.itemsElectromenagers, priceKey: 'price' },
+      { data: projectData.itemsSanitaires, priceKey: 'price' },
+      { data: projectData.itemsDivers, priceKey: 'diversListPrice' }, // 'itemsDivers' için 'diversListPrice' kullan
+      { data: projectData.itemsSurfaces, priceKey: 'price' }
+  ];
+
+  let totalDiscount = 0;
+    
+    categoriesDiscount.forEach(category => {
+    category.data.forEach(item => {
+        const price = item[category.priceKey] || item.price; // Eğer priceKey yoksa default olarak 'price' kullan
+        const listVATPrice = (price * (1 + (item.taxRate / 100))) * item.quantity;
+        const itemDiscount = listVATPrice - item.vatIncludedPrice;
+        totalDiscount += itemDiscount;
+    });
+});
+    
+    // globalDiscount değerini totalDiscount'a ekle
+    totalDiscount += globalDiscount;
+
+    const headerText = "Remises Supplémentaires (TTC):";
+    const detailsText = "(sur les Accessoires, Électroménagers, Sanitaires, Surface, Divers, Livraison, Pose, Remise globale)";
+    const totalDiscountText = `${totalDiscount.toFixed(2)} €`; // Sadece indirim değerini birleştir
+    const pageWidth = doc.internal.pageSize.width;
+    
+    // Üst satır için metin
+    doc.setFontSize(11);
+    doc.setTextColor(0, 0, 0); // Siyah renk
+    // Üst satırdaki başlık metni
+    doc.text(headerText, leftMargin, currentY);
+    // Sağa yaslanacak şekilde fiyatı hesapla ve yazdır
+    const priceTextWidthOther = doc.getStringUnitWidth(totalDiscountText) * 11;
+    const priceTextX = pageWidth - priceTextWidthOther - rightMargin + 20; // Sağa yaslanacak şekilde konum hesaplama
+    doc.text(totalDiscountText, priceTextX, currentY);
+    currentY += 4; // Yeni satır için yükseklik artır
+    
+    // Detaylar metnini yazdır
+    doc.setFont("helvetica", "normal");
+    doc.text(detailsText, leftMargin, currentY);
+    currentY += 10; // Sonraki içerik için boşluk
+    
+    
+    
+    
+// REMISE GLOBALE SUR L'ENSEMBLE DU PROJET (TTC) Başlığı ve değeri için kod düzenlemesi
+
+
+// Toplam indirim miktarını hesapla
+const allTotalDiscount = totalDiscount + discountmeubles;
+
+
+doc.setFontSize(16);
+doc.setFont("helvetica", "bold");
+doc.setTextColor(0, 0, 0);  // Siyah
+doc.setFillColor(230, 230, 230);  // Gri arka plan
+const allTotalDiscountTitle = `REMISE GLOBALE SUR L'ENSEMBLE DU PROJET (TTC) :  -${allTotalDiscount.toFixed(2)} €`;
+const allTotalDiscountFontSize = 13;
+doc.setFontSize(allTotalDiscountFontSize);
+
+// Margin değerlerini ayarla
+const allTotalDiscountLeftMargin = 18;
+const allTotalDiscountRightMargin = 18;
+const allTotalDiscountTitleWidth = doc.internal.pageSize.width - (allTotalDiscountLeftMargin + allTotalDiscountRightMargin);  // Genişlik, marginlar çıkarılarak hesaplanıyor
+
+// Yüksekliği font boyutuna göre daha uygun bir şekilde ayarla
+const allTotalDiscountTitleHeight = allTotalDiscountFontSize * 0.9;  // Font boyutunun yaklaşık %75'i kadar
+// Başlangıç X koordinatı
+const allTotalDiscountTitleX = livraisonLeftMargin;
+// Dikdörtgeni çiz, marginler ile ayarlanmış genişlik ve yükseklik
+doc.rect(allTotalDiscountTitleX, currentY, allTotalDiscountTitleWidth, allTotalDiscountTitleHeight + 4, 'F');
+// Başlığı tam ortada yerleştir
+const allTotalDiscountTextWidth = doc.getStringUnitWidth(allTotalDiscountTitle) * allTotalDiscountFontSize / doc.internal.scaleFactor;
+const allTotalDiscountTextX = allTotalDiscountTitleX + (allTotalDiscountTitleWidth - allTotalDiscountTextWidth) / 2;
+doc.text(allTotalDiscountTitle, allTotalDiscountTextX, currentY + allTotalDiscountTitleHeight * 0.8);  // Metni dikdörtgen içinde daha ortalanmış konumda yazdır
+
+// Başlık ve alt metin için yeterli boşluk ayarla
+currentY += allTotalDiscountTitleHeight + 10;  // Alt metin için boşluk artışını ayarla
+
+
+
+// Önceki kodlarla çakışmamak için yeni değişken isimleri kullanılıyor
+const kitchenTotalTitle = "PRIX TOTAL DE VOTRE PROJET (TTC) :";
+const kitchenTotalValue = projectData.grandTotal;  // JSON'dan gelen toplam değer
+const kitchenFontSize = 15;  // Başlık için font boyutu
+doc.setFontSize(kitchenFontSize);
+doc.setFont("helvetica", "bold");
+doc.setTextColor(139, 0, 0);  // Koyu kırmızı metin rengi
+
+// Arka plan ve metin ayarları için margin değerleri
+const kitchenLeftMargin = 18;
+const kitchenRightMargin = 18;
+
+// Arka plan rengini ayarla ve dikdörtgen çiz
+doc.setFillColor(230, 230, 230);  // Gri arka plan
+const kitchenTitleWidth = doc.internal.pageSize.width - (kitchenLeftMargin + kitchenRightMargin);
+const kitchenTitleHeight = kitchenFontSize * 1.2;  // Yükseklik ayarı
+const kitchenTitleX = kitchenLeftMargin;
+doc.rect(kitchenTitleX, currentY+1, kitchenTitleWidth, kitchenTitleHeight, 'F'); // Arka planı doldur
+
+// Siyah sınır eklemek için
+doc.setDrawColor(0, 0, 0); // Siyah renk ayarla
+doc.setLineWidth(0.5);
+doc.rect(kitchenTitleX, currentY+1, kitchenTitleWidth, kitchenTitleHeight, 'S'); // Sadece çizgi çiz
+
+// Başlığı yazdır
+const kitchenTextWidth = doc.getStringUnitWidth(kitchenTotalTitle) * kitchenFontSize / doc.internal.scaleFactor;
+const kitchenTextX = kitchenTitleX + (kitchenTitleWidth - kitchenTextWidth) / 2 - 20;
+doc.text(kitchenTotalTitle, kitchenTextX, currentY + kitchenTitleHeight * 0.7);
+
+// Toplam fiyatı yanına yazdır
+const kitchenValueText = `${parseFloat(kitchenTotalValue).toFixed(2)} €`;
+const kitchenValueX = kitchenTitleX + kitchenTitleWidth - (doc.getStringUnitWidth(kitchenValueText) * kitchenFontSize / doc.internal.scaleFactor) - 5;
+doc.text(kitchenValueText, kitchenValueX, currentY + kitchenTitleHeight * 0.7);
+
+// Metin ve arka plan için boşluk ayarla
+currentY += kitchenTitleHeight + 10;  // Sonraki içerik için boşluk ayarla
+
+
+
+
+
+
+
+
+
+// Vergi oranlarına göre ürünleri gruplama
+const taxData = {};
+const collectData = (items, priceKey = 'price', useDiscountedPrice = false) => {
+  items.forEach(item => {
+    const { taxRate, vatIncludedPrice } = item;
+    const price = useDiscountedPrice && item.discountedPrice ? item.discountedPrice : item[priceKey];
+    const vatAmount = vatIncludedPrice - price;
+
+    if (!taxData[taxRate]) {
+      taxData[taxRate] = { basicExclVat: 0, vatIncluded: 0, vat: 0 };
+    }
+    taxData[taxRate].basicExclVat += price;
+    taxData[taxRate].vatIncluded += vatIncludedPrice;
+    taxData[taxRate].vat += vatAmount;
+  });
+};
+
+// Kategorilere göre veri toplama
+collectData(projectData.articles, 'price', false);  // `articles` için `price` kullanarak ve indirim uygulanmadan
+collectData(projectData.itemsAccessoires, 'discountedPrice', true);  // `itemsAccessoires` için `discountedPrice` kullanarak
+collectData(projectData.itemsElectromenagers, 'discountedPrice', true);  // `itemsElectromenagers` için
+collectData(projectData.itemsSanitaires, 'discountedPrice', true);  // `itemsSanitaires` için
+collectData(projectData.itemsSurfaces, 'discountedPrice', true);  // `itemsSurfaces` için
+collectData(projectData.itemsDivers, 'price', false);  // `itemsDivers` için `price` kullanarak ve indirim uygulanmadan
+
+// Tabloyu PDF'e eklemek
+const headers = ['Type (Tax Rate)', 'Basic Excl Vat', 'Vat', 'Vat Included'];
+const rows = Object.keys(taxData).map(taxRate => ([
+  `${taxRate}%`,
+  taxData[taxRate].basicExclVat.toFixed(2) + ' €',
+  taxData[taxRate].vat.toFixed(2) + ' €',
+  taxData[taxRate].vatIncluded.toFixed(2) + ' €',
+]));
+
+
+// Toplam değerler için benzersiz değişken isimleri
+let totalExVATSum = 0;
+let totalVATSum = 0;
+let totalInclVATSum = 0;
+
+// Toplam değerleri hesaplama
+Object.keys(taxData).forEach(taxRate => {
+  totalExVATSum += taxData[taxRate].basicExclVat;
+  totalVATSum += taxData[taxRate].vat;
+  totalInclVATSum += taxData[taxRate].vatIncluded;
+});
+
+// Toplam satırı ekleme
+rows.push([
+  "Total",
+  totalExVATSum.toFixed(2) + ' €',
+  totalVATSum.toFixed(2) + ' €',
+  totalInclVATSum.toFixed(2) + ' €',
+]);
+
+// Tabloyu çiz
+doc.autoTable({
+  startY: currentY,
+  margin: { left: 18},
+  theme: 'grid',
+  head: [headers],
+  body: rows,
+  styles: {
+    fontSize: 10,
+    cellPadding: 1,
+    textColor: 20,
+    lineColor: [44, 62, 80],
+    lineWidth: 0.2
+  },
+  headStyles: {
+    fillColor: [220, 220, 220],
+    textColor: 0,
+    fontStyle: 'bold',
+    halign: 'center'
+  },
+  columnStyles: {
+    0: { cellWidth: 30 },
+    1: { cellWidth: 30 },
+    2: { cellWidth: 30 },
+    3: { cellWidth: 30 }
+  },
+  didDrawPage: function(data) {
+    currentY = data.cursor.y;
+  }
+});
+
+// Sonraki içerik için 'currentY' y koordinatını güncelle
+currentY += 10;
+
+
+
+
 
 
 
@@ -537,11 +821,7 @@ currentY += 10; // Y koordinatını sonraki içerik için artır
       currentY = 10; // Yeni sayfanın başına geri dön
     }
   
-    // Diğer Ücretler
-    doc.setFontSize(9);
-    const feesStartY = currentY + 10; // Diğer ücretler için biraz boşluk bırak
-    doc.text(`Grand Total: ${projectData.grandTotal}\nGlobal Discount: ${projectData.globaldiscount}`, 10, feesStartY);
-    currentY = feesStartY + 20; // Diğer ücretlerden sonra boşluk bırak
+    
   
     // Genel Sözleşme Şartları
     doc.setFontSize(8);
