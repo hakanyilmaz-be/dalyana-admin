@@ -2,13 +2,13 @@
     {
         "id" : "François-001",
         "location":"Mons",
-        "status": "Bon de Commande",
+        "status": "Devis",
         "createDate": "01 Mai 2023"
     },
     {
         "id" : "François-002",
         "location":"Bruxelles",
-        "status": "Devis",
+        "status": "Bon de Commande",
         "createDate": "22 Février 2023"
     },
     {

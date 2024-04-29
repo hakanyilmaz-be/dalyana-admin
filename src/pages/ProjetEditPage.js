@@ -15,6 +15,43 @@ const ProjetEditPage = () => {
 
   const downloadPdf = () => {
     const doc = new jsPDF();
+
+    //GRI ARKA PLAN BASLIK
+    function addStyledTitle(doc, titleText, fontSize, textColor, fillColor, yPosition) {
+      const leftMargin = 18;
+      const rightMargin = 18;
+      const titleWidth = doc.internal.pageSize.width - (leftMargin + rightMargin);
+      const titleHeight = fontSize * 0.5;
+      const titleX = leftMargin;
+        // Font ve stil ayarları
+      doc.setFontSize(fontSize);
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(...textColor); // Spread operatörü kullanarak renk değerlerini fonksiyona geçir
+      doc.setFillColor(...fillColor); // Arka plan rengi için de benzer düzenleme
+      // Başlık için arka planı çiz
+      doc.rect(titleX, yPosition, titleWidth, titleHeight, 'F');
+      // Başlığı ortala ve yaz
+      const textWidth = doc.getStringUnitWidth(titleText) * fontSize / doc.internal.scaleFactor;
+      const textX = titleX + (titleWidth - textWidth) / 2;
+      doc.text(titleText, textX, yPosition + titleHeight * 0.8);
+      // Yeni Y konumu döndür, diğer içerikler için boşluk bırak
+      return yPosition + titleHeight + 10;
+    }
+    
+   //PARAGRAF FONKSIYONU
+   function addParagraph(doc, text, fontSize, textColor, leftMargin, rightMargin, yPosition) {
+    const pageWidth = doc.internal.pageSize.width;
+    const maxTextWidth = pageWidth - leftMargin - rightMargin; // Metnin yazılabilir maksimum genişliği
+    // Font ve stil ayarları
+    doc.setFontSize(fontSize);
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(...textColor); // Renk değerleri
+    // Metni belirlenen genişlikte böl ve yükseklik ayarını yap
+    const splitText = doc.splitTextToSize(text, maxTextWidth);
+    doc.text(splitText, leftMargin, yPosition);
+    // Yeni Y konumu döndür, dinamik olarak satır sayısına bağlı
+    return yPosition + (fontSize * 0.5) * splitText.length; // Satır başına yükseklik artışını azalt
+}
   
     // Logo ve firma bilgileri
     doc.addImage(logo, 'PNG', 18, 17, 66, 18);
@@ -304,6 +341,7 @@ currentY += 10;
 
 
 // Livraison et Pose kategorisi için özel işlem
+
 doc.setFontSize(18);
 doc.setFont("helvetica", "bold");
 doc.setTextColor(139, 0, 0);  // Koyu kırmızı
@@ -378,32 +416,8 @@ currentY += doc.getTextDimensions(livraisonDetails, { maxWidth: livraisonetposeT
 
 
 // Résumé de Projet kategorisi için özel işlem
-doc.setFontSize(18);
-doc.setFont("helvetica", "bold");
-doc.setTextColor(139, 0, 0);  // Koyu kırmızı
-doc.setFillColor(230, 230, 230);  // Gri arka plan
-const resumeTitle = "Résumé de Projet (TTC) avant remise";
-const resumeFontSize = 15;
-doc.setFontSize(resumeFontSize);
+currentY = addStyledTitle(doc, "Résumé de Projet (TTC) avant remise", 15, [139, 0, 0], [230, 230, 230], currentY);
 
-// Margin değerlerini ayarla
-const resumeLeftMargin = 18;
-const resumeRightMargin = 18;
-const resumeTitleWidth = doc.internal.pageSize.width - (resumeLeftMargin + resumeRightMargin);  // Genişlik, marginlar çıkarılarak hesaplanıyor
-
-// Yüksekliği font boyutuna göre daha uygun bir şekilde ayarla
-const resumeTitleHeight = resumeFontSize * 0.5;  // Font boyutunun yaklaşık %75'i kadar
-// Başlangıç X koordinatı
-const resumeTitleX = resumeLeftMargin;
-// Dikdörtgeni çiz, marginler ile ayarlanmış genişlik ve yükseklik
-doc.rect(resumeTitleX, currentY, resumeTitleWidth, resumeTitleHeight, 'F');
-// Başlığı tam ortada yerleştir
-const resumeTextWidth = doc.getStringUnitWidth(resumeTitle) * resumeFontSize / doc.internal.scaleFactor;
-const resumeTextX = resumeTitleX + (resumeTitleWidth - resumeTextWidth) / 2;
-doc.text(resumeTitle, resumeTextX, currentY + resumeTitleHeight * 0.8);  // Metni dikdörtgen içinde daha ortalanmış konumda yazdır
-
-// Başlık ve alt metin için yeterli boşluk ayarla
-currentY += resumeTitleHeight + 10;  // Alt metin için boşluk artışını ayarla
 
 doc.setFont("helvetica", "bold");
 doc.setTextColor(0, 0, 0);
@@ -522,33 +536,7 @@ if (doc.internal.pageSize.height - currentY < 20) {
 
 
 // Remises et Montant Total kategorisi için özel işlem
-doc.setFontSize(18);
-doc.setFont("helvetica", "bold");
-doc.setTextColor(139, 0, 0);  // Koyu kırmızı
-doc.setFillColor(230, 230, 230);  // Gri arka plan
-const remisesEtMontantTitle = "Remises et Montant Total";
-const remisesEtMontantFontSize = 15;
-doc.setFontSize(remisesEtMontantFontSize);
-
-// Margin değerlerini ayarla
-const remisesEtMontantLeftMargin = 18;
-const remisesEtMontantRightMargin = 18;
-const remisesEtMontantTitleWidth = doc.internal.pageSize.width - (remisesEtMontantLeftMargin + remisesEtMontantRightMargin);  // Genişlik, marginlar çıkarılarak hesaplanıyor
-
-// Yüksekliği font boyutuna göre daha uygun bir şekilde ayarla
-const remisesEtMontantTitleHeight = remisesEtMontantFontSize * 0.5;  // Font boyutunun yaklaşık %75'i kadar
-// Başlangıç X koordinatı
-const remisesEtMontantTitleX = resumeLeftMargin;
-// Dikdörtgeni çiz, marginler ile ayarlanmış genişlik ve yükseklik
-doc.rect(remisesEtMontantTitleX, currentY, remisesEtMontantTitleWidth, remisesEtMontantTitleHeight, 'F');
-// Başlığı tam ortada yerleştir
-const remisesEtMontantTextWidth = doc.getStringUnitWidth(remisesEtMontantTitle) * remisesEtMontantFontSize / doc.internal.scaleFactor;
-const remisesEtMontantTextX = remisesEtMontantTitleX + (remisesEtMontantTitleWidth - remisesEtMontantTextWidth) / 2;
-doc.text(remisesEtMontantTitle, remisesEtMontantTextX, currentY + remisesEtMontantTitleHeight * 0.8);  // Metni dikdörtgen içinde daha ortalanmış konumda yazdır
-
-// Başlık ve alt metin için yeterli boşluk ayarla
-currentY += remisesEtMontantTitleHeight + 10;  // Alt metin için boşluk artışını ayarla
-
+currentY = addStyledTitle(doc, "Remises et Montant Total", 15, [139, 0, 0], [230, 230, 230], currentY);
 
 const discountMobilierInfo = "Remise sur les Meubles (TTC):";
     doc.setFontSize(11);
@@ -732,7 +720,7 @@ collectData(projectData.itemsSurfaces, 'discountedPrice', true);  // `itemsSurfa
 collectData(projectData.itemsDivers, 'price', false);  // `itemsDivers` için `price` kullanarak ve indirim uygulanmadan
 
 // Tabloyu PDF'e eklemek
-const headers = ['Type (Tax Rate)', 'Basic Excl Vat', 'Vat', 'Vat Included'];
+const headers = ['Ventilation TVA', 'Base HT', 'TVA', 'TTC'];
 const rows = Object.keys(taxData).map(taxRate => ([
   `${taxRate}%`,
   taxData[taxRate].basicExclVat.toFixed(2) + ' €',
@@ -799,19 +787,6 @@ currentY += 10;
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
     
     
     doc.setTextColor(0, 0, 0);
@@ -823,16 +798,32 @@ currentY += 10;
   
     
   
-    // Genel Sözleşme Şartları
-    doc.setFontSize(8);
-    terms.terms.forEach((term, index) => {
-      if (doc.internal.pageSize.height - currentY < 20) {
-        doc.addPage();
-        currentY = 10; // Yeni sayfanın başına geri dön
-      }
-      doc.text(`${index + 1}. ${term}`, 10, currentY);
-      currentY += 5; // Sonraki terim için boşluk ekleyin
-    });
+ // Genel Sözleşme Şartları
+
+ currentY = addStyledTitle(doc, "Notice d'information", 15, [139, 0, 0], [230, 230, 230], currentY);
+
+ const paragraphText = "Cher Client(e),\n\nFélicitation pour la concrétisation de votre projet, afin d’assurer le bon déroulement de votre commande, vous trouverez ci- dessous une notice informative décrivant chronologiquement les événements qui suivront la signature de votre bon de commande jusqu’à la pose complète de votre projet.";
+ currentY = addParagraph(doc, paragraphText, 9, [0, 0, 0], 18, 18, currentY);
+ 
+ 
+ currentY = addStyledTitle(doc, "1- Prise de mesure :", 15, [139, 0, 0], [230, 230, 230], currentY);
+
+doc.setFontSize(8);
+doc.setTextColor(0, 0, 0);
+doc.setFont("helvetica", "normal");
+const maxTextWidth = pageWidth - leftMargin - rightMargin; // Metnin yazılabilir maksimum genişliği
+
+terms.terms.forEach((term, index) => {
+  if (doc.internal.pageSize.height - currentY < 20) {
+    doc.addPage();
+    currentY = 10; // Yeni sayfanın başına dön
+  }
+  const termText = `${index + 1}. ${term}`;
+  const splitText = doc.splitTextToSize(termText, maxTextWidth); // Metni belirlenen genişlikte böl
+  doc.text(splitText, leftMargin, currentY); // Metni belirlenen yükseklikten ve soldan boşluk bırakarak yaz
+  currentY += 5 + (splitText.length - 1) * 10; // Metin boyutuna göre Y konumunu ayarla
+});
+
   
     // Sayfa numaralarını ekleyen fonksiyon
     const addPageNumbers = () => {

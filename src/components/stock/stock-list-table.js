@@ -70,10 +70,10 @@ const StockListTable = () => {
       
     const validateForm = () => {
       const errors = {};
-      if (!newProduct.name) errors.name = 'Name is required';
-      if (!newProduct.quantity) errors.quantity = 'Quantity is required';
-      if (!newProduct.category) errors.category = 'Category is required';
-      else if (isNaN(newProduct.quantity)) errors.quantity = 'Quantity must be a number';
+      if (!newProduct.name) errors.name = 'Le nom/referance est requis';
+      if (!newProduct.quantity) errors.quantity = 'La quantité est requise';
+      if (!newProduct.category) errors.category = 'La catégorie est obligatoire';
+      else if (isNaN(newProduct.quantity)) errors.quantity = 'La quantité doit être un nombre';
       return errors;
     };
 
@@ -256,21 +256,21 @@ const StockListTable = () => {
               variant="secondary"
               onClick={() => setShowUpdateModal(false)}
             >
-              Cancel
+              Annuler
             </Button>
             <Button variant="primary" onClick={handleUpdate}>
-              Save Changes
+            Sauvegarder
             </Button>
           </Modal.Footer>
         </Modal>
 
         <Button variant="success" onClick={() => setShowModal(true)}>
-          Add New Product
+        Ajouter Un Produit
         </Button>
 
         <Modal show={showModal} onHide={() => setShowModal(false)}>
           <Modal.Header closeButton>
-            <Modal.Title>Add New Product</Modal.Title>
+            <Modal.Title>Ajouter Un Produit</Modal.Title>
           </Modal.Header>
           <Modal.Body>
             <Form>
@@ -288,7 +288,7 @@ const StockListTable = () => {
               </Form.Group>
 
               <Form.Group className="mb-3">
-                <Form.Label>Name</Form.Label>
+                <Form.Label>Nom-Referance</Form.Label>
                 <Form.Control
                   type="text"
                   name="name"
@@ -310,7 +310,7 @@ const StockListTable = () => {
                 />
               </Form.Group>
               <Form.Group className="mb-3">
-                <Form.Label>Quantity</Form.Label>
+                <Form.Label>Quantité</Form.Label>
                 <Form.Control
                   type="text"
                   name="quantity"
@@ -332,14 +332,14 @@ const StockListTable = () => {
                 />
               </Form.Group>
               <Form.Group className="mb-3">
-                <Form.Label>Category</Form.Label>
+                <Form.Label>Catégorie</Form.Label>
                 <Form.Select
                   name="category"
                   value={newProduct.category}
                   onChange={handleInputChange}
                   isInvalid={!!errors.category}
                 >
-                  <option value="">Select a category</option>
+                  <option value="">Choisir une catégorie</option>
                   {[
                     "Meuble",
                     "Accessoires",
@@ -359,10 +359,10 @@ const StockListTable = () => {
               </Form.Group>
               <div className="button-group-new-product">
                 <Button variant="primary" onClick={handleSubmit}>
-                  Add
+                Ajouter
                 </Button>
                 <Button variant="danger" onClick={() => setShowModal(false)}>
-                  Cancel
+                Annuler
                 </Button>
               </div>
             </Form>
@@ -383,13 +383,13 @@ const StockListTable = () => {
             <thead>
               <tr>
                 <th>Image</th>
-                <th>Name-Reference</th>
+                <th>Nom-Reference</th>
                 <th>Description</th>
-                <th>Quantity</th>
-                <th>Category</th>
+                <th>Quantité</th>
+                <th>Catégorie</th>
                 <th>Note</th>
-                <th>Update</th>
-                <th>Delete</th>
+                <th>Mise à jour</th>
+                <th>Supprimer</th>
               </tr>
             </thead>
             <tbody>
