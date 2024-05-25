@@ -49,15 +49,22 @@ const SideBar = () => {
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse className="navbar-menu" id="basic-navbar-nav">
           <Nav className="me-auto">
-            <Nav.Link as={Link} to="/" className={currentPath === "/" ? "active" : ""}>
+           {/*  <Nav.Link as={Link} to="/" className={currentPath === "/" ? "active" : ""}>
               <RiHome3Line /> Accueil
+            </Nav.Link>  */}
+            
+            <Nav.Link as={Link} to="/" className={currentPath === "/" ? "active" : ""}>
+            <IoMdContacts /> Clients
             </Nav.Link>
+            
+            
             <Nav.Link as={Link} to="/projets" className={currentPath === "/projets" ? "active" : ""}>
               <AiFillFolderOpen /> Projets
             </Nav.Link>
-            <Nav.Link as={Link} to="/clients" className={currentPath === "/clients" ? "active" : ""}>
-            <IoMdContacts /> Clients
-            </Nav.Link>
+
+
+            
+         
             <Nav.Link as={Link} to="/elements-produits" className={currentPath === "/elements-produits" ? "active" : ""}>
               <RiDashboardLine /> Elements & Produits
             </Nav.Link>

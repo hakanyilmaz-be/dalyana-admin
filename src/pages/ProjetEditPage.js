@@ -9,6 +9,7 @@ import projectData from "../components/projet/formInitialValues.json";
 import terms from "../assets/data/terms.json";
 import logo from "../assets/img/logo-invoice.png";
 import { Button } from 'react-bootstrap';
+import { FaDownload } from 'react-icons/fa';
 
 const ProjetEditPage = () => {
   const clientData = clientsData[0];
@@ -166,7 +167,7 @@ doc.text(clientData.tva, 152, 74);
   
     // Kategori Başlıkları ve Tablolar
     // MEUBLES kategorisi için özel değişken
-    const meublesData = projectData.articles;
+    //const meublesData = projectData.articles;
 
     // MEUBLES kategorisi için özel işlem
     doc.setFontSize(18);
@@ -323,7 +324,7 @@ categories.forEach(category => {
 
   // Toplam değeri doğrudan category nesnesinden al
 const totalValue = projectData[category.totalKey];
-const text = `Sous-total ${category.title} (TTC): ${totalValue} €`;
+const text = `Sous-total ${category.title} (TTC - après remise): ${totalValue} €`;
 
 doc.setFontSize(11);
 doc.setTextColor(139, 0, 0); // Koyu kırmızı rengi ayarla
@@ -846,7 +847,8 @@ terms.terms.forEach((term, index) => {
   return (
     <>
     <div style={{ textAlign: 'left', marginBottom: '20px' }}>
-        <Button onClick={downloadPdf}>Télécharger le PDF</Button>
+        <Button onClick={downloadPdf}>
+        <FaDownload style={{ marginRight: '5px' }} />Télécharger le PDF</Button>
       </div>
       <ClientsEditPage showProjectList={false} />
       <ProjetEdit />

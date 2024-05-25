@@ -71,10 +71,12 @@ const CustomRoutes = () => {
             </Route>
           </Route> */} 
 
-
+ 
           {/* USER ROUTES */}
           
-          <Route index element={<AdminTemplate><AdminDashboardPage /></AdminTemplate>} />
+          {/* <Route index element={<AdminTemplate><AdminDashboardPage /></AdminTemplate>} /> */}
+          <Route index element={<AdminTemplate><Clients /></AdminTemplate>} />
+
          
             <Route path="projets">
               <Route index element={<AdminTemplate><Projets /></AdminTemplate>}/>
