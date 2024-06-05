@@ -64,7 +64,10 @@ const ClientsEditPage = ({ showProjectList = true }) => {
     <>
       <Form noValidate onSubmit={formik.handleSubmit}>
         <Card className="mb-5">
-          <Card.Header as="h3" style={{ color: "white", backgroundColor: "#9f0f0f" }}>
+          <Card.Header
+            as="h3"
+            style={{ color: "white", backgroundColor: "#9f0f0f" }}
+          >
             Informations Client
           </Card.Header>
           <Card.Body>
@@ -100,7 +103,9 @@ const ClientsEditPage = ({ showProjectList = true }) => {
                   type="number"
                   placeholder="Entrez le téléphone"
                   {...formik.getFieldProps("phoneNumber")}
-                  isInvalid={formik.touched.phoneNumber && !!formik.errors.phoneNumber}
+                  isInvalid={
+                    formik.touched.phoneNumber && !!formik.errors.phoneNumber
+                  }
                 />
                 <Form.Control.Feedback type="invalid">
                   {formik.touched.phoneNumber && formik.errors.phoneNumber}
@@ -171,39 +176,48 @@ const ClientsEditPage = ({ showProjectList = true }) => {
               </Form.Group>
             </Row>
             <Row>
-  <Col md={4}>
-    <div className="d-flex">
-      <Button
-        disabled={creating || !formik.dirty}
-        variant="success"
-        type="submit"
-        style={{ fontSize: '20px', letterSpacing: '1px', marginRight: '10px' }}
-      >
-        {creating && (
-          <Spinner animation="border" variant="light" size="sm" />
-        )}{" "}
-        Mise à jour
-      </Button>
-      {formik.dirty && (
-        <Button
-          type="button"
-          variant="secondary"
-          onClick={() => formik.resetForm()}
-          style={{ marginRight: '10px' }}
-        >
-          Annuler
-        </Button>
-      )}
-    </div>
-  </Col>
-</Row>
-
+              <Col md={4}>
+                <div className="d-flex">
+                  <Button
+                    disabled={creating || !formik.dirty}
+                    variant="success"
+                    type="submit"
+                    style={{
+                      letterSpacing: "1px",
+                      marginRight: "10px",
+                    }}
+                  >
+                    {creating && (
+                      <Spinner animation="border" variant="light" size="sm" />
+                    )}{" "}
+                    Mise à jour
+                  </Button>
+                  {formik.dirty && (
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      onClick={() => formik.resetForm()}
+                      style={{ marginRight: "10px" }}
+                    >
+                      Annuler
+                    </Button>
+                  )}
+                </div>
+              </Col>
+            </Row>
           </Card.Body>
         </Card>
       </Form>
       {showProjectList && (
         <div>
-          <h2 className="mb-4 mt-4" style={{ textAlign: 'center', color: '#112e3b' }}>Listes de Devis & Projets</h2>
+          <h2
+            className="mb-4 mt-4"
+            style={{ textAlign: "center", color: "#112e3b" }}
+          >
+            Listes de Devis & Projets
+          </h2>
+        <div className="title-border mt-3 mb-5"></div> 
+
           <DevisCommandeTableForCustomerPage />
         </div>
       )}

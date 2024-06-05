@@ -8,6 +8,8 @@ const Status = ({ setFilterStatus }) => {
     <> 
       <div className="status-wrapper">
         <h2 className="status-title">Tous Les Statuts</h2>
+    <div className="title-border mt-3 mb-5"></div> 
+
         <div className="status-options">
           <ButtonGroup className="mr-2">
             <Button variant="success" onClick={() => setFilterStatus('Devis')}>Devis</Button>

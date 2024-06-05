@@ -29,6 +29,12 @@ const DevisCommandeTableForCustomerPage = () => {
     },
   ];
 
+  const paginationOptions = {
+    rowsPerPageText: 'Nombre de lignes :',
+    rangeSeparatorText: 'à',
+    selectAllRowsItemText: 'Tout Afficher'
+};
+
   const customStyles = {
     rows: {
       style: {
@@ -79,6 +85,8 @@ const DevisCommandeTableForCustomerPage = () => {
         customStyles={customStyles}
         highlightOnHover
 		    pointerOnHover
+        paginationComponentOptions={paginationOptions}
+
         //  progressPending={loadingUsers}
         onRowClicked={handleEdit}
       /> :

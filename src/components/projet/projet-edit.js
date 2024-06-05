@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import "../create-new-devis-commande/create-new-devis-commande.css";
 import * as Yup from "yup";
 import { toast } from "react-toastify";
@@ -237,7 +237,7 @@ const ProjetEdit = () => {
     setCreating(true);
     try {
       // Perform submit actions, e.g., API call
-      toast.success("Devis créé avec succès");
+      toast.success("Mise à jour le projet avec succès");
     } catch (error) {
       console.error("Error:", error);
     } finally {
@@ -270,7 +270,7 @@ const ProjetEdit = () => {
       validationSchema={validationSchema}
       onSubmit={onSubmit}
     >
-      {({ values, setFieldValue, handleSubmit }) => {
+      {({ values, setFieldValue, handleSubmit, dirty, resetForm }) => {
         const calculateGrandTotal = () => {
          
           const totalAccessoires = parseFloat(totalFeeAccessoires || 0);
@@ -2438,11 +2438,31 @@ const ProjetEdit = () => {
               />
             </Form.Group>
 
-            <Button type="submit" variant="success">
-            Mise à jour le projet
-            </Button>
+            <div className="d-flex gap-2">
+        <Button
+          type="submit"
+          variant="success"
+          disabled={!dirty}
+          style={{ letterSpacing: '1px', marginRight: '10px' }}
+        >
+          {creating && (
+            <Spinner animation="border" variant="light" size="sm" />
+          )}{" "}
+          Mise à jour le projet
+        </Button>
+        {dirty && (
+          <Button
+            type="button"
+            variant="secondary"
+            onClick={resetForm}
+            style={{ marginRight: '10px' }}
+          >
+            Annuler
+          </Button>
+        )}
+      </div>
           </Form>
-        );
+        ); 
       }} 
     </Formik>
   );

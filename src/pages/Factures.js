@@ -13,6 +13,8 @@ const Factures = () => {
         <CreateNew title="Créer une facture" />
       </Link>
     <h1 className='mt-5' style={{ textAlign: 'center', color: '#112e3b' }}>Factures</h1>
+    <div className="title-border mt-3 mb-5"></div> 
+
     <InvoiceTable/>
     </Container>
 

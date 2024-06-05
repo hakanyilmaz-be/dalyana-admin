@@ -106,7 +106,7 @@ function Sav() {
   return (
     <Container>
         <h3 className='mt-5' style={{ textAlign: 'center' }}>Le service après-vente (SAV)</h3>
-        <div className="title-border mt-3 mb-5"></div>
+        <div className="title-border mt-3 mb-5"></div> 
       <Form onSubmit={(e) => e.preventDefault()} className="mb-3">
         <Row>
           <Col md={9}>

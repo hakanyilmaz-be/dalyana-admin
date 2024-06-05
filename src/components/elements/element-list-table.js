@@ -42,6 +42,12 @@ const ElementListTable = () => {
       
     ];
 
+    const paginationOptions = {
+        rowsPerPageText: 'Nombre de lignes :',
+        rangeSeparatorText: 'à',
+        selectAllRowsItemText: 'Tout Afficher'
+    };
+    
     const customStyles = {
         rows: {
             style: {
@@ -94,6 +100,8 @@ const ElementListTable = () => {
                     customStyles={customStyles}
                     highlightOnHover
                     pointerOnHover
+        paginationComponentOptions={paginationOptions}
+
                     className="my-custom-table"
                 />
             ) : (

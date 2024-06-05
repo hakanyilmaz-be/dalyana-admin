@@ -8,3 +8,11 @@
         height: auto;
     }
 }
+
+.title-border {
+    width: 140px;
+    height: 1.5px;
+    background: rgb(1, 1, 59);
+    background: linear-gradient(to right, transparent, rgb(1, 1, 59), transparent);
+    margin: 0 auto;
+} 

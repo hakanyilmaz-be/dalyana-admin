@@ -9,7 +9,8 @@ const ElementsProduits = () => {
 
     <Container>
     <h2 style={{ textAlign: 'center', color: '#112e3b' }}>Elements & Produits</h2>
-     <ElementsType/>
+    <div className="title-border mt-3 mb-5"></div> 
+{/*      <ElementsType/> */}
       <ElementListTable/>
     </Container>
    

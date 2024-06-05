@@ -44,6 +44,12 @@ const EmployeeListTable = () => {
         },
     ];
 
+    const paginationOptions = {
+        rowsPerPageText: 'Nombre de lignes :',
+        rangeSeparatorText: 'à',
+        selectAllRowsItemText: 'Tout Afficher'
+    };
+    
     const customStyles = {
         rows: {
             style: {
@@ -101,6 +107,8 @@ const EmployeeListTable = () => {
                     customStyles={customStyles}
                     highlightOnHover
                     pointerOnHover
+        paginationComponentOptions={paginationOptions}
+
                     onRowClicked={handleEdit}
                 />
             ) : (
