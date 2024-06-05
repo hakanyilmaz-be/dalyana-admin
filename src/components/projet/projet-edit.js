@@ -2439,7 +2439,7 @@ const ProjetEdit = () => {
             </Form.Group>
 
             <Button type="submit" variant="success">
-              Submit
+            Mise à jour le projet
             </Button>
           </Form>
         );
@@ -2447,7 +2447,5 @@ const ProjetEdit = () => {
     </Formik>
   );
 };
-
-
 
 export default ProjetEdit;
