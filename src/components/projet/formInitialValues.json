@@ -8,7 +8,7 @@
             "furnitureListPrice": 22000,
             "price": 19800,
             "quantity": 1,
-            "taxRate": 20,
+            "taxRate": 20, 
             "vatIncludedPrice": 23760,
             "subtotal": 0,
             "discountRate": 10

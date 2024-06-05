@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Button, Form, Card, Container, Row, Col, Modal } from 'react-bootstrap';
 import { v4 as uuidv4 } from 'uuid';
+import "./projet-edit.css"
 
 function Sav() {
   const [items, setItems] = useState([]);
@@ -104,6 +105,8 @@ function Sav() {
 
   return (
     <Container>
+        <h3 className='mt-5' style={{ textAlign: 'center' }}>Le service après-vente (SAV)</h3>
+        <div className="title-border mt-3 mb-5"></div>
       <Form onSubmit={(e) => e.preventDefault()} className="mb-3">
         <Row>
           <Col md={9}>
@@ -118,7 +121,7 @@ function Sav() {
             </Form.Group>
           </Col>
           <Col md={3}>
-            <Button variant="primary" onClick={handleAddText}>
+            <Button variant="outline-primary" onClick={handleAddText}>
             Ajouter une note
             </Button>
           </Col>
@@ -145,7 +148,7 @@ function Sav() {
         <Modal.Body>Etes-vous sûr que vous voulez supprimer?</Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>Annuler</Button>
-          <Button variant="danger" onClick={handleDelete}>Sil</Button>
+          <Button variant="danger" onClick={handleDelete}>Supprimer</Button>
         </Modal.Footer>
       </Modal>
     </Container>

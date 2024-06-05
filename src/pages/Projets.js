@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Container } from 'react-bootstrap'
 import CreateNew from '../components/create-new/create-new'
 import Status from '../components/status/status'
@@ -8,6 +8,10 @@ import { Link } from 'react-router-dom'
 
 
 const Projets = () => {
+  const [filterStatus, setFilterStatus] = useState('');
+
+
+
   return (
 
     <Container>
@@ -16,8 +20,9 @@ const Projets = () => {
         title= "Créer un Nouveau Projet"
       />
       </Link>
-      <Status/>
-      <DevisCommandeTable/>
+
+      <Status setFilterStatus={setFilterStatus} />
+      <DevisCommandeTable filterStatus={filterStatus} />
     
     </Container>
 

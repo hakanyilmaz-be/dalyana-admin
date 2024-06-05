@@ -15,7 +15,7 @@ import {
   InputGroup,
   Dropdown,
   FormControl,
-  Accordion,
+  Accordion, 
 } from "react-bootstrap";
 import accessoires from "../../assets/data/accessoires.json";
 import electromenagers from "../../assets/data/electromenagers.json";

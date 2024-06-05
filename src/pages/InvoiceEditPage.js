@@ -1,9 +1,19 @@
 import React from 'react'
+import { Container } from 'react-bootstrap'
+import InvoiceEdit from '../components/invoice/invoice-edit'
+
 
 const InvoiceEditPage = () => {
   return (
-    <div>InvoiceEditPage</div>
+    <Container>
+         <InvoiceEdit/>
+    </Container>
   )
 }
 
-export default InvoiceEditPage
+export default 
+
+
+
+
+InvoiceEditPage

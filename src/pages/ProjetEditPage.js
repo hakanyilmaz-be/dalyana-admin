@@ -10,6 +10,7 @@ import terms from "../assets/data/terms.json";
 import logo from "../assets/img/logo-invoice.png";
 import { Button } from 'react-bootstrap';
 import { FaDownload } from 'react-icons/fa';
+import Payment from '../components/payment/payment';
 
 const ProjetEditPage = () => {
   const clientData = clientsData[0];
@@ -852,8 +853,10 @@ terms.terms.forEach((term, index) => {
       </div>
       <ClientsEditPage showProjectList={false} />
       <ProjetEdit />
+      <div style={{ height: '80px' }}></div>
+      <Payment/>
+
       <div className='mt-5'>
-        <h3 className='my-5' style={{ textAlign: 'center' }}>Le service après-vente (SAV)</h3>
         <Sav />
       </div>
       

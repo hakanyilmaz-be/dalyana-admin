@@ -160,8 +160,12 @@ const CreateNewDevisCommande = () => {
     floor: Yup.string().required("Obligatoire"),
     elevator: Yup.string().required("Obligatoire"),
     status: Yup.string().required("Obligatoire"),
-    deliveryFee: Yup.string(),
-    montageFee: Yup.string(),
+    deliveryFee: Yup.number()
+    .min(1, "La frais de livraison doit être minimum 1€")
+    .required("Obligatoire"),
+    montageFee: Yup.number()
+    .min(1, "La frais de livraison doit être minimum 1€")
+    .required("Obligatoire"),
     totalFee: Yup.string(),
     grandTotal: Yup.number(),
     globaldiscount: Yup.string(),
@@ -2316,38 +2320,43 @@ const CreateNewDevisCommande = () => {
             </Card>
 
             <Form.Group
-              className="livraison mb-3"
-              style={{ display: "flex", gap: "15px" }}
-            >
-              <Form.Label as="h3">Livraison:</Form.Label>
-              <NumericFormat
-                thousandSeparator=","
-                decimalSeparator="."
-                decimalScale={2}
-                fixedDecimalScale={true}
-                prefix={"€"} // Para birimi olarak Euro
-                allowNegative={false}
-                className={`form-control ${
-                  formik.errors.deliveryFee && formik.touched.deliveryFee
-                    ? "is-invalid"
-                    : ""
-                }`}
-                style={{
-                  color: "#9f0f0f",
-                  borderColor: "#9f0f0f",
-                  width: "200px",
-                }}
-                placeholder="Frais de livraison"
-                value={values.deliveryFee}
-                onValueChange={(values) => {
-                  const { floatValue } = values;
-                  setFieldValue("deliveryFee", floatValue || 0);
-                }}
-              />
-              <Form.Control.Feedback type="invalid">
-                {formik.errors.deliveryFee}
-              </Form.Control.Feedback>
-            </Form.Group>
+  className="livraison mb-3"
+  style={{ display: "flex", gap: "15px" }}
+>
+  <Form.Label as="h3">Livraison:</Form.Label>
+  <NumericFormat
+    thousandSeparator=","
+    decimalSeparator="."
+    decimalScale={2}
+    fixedDecimalScale={true}
+    prefix={"€"} // Para birimi olarak Euro
+    allowNegative={false}
+    className={`form-control ${
+      formik.errors.deliveryFee && formik.touched.deliveryFee
+        ? "is-invalid"
+        : ""
+    }`}
+    style={{
+      color: "#9f0f0f",
+      borderColor: "#9f0f0f",
+      width: "200px",
+    }}
+    placeholder="Frais de livraison"
+    value={values.deliveryFee}
+    onValueChange={(values) => {
+      const { floatValue } = values;
+      setFieldValue("deliveryFee", floatValue || 0);
+    }}
+  />
+  <Form.Control.Feedback type="invalid">
+    {formik.errors.deliveryFee}
+  </Form.Control.Feedback>
+  <ErrorMessage
+    name="deliveryFee"
+    component="div"
+    className="error-message"
+  />
+</Form.Group>
 
             <Form.Group
               className="pose mb-5"
@@ -2381,6 +2390,11 @@ const CreateNewDevisCommande = () => {
               <Form.Control.Feedback type="invalid">
                 {formik.errors.montageFee}
               </Form.Control.Feedback>
+              <ErrorMessage
+    name="montageFee"
+    component="div"
+    className="error-message"
+  />
             </Form.Group>
 
             <Form.Group className="mb-3">

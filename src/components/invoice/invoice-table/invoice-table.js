@@ -6,7 +6,7 @@ import { Form } from "react-bootstrap";
 import "./invoice-table.css"
 
 const InvoiceTable = () => {
-  const navigate = useNavigate();
+  const navigate = useNavigate(); 
   const [records, setRecords] = useState(data)
 
   const columns = [

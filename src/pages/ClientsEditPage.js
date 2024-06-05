@@ -206,7 +206,7 @@ const ClientsEditPage = ({ showProjectList=true }) => {
         </Card.Body>
       </Card>
     </Form>
-    {showProjectList && (
+    {showProjectList && ( 
         <div>
           <h2 className="mb-4 mt-4" style={{ textAlign: 'center', color: '#112e3b' }}>Listes de Devis & Projets</h2>
           <DevisCommandeTableForCustomerPage />

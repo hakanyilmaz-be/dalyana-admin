@@ -1,0 +1,25 @@
+.title-border {
+    width: 140px;
+    height: 1.5px;
+    background: rgb(1, 1, 59);
+    background: linear-gradient(to right, transparent, rgb(1, 1, 59), transparent);
+    margin: 0 auto;
+}
+
+
+.payment-container {
+    background-color: #f8f9fa; /* Açık gri renk */
+    padding: 20px; /* İç boşluk */
+    border-radius: 8px; /* Köşe yumuşatma */
+  }
+  
+  .remaining-amount {
+    text-align: center;
+    font-size: 1.5rem;
+  }
+  
+  .remaining-amount-value {
+    font-weight: bold;
+    color: #ff0000; /* Kırmızı renk */
+  }
+  

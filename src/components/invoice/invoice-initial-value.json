@@ -1,0 +1,34 @@
+{
+    "customerId": "C-1",
+    "items": [
+        {
+            "productId": "AC-001",
+            "quantity": 1,
+            "price": "120",
+            "taxRate": "10",
+            "vatIncludedPrice": 132,
+            "subtotal": 120
+        },
+        {
+            "productId": "EL-003",
+            "quantity": 1,
+            "price": "335",
+            "taxRate": "20",
+            "vatIncludedPrice": 402,
+            "subtotal": 335
+        }
+    ],
+    "accessoires": [
+        {
+            "name": "Cuisine Sur Mesure",
+            "price": 10000,
+            "quantity": 1,
+            "taxRate": 10,
+            "vatIncludedPrice": 11000,
+            "subtotal": 10000
+        }
+    ],
+    "invoiceDate": "2024-06-01",
+    "invoiceNumber": "116",
+    "invoiceType": "Facture"
+}
