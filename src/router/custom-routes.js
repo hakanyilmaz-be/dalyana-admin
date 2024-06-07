@@ -18,7 +18,6 @@ import Stock from "../pages/Stock";
 import Projets from "../pages/Projets";
 import Clients from "../pages/Clients";
 import ProjetEditPage from "../pages/ProjetEditPage";
-import Uygulama from "../components/create-new-devis-commande/uygulama";
 import Login from "../components/Login";
 import PrivateRoute from "../components/PrivateRoute";
 import RoleBasedRoute from "../components/RoleBasedRoute";
@@ -35,7 +34,6 @@ const CustomRoutes = () => {
           <Route index element={<PrivateRoute><AdminTemplate><Projets /></AdminTemplate></PrivateRoute>}/>
           <Route path="creer-devis-commande" element={<PrivateRoute><AdminTemplate><CreateDevisCommande /></AdminTemplate></PrivateRoute>} />
           <Route path="edit" element={<PrivateRoute><AdminTemplate><ProjetEditPage /></AdminTemplate></PrivateRoute>} />
-          <Route path="uygulama" element={<PrivateRoute><AdminTemplate><Uygulama /></AdminTemplate></PrivateRoute>} />
           <Route path=":projetId" element={<PrivateRoute><AdminTemplate><ProjetEditPage /></AdminTemplate></PrivateRoute>} />
         </Route>
         <Route path="clients">
