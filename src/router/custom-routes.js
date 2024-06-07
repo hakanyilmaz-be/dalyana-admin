@@ -1,33 +1,10 @@
 import React from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-
-/* import AdminReservationEditPage from "../pages/admins/AdminReservationEditPage";
-import AdminReservationsPage from "../pages/admins/AdminReservationsPage";
-import AdminUsersEditPage from "../pages/admins/AdminUsersEditPage";
-import AdminUsersNewPage from "../pages/admins/AdminUsersNewPage";
-import AdminUsersPage from "../pages/admins/AdminUsersPage";
-import AdminVehicleEditPage from "../pages/admins/AdminVehicleEditPage";
-import AdminVehiclesNewPage from "../pages/admins/AdminVehiclesNewPage";
-import AdminVehiclesPage from "../pages/admins/AdminVehiclesPage";
-import NotFoundPage from "../pages/common/NotFoundPage";
-import UnAuthorizedPage from "../pages/common/UnAuthorizedPage";
-import AboutPage from "../pages/users/AboutPage";
-import AuthPage from "../pages/users/AuthPage";
-import ContactPage from "../pages/users/ContactPage";
-import HomePage from "../pages/users/HomePage";
-import ProfilePage from "../pages/users/ProfilePage";
-import UserReservationDetailsPage from "../pages/users/UserReservationDetailsPage";
-import UserReservationsPage from "../pages/users/UserReservationsPage";
-import VehicleDetailsPage from "../pages/users/VehicleDetailsPage";
-import VehiclesPage from "../pages/users/VehiclesPage";
-import UserTemplate from "../templates/user-template";
-import ProtectedRoute from "./protected-route"; */
-
 import AdminTemplate from "../template/admin-template";
 import AdminDashboardPage from "../pages/AdminDashboardPage";
 import ElementsProduits from "../pages/ElementsProduits";
 import Factures from "../pages/Factures";
-import Employees from "../pages/Employees"; 
+import Employees from "../pages/Employees";
 import Calendrier from "../pages/Calendrier";
 import Missions from "../pages/Missions";
 import Statistiques from "../pages/Statistiques";
@@ -42,100 +19,49 @@ import Projets from "../pages/Projets";
 import Clients from "../pages/Clients";
 import ProjetEditPage from "../pages/ProjetEditPage";
 import Uygulama from "../components/create-new-devis-commande/uygulama";
-
-
-
+import Login from "../components/Login";
+import PrivateRoute from "../components/PrivateRoute";
+import RoleBasedRoute from "../components/RoleBasedRoute";
+import AdminPanel from "../components/AdminPanel";
 
 const CustomRoutes = () => {
   return (
-    <BrowserRouter>       
+    <BrowserRouter>
       <Routes>
-        <Route path="/">
-
-          {/* ADMIN ROUTES */}
-         {/*  <Route path="admin">
-            <Route index element={<ProtectedRoute isAdmin={true}><AdminTemplate><AdminDashboardPage/></AdminTemplate></ProtectedRoute>}/>
-            <Route path="users">
-              <Route index element={<ProtectedRoute isAdmin={true}><AdminTemplate><AdminUsersPage/></AdminTemplate></ProtectedRoute>}/>
-              <Route path=":userId" element={<ProtectedRoute isAdmin={true}><AdminTemplate><AdminUsersEditPage/></AdminTemplate></ProtectedRoute>}/>
-              <Route path="new" element={<ProtectedRoute isAdmin={true}><AdminTemplate><AdminUsersNewPage/></AdminTemplate></ProtectedRoute>}/>
-            </Route>
-            <Route path="vehicles">
-              <Route index element={<ProtectedRoute isAdmin={true}><AdminTemplate><AdminVehiclesPage/></AdminTemplate></ProtectedRoute>}/>
-              <Route path=":vehicleId" element={<ProtectedRoute isAdmin={true}><AdminTemplate><AdminVehicleEditPage/></AdminTemplate></ProtectedRoute>}/>
-              <Route path="new" element={<ProtectedRoute isAdmin={true}><AdminTemplate><AdminVehiclesNewPage/></AdminTemplate></ProtectedRoute>}/>
-            </Route>
-            <Route path="reservations">
-              <Route index element={<ProtectedRoute isAdmin={true}><AdminTemplate><AdminReservationsPage/></AdminTemplate></ProtectedRoute>}/>
-              <Route path=":reservationId" element={<ProtectedRoute isAdmin={true}><AdminTemplate><AdminReservationEditPage/></AdminTemplate></ProtectedRoute>}/>
-            </Route>
-          </Route> */} 
-
- 
-          {/* USER ROUTES */}
-          
-          {/* <Route index element={<AdminTemplate><AdminDashboardPage /></AdminTemplate>} /> */}
-          <Route index element={<AdminTemplate><Clients /></AdminTemplate>} />
-
-         
-            <Route path="projets">
-              <Route index element={<AdminTemplate><Projets /></AdminTemplate>}/>
-              <Route path="creer-devis-commande" element={<AdminTemplate><CreateDevisCommande/></AdminTemplate>}/>
-              <Route path="edit" element={<AdminTemplate><ProjetEditPage /></AdminTemplate>}/>
-              <Route path="uygulama" element={<AdminTemplate><Uygulama/></AdminTemplate>}/>
-              <Route path=":projetId" element={<AdminTemplate> <ProjetEditPage /></AdminTemplate>}/>
-            </Route>
-
-            <Route path="clients">
-              <Route index element={<AdminTemplate><Clients/></AdminTemplate>}/>
-              <Route path="creer-client" element={<AdminTemplate><CreateCustomer/></AdminTemplate>}/>
-              <Route path=":clientId" element={<AdminTemplate><ClientsEditPage/></AdminTemplate>}/>
-            </Route>
-
-          <Route path="elements-produits" element={<AdminTemplate><ElementsProduits /></AdminTemplate>} />
-          <Route path="stock" element={<AdminTemplate><Stock /></AdminTemplate>} />
-          
-
-          <Route path="factures"> 
-            <Route index element={<AdminTemplate><Factures /></AdminTemplate>} />
-            <Route path="new" element={<AdminTemplate><CreateInvoice/></AdminTemplate>}/>
-            <Route path=":factureId" element={<AdminTemplate><InvoiceEditPage/></AdminTemplate>}/>
-
-            </Route> 
-         
-          <Route path="employees">
-              <Route index element={<AdminTemplate><Employees /></AdminTemplate>}/>
-              <Route path=":employeeId" element={<AdminTemplate><EmployeeEditPage/></AdminTemplate>}/>
-          </Route> 
-          <Route path="calendrier" element={<AdminTemplate><Calendrier /></AdminTemplate>} />
-          <Route path="missions" element={<AdminTemplate><Missions /></AdminTemplate>} />
-          <Route path="statistiques" element={<AdminTemplate><Statistiques /></AdminTemplate>} />
-
-
-         {/*  <Route path="about" element={<UserTemplate><AboutPage /></UserTemplate>} />
-          <Route path="contact" element={<UserTemplate><ContactPage /></UserTemplate>} />
-          <Route path="auth" element={<AuthPage />} />
-
-          <Route path="vehicles">
-            <Route index element={<UserTemplate><VehiclesPage /></UserTemplate>} />
-            <Route path=":vehicleId" element={<UserTemplate><VehicleDetailsPage /></UserTemplate>} />
-          </Route>
-
-          <Route path="user">
-            <Route index element={<ProtectedRoute><UserTemplate><ProfilePage /></UserTemplate></ProtectedRoute>} />
-            <Route path="reservations">
-              <Route index element={<ProtectedRoute><UserTemplate><UserReservationsPage/></UserTemplate></ProtectedRoute>} />
-              <Route path=":reservationId" element={<ProtectedRoute><UserTemplate><UserReservationDetailsPage/></UserTemplate></ProtectedRoute>} />
-            </Route>
-          </Route>
-
-          <Route path='unauthorized' element={<UserTemplate><UnAuthorizedPage /></UserTemplate>} />
-          <Route path='*' element={<UserTemplate><NotFoundPage /></UserTemplate>} /> */}
-
+        <Route path="/login" element={<Login />} />
+        <Route index element={<PrivateRoute><AdminTemplate><Clients /></AdminTemplate></PrivateRoute>} />
+        <Route path="projets">
+        
+          <Route index element={<PrivateRoute><AdminTemplate><Projets /></AdminTemplate></PrivateRoute>}/>
+          <Route path="creer-devis-commande" element={<PrivateRoute><AdminTemplate><CreateDevisCommande /></AdminTemplate></PrivateRoute>} />
+          <Route path="edit" element={<PrivateRoute><AdminTemplate><ProjetEditPage /></AdminTemplate></PrivateRoute>} />
+          <Route path="uygulama" element={<PrivateRoute><AdminTemplate><Uygulama /></AdminTemplate></PrivateRoute>} />
+          <Route path=":projetId" element={<PrivateRoute><AdminTemplate><ProjetEditPage /></AdminTemplate></PrivateRoute>} />
         </Route>
+        <Route path="clients">
+        <Route index element={<PrivateRoute><AdminTemplate><Clients /></AdminTemplate></PrivateRoute>}/>
+        <Route path="creer-client" element={<PrivateRoute><AdminTemplate><CreateCustomer/></AdminTemplate></PrivateRoute>}/>
+        <Route path=":clientId" element={<PrivateRoute><AdminTemplate><ClientsEditPage/></AdminTemplate></PrivateRoute>}/>
+        </Route>
+        <Route path="elements-produits" element={<PrivateRoute><AdminTemplate><ElementsProduits /></AdminTemplate></PrivateRoute>} />
+        <Route path="stock" element={<PrivateRoute><AdminTemplate><Stock /></AdminTemplate></PrivateRoute>} />
+        <Route path="factures" >
+        <Route index element={<RoleBasedRoute allowedRoles={['admin']}><AdminTemplate><Factures /></AdminTemplate></RoleBasedRoute>}/>
+          <Route path="new" element={<RoleBasedRoute allowedRoles={['admin']}><AdminTemplate><CreateInvoice /></AdminTemplate></RoleBasedRoute>} />
+          <Route path=":factureId" element={<RoleBasedRoute allowedRoles={['admin']}><AdminTemplate><InvoiceEditPage /></AdminTemplate></RoleBasedRoute>} />
+        </Route>
+        <Route path="employees" >
+        <Route index element={<PrivateRoute><AdminTemplate><Employees /></AdminTemplate></PrivateRoute>}/>
+          <Route path=":employeeId" element={<PrivateRoute><AdminTemplate><EmployeeEditPage /></AdminTemplate></PrivateRoute>} />
+        </Route>
+        <Route path="calendrier" element={<PrivateRoute><AdminTemplate><Calendrier /></AdminTemplate></PrivateRoute>} />
+        <Route path="missions" element={<PrivateRoute><AdminTemplate><Missions /></AdminTemplate></PrivateRoute>} />
+        <Route path="statistiques" element={<RoleBasedRoute allowedRoles={['admin']}><AdminTemplate><Statistiques /></AdminTemplate></RoleBasedRoute>} />
+        <Route path="admin-panel" element={<RoleBasedRoute allowedRoles={['admin']}><AdminTemplate><AdminPanel /></AdminTemplate></RoleBasedRoute>} />
       </Routes>
     </BrowserRouter>
   );
 };
 
 export default CustomRoutes;
+

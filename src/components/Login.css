@@ -1,0 +1,145 @@
+/* src/components/Login.css */
+body {
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+}
+
+.login-page {
+    display: flex;
+    height: 100vh;
+}
+
+.login-left {
+    flex: 1;
+    background: url('../assets/img/login-design.png') no-repeat center center;
+    background-size: cover;
+}
+
+.login-right {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f9f9f9;
+}
+
+.login-form-container {
+    width: 100%;
+    max-width: 400px;
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.login-form-container h2 {
+    margin-bottom: 2rem;
+    color: #333;
+    font-weight: 700;
+}
+
+.input-group {
+    margin-bottom: 1.2rem;
+    text-align: left;
+    display: flex;
+    flex-direction: column; /* Label ve input'u dikey hizalamak için */
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #555;
+}
+
+.input-icon {
+    display: flex;
+    align-items: center;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 0.5rem;
+    background-color: white; /* Arka plan rengini beyaz yaptık */
+}
+
+.input-icon .icon {
+    margin-right: 0.5rem;
+    color: #555;
+}
+
+.input-icon input {
+    flex: 1;
+    border: none;
+    outline: none;
+    padding: 0.5rem;
+    font-size: 1rem;
+    background: none; /* Arka plan rengini kaldırdık */
+}
+
+.password-icon {
+    cursor: pointer;
+    color: #555;
+    margin-left: 0.5rem;
+}
+
+
+.login-options {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.login-options input[type="checkbox"] {
+    margin-right: 0.5rem;
+}
+
+.login-options a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.login-options a:hover {
+    text-decoration: underline;
+}
+
+.login-button {
+    width: 100%;
+    padding: 0.8rem;
+    background-color: #000204;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-bottom: 1rem;
+}
+
+.login-button:hover {
+    background-color: #0056b3;
+}
+
+.divider {
+    margin: 1.5rem 0;
+    font-weight: bold;
+    color: #555;
+}
+
+.google-login-button {
+    width: 100%;
+    padding: 0.8rem;
+    background-color: white;
+    color: #555;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.google-login-button img {
+    margin-right: 0.5rem;
+}
+
+.google-login-button:hover {
+    background-color: #f5f5f5;
+}

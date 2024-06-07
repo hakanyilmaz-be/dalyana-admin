@@ -1,13 +1,12 @@
 import CustomRoutes from "./router/custom-routes";
 import { ToastContainer } from "react-toastify";
-
-
+import { AuthProvider } from './context/AuthContext';
 
 function App() {
   return (
-    <>
-          <CustomRoutes/>
-          <ToastContainer
+    <AuthProvider>
+      <CustomRoutes />
+      <ToastContainer
         position="top-center"
         autoClose={6500}
         hideProgressBar={false}
@@ -19,7 +18,7 @@ function App() {
         pauseOnHover
         theme="light"
       />
-    </>
+    </AuthProvider>
   );
 }
 
