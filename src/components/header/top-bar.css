@@ -15,7 +15,7 @@
 
 }
 .topbar-wrapper .profile img{
-    height: 50px;
+    height: 40px;
     border-radius: 5px;
     cursor: pointer;
    
@@ -30,7 +30,10 @@
     color: var(--color2);
     margin-right: 15px;
     cursor: pointer;
+}
 
+.profile img {
+    margin-right: 10px; /* Resmin sağ tarafına 10px boşluk ekleyin */
 }
 
 @media(max-width: 991px){

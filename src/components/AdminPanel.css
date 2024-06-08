@@ -1,90 +1,37 @@
-/* src/components/AdminPanel.css */
 .admin-panel-container {
     width: 100%;
-    max-width: 500px;
+    max-width: 600px;
     margin: 0 auto;
     padding: 2rem;
-    background-color: #f9f9f9;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-.admin-panel-container h2 {
-    text-align: center;
+.admin-panel-form .form-group {
     margin-bottom: 1.5rem;
-    color: #333;
-}
-
-.admin-panel-form {
-    display: flex;
-    flex-direction: column;
-    gap: 0.8rem;
-}
-
-.form-group {
-    display: flex;
-    flex-direction: column;
-}
-
-.form-group label {
-    margin-bottom: 0.5rem;
-    color: #555;
-}
-
-.form-group input,
-.form-group select {
-    padding: 0.8rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 1rem;
-    box-sizing: border-box;
-}
-
-.form-group select {
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    padding-right: 4rem;
-    background: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" width="4" height="5" viewBox="0 0 4 5"><path fill="%23666" d="M2 0L0 2h4zm0 5L0 3h4z"/></svg>') no-repeat;
-    background-position: right 0.5rem center;
-    background-size: 0.5rem;
 }
 
 .input-icon {
     display: flex;
     align-items: center;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    padding: 0.5rem;
-    background-color: white;
 }
 
-.input-icon input {
-    flex: 1;
-    border: none;
-    outline: none;
-    font-size: 1rem;
-    padding: 0.5rem;
-    background: none;
-}
-
-.password-icon {
+.input-icon .password-icon {
     cursor: pointer;
-    color: #555;
-    margin-left: 0.5rem;
 }
 
 .add-user-button {
-    padding: 0.8rem;
-    background-color: #000d1b;
-    color: white;
-    border: none;
+    width: 100%;
+    padding: 0.55rem!important;
+    color: #fff;
+    border: none !important;
     border-radius: 4px;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+    font-size: 1.3rem!important;
 }
 
+
+
 .add-user-button:hover {
-    background-color: #0056b3;
+    background-color: #0056b3!important;
 }

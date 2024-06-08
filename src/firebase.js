@@ -1,8 +1,8 @@
-// src/firebase.js
 import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 import { getAnalytics } from 'firebase/analytics';
+import { getStorage } from 'firebase/storage'; // Firebase Storage importu
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -19,9 +19,10 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 
-// Initialize Authentication and Firestore
+// Initialize Authentication, Firestore, and Storage
 const auth = getAuth(app);
 const db = getFirestore(app);
+const storage = getStorage(app); // Firebase Storage'u başlatın
 const googleProvider = new GoogleAuthProvider();
 
-export { auth, db, analytics, googleProvider };
+export { auth, db, storage, analytics, googleProvider };
