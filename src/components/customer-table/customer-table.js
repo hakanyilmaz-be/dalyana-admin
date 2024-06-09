@@ -1,19 +1,37 @@
-import React, { useState } from "react";
-import data from "./customer.json";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import DataTable from "react-data-table-component";
 import { Form } from "react-bootstrap";
-import "./customer-table.css"
+import { db } from '../../../src/firebase';
+import { collection, getDocs, orderBy, query } from 'firebase/firestore';
+import "./customer-table.css";
 
 const CustomerTable = () => {
-  const navigate = useNavigate(); 
-  const [records, setRecords] = useState(data)
+  const navigate = useNavigate();
+  const [records, setRecords] = useState([]);
+  const [filteredRecords, setFilteredRecords] = useState([]);
+
+  useEffect(() => {
+    const fetchCustomers = async () => {
+      try {
+        const q = query(collection(db, "customers"), orderBy("createdAt", "desc"));
+        const querySnapshot = await getDocs(q);
+        const customers = querySnapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
+        setRecords(customers);
+        setFilteredRecords(customers);
+      } catch (error) {
+        console.error("Error fetching customers: ", error);
+      }
+    };
+
+    fetchCustomers();
+  }, []);
 
   const columns = [
     {
       name: "C. ID",
-      selector: (row) => row.id,
-      width: "80px",
+      selector: (row) => row.customerID,
+      width: "100px",
     },
     {
       name: "Nom",
@@ -29,7 +47,7 @@ const CustomerTable = () => {
     },
     {
       name: "Emplacement",
-      selector: (row) => row.location,
+      selector: (row) => row.city,
     },
   ];
 
@@ -37,8 +55,7 @@ const CustomerTable = () => {
     rowsPerPageText: 'Nombre de lignes :',
     rangeSeparatorText: 'à',
     selectAllRowsItemText: 'Tout Afficher'
-};
-
+  };
 
   const customStyles = {
     rows: {
@@ -54,8 +71,8 @@ const CustomerTable = () => {
     },
     cells: {
       style: {
-       // paddingLeft: "8px", // override the cell padding for data cells
-       // paddingRight: "8px",
+        // paddingLeft: "8px", // override the cell padding for data cells
+        // paddingRight: "8px",
       },
     },
   };
@@ -64,40 +81,39 @@ const CustomerTable = () => {
     navigate(`/clients/${row.id}`);
   };
 
-  const handleFilter = (e) => { 
-      const filteredData = data.filter(row=>{
-        return (
-        row.id.toLocaleLowerCase().includes(e.target.value.toLocaleLowerCase()) ||
-        row.name.toLocaleLowerCase().includes(e.target.value.toLocaleLowerCase()) ||
-        row.phoneNumber.toLocaleLowerCase().includes(e.target.value.toLocaleLowerCase()) ||
-        row.email.toLocaleLowerCase().includes(e.target.value.toLocaleLowerCase()) ||
-        row.location.toLocaleLowerCase().includes(e.target.value.toLocaleLowerCase()) )
-        
-      })
-      setRecords(filteredData);
-   }
+  const handleFilter = (e) => {
+    const searchTerm = e.target.value.toLowerCase();
+    const filteredData = records.filter(row => {
+      return (
+        row.customerID.toLowerCase().includes(searchTerm) ||
+        row.name.toLowerCase().includes(searchTerm) ||
+        (row.phoneNumber && row.phoneNumber.toString().toLowerCase().includes(searchTerm)) ||
+        row.email.toLowerCase().includes(searchTerm) ||
+        row.city.toLowerCase().includes(searchTerm)
+      );
+    });
+    setFilteredRecords(filteredData);
+  };
 
   return (
     <div className="data-wrapper">
       <div className="data-filter">
-        <Form.Control size="lg" type="text" placeholder="Filtrer les données" onChange={handleFilter}/>
-      </div>  
-      {records.length > 0 ?
+        <Form.Control size="lg" type="text" placeholder="Filtrer les données" onChange={handleFilter} />
+      </div>
+      {filteredRecords.length > 0 ?
         <DataTable
-        columns={columns}
-        data={records}
-        pagination
-        fixedHeader
-        customStyles={customStyles}
-        highlightOnHover
-		    pointerOnHover
-        paginationComponentOptions={paginationOptions}
-        //  progressPending={loadingUsers}
-        onRowClicked={handleEdit}
-      /> :
-      <p className="filtered-message">Il n'y a aucun enregistrement à afficher</p>
+          columns={columns}
+          data={filteredRecords}
+          pagination
+          fixedHeader
+          customStyles={customStyles}
+          highlightOnHover
+          pointerOnHover
+          paginationComponentOptions={paginationOptions}
+          onRowClicked={handleEdit}
+        /> :
+        <p className="filtered-message">Il n'y a aucun enregistrement à afficher</p>
       }
-      
     </div>
   );
 };

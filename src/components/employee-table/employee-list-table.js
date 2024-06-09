@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import DataTable from 'react-data-table-component';
 import { Form } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-import { db } from '../../firebase'; // Firestore bağlantısını import edin
+import { db } from '../../firebase'; 
 import { collection, getDocs } from 'firebase/firestore';
 import './employee-list-table.css';
-import defaultProfileImage from '../../assets/img/profile.png'; // Varsayılan profil resmini import edin
+import defaultProfileImage from '../../assets/img/profile.png'; 
 
 const EmployeeListTable = () => {
     const navigate = useNavigate();

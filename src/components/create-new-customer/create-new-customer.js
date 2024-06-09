@@ -1,3 +1,4 @@
+// src/components/CreateNewCustomer.js
 import React, { useState } from "react";
 import "./create-new-customer.css";
 import * as Yup from "yup";
@@ -5,7 +6,7 @@ import { toast } from "react-toastify";
 import { useFormik } from "formik";
 import { Form, Button, Spinner, Row, Col, Card } from "react-bootstrap";
 import { db } from '../../../src/firebase'; // Firestore bağlantısı
-import { collection, addDoc, getDocs, query } from 'firebase/firestore'; // Firestore işlemleri
+import { collection, addDoc, getDocs, query, serverTimestamp } from 'firebase/firestore'; // Firestore işlemleri
 
 const CreateNewCustomer = () => {
   const [creating, setCreating] = useState(false);
@@ -32,6 +33,10 @@ const CreateNewCustomer = () => {
     note: Yup.string(),
   });
 
+  const capitalizeName = (name) => {
+    return name.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
+  };
+
   const onSubmit = async (values) => {
     setCreating(true);
     try {
@@ -45,7 +50,12 @@ const CreateNewCustomer = () => {
       const customerID = `${cityCode} - ${String(customerCount + 1).padStart(3, '0')}`;
 
       // Yeni müşteri belgesini oluştur
-      const newCustomer = { ...values, customerID };
+      const newCustomer = { 
+        ...values, 
+        name: capitalizeName(values.name), 
+        customerID,
+        createdAt: serverTimestamp() // Belgeye oluşturulma zamanı ekle
+      };
 
       const docRef = await addDoc(collection(db, "customers"), newCustomer);
       console.log("Document written with ID: ", docRef.id);
@@ -105,7 +115,7 @@ const CreateNewCustomer = () => {
             <Form.Group as={Col} md={4} className="mb-3">
               <Form.Label>Téléphone</Form.Label>
               <Form.Control
-                type="number"
+                type="text" // Telefon numarası için type="text"
                 placeholder="Entrez le téléphone"
                 {...formik.getFieldProps("phoneNumber")}
                 isInvalid={formik.touched.phoneNumber && !!formik.errors.phoneNumber}
@@ -145,7 +155,7 @@ const CreateNewCustomer = () => {
             <Form.Group as={Col} md={4} className="mb-3">
               <Form.Label>Code postal</Form.Label>
               <Form.Control
-                type="number"
+                type="text" // Posta kodu için type="text"
                 placeholder="Entrer le code postal"
                 {...formik.getFieldProps("zipCode")}
                 isInvalid={formik.touched.zipCode && !!formik.errors.zipCode}
@@ -182,7 +192,7 @@ const CreateNewCustomer = () => {
           <Row>
             <Col md={4}>
               <div className="d-grid gap-2">
-                <Button disabled={creating} variant="success" type="submit" style={{ fontSize: '20px', letterSpacing: '1px' }}>
+                <Button disabled={creating} variant="dark" type="submit" style={{ fontSize: '20px', letterSpacing: '1px' }}>
                   {creating && (
                     <Spinner animation="border" variant="light" size="sm" />
                   )}{" "}Créer

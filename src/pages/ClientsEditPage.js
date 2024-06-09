@@ -1,27 +1,45 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import * as Yup from "yup";
 import { toast } from "react-toastify";
 import { useFormik } from "formik";
 import { Form, Button, Spinner, Row, Col, Card } from "react-bootstrap";
-import clientsData from "../assets/data/clients.json";
+import { useParams } from "react-router-dom";
+import { db } from "../firebase";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
 import DevisCommandeTableForCustomerPage from "../components/devis-commande-table-for-customer-page/devis-commande-table-for-customer-page";
 
 const ClientsEditPage = ({ showProjectList = true }) => {
+  const { clientId } = useParams();
   const [creating, setCreating] = useState(false);
+  const [initialValues, setInitialValues] = useState({
+    name: "",
+    tva: "",
+    phoneNumber: "",
+    email: "",
+    address: "",
+    zipCode: "",
+    city: "",
+    note: "",
+  });
 
-  // İlk müşterinin verilerini başlangıç değerleri olarak kullan
-  const firstClient = clientsData[0];
+  const fetchClientData = useCallback(async () => {
+    try {
+      const docRef = doc(db, "customers", clientId);
+      const docSnap = await getDoc(docRef);
 
-  const initialValues = {
-    name: firstClient.name,
-    tva: firstClient.tva,
-    phoneNumber: firstClient.phoneNumber,
-    email: firstClient.email,
-    address: firstClient.address,
-    zipCode: firstClient.zipCode,
-    city: firstClient.city,
-    note: firstClient.note,
-  };
+      if (docSnap.exists()) {
+        setInitialValues(docSnap.data());
+      } else {
+        console.log("No such document!");
+      }
+    } catch (error) {
+      console.error("Error fetching client data: ", error);
+    }
+  }, [clientId]);
+
+  useEffect(() => {
+    fetchClientData();
+  }, [clientId, fetchClientData]);
 
   const validationSchema = Yup.object({
     name: Yup.string().required("Veuillez entrer le nom"),
@@ -36,22 +54,21 @@ const ClientsEditPage = ({ showProjectList = true }) => {
     note: Yup.string(),
   });
 
-  const onSubmit = (values) => {
-    console.log("Values", values); // Log values to the console
+  const onSubmit = async (values) => {
     setCreating(true);
     try {
-      // Perform submit actions, e.g., API call
-      toast.success("Mis à jour avec succés");
+      const docRef = doc(db, "customers", clientId);
+      await updateDoc(docRef, values);
+      toast.success("Mis à jour avec succès");
+      formik.resetForm({ values }); // Formu gönderildikten sonra sıfırla
+      await fetchClientData(); // En son güncellenmiş verileri yeniden çek
     } catch (error) {
-      console.error("Error:", error);
+      console.error("Error updating document: ", error);
+      toast.error("Une erreur s'est produite lors de la mise à jour");
     } finally {
-      setTimeout(() => {
-        setCreating(false);
-      }, 700);
+      setCreating(false);
     }
   };
-
-
 
   const formik = useFormik({
     enableReinitialize: true,
@@ -100,7 +117,7 @@ const ClientsEditPage = ({ showProjectList = true }) => {
               <Form.Group as={Col} md={4} className="mb-3">
                 <Form.Label>Téléphone</Form.Label>
                 <Form.Control
-                  type="number"
+                  type="text"
                   placeholder="Entrez le téléphone"
                   {...formik.getFieldProps("phoneNumber")}
                   isInvalid={
@@ -196,7 +213,7 @@ const ClientsEditPage = ({ showProjectList = true }) => {
                     <Button
                       type="button"
                       variant="secondary"
-                      onClick={() => formik.resetForm()}
+                      onClick={() => formik.resetForm({ values: initialValues })}
                       style={{ marginRight: "10px" }}
                     >
                       Annuler
@@ -216,7 +233,7 @@ const ClientsEditPage = ({ showProjectList = true }) => {
           >
             Listes de Devis & Projets
           </h2>
-        <div className="title-border mt-3 mb-5"></div> 
+          <div className="title-border mt-3 mb-5"></div>
 
           <DevisCommandeTableForCustomerPage />
         </div>
