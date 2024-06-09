@@ -16,3 +16,15 @@
     background: linear-gradient(to right, transparent, rgb(1, 1, 59), transparent);
     margin: 0 auto;
 } 
+
+
+
+.col-lg-3 {
+    flex: 0 0 auto!important;
+    width: 22%!important;
+}
+
+.col-lg-9 {
+    flex: 0 0 auto!important;
+    width: 78%!important;
+}
