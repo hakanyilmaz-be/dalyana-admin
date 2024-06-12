@@ -1,3 +1,4 @@
+// CustomerTable.js
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import DataTable from "react-data-table-component";
@@ -6,26 +7,26 @@ import { db } from '../../../src/firebase';
 import { collection, getDocs, orderBy, query } from 'firebase/firestore';
 import "./customer-table.css";
 
-const CustomerTable = () => {
+const CustomerTable = ({ updateTrigger }) => {
   const navigate = useNavigate();
   const [records, setRecords] = useState([]);
   const [filteredRecords, setFilteredRecords] = useState([]);
 
-  useEffect(() => {
-    const fetchCustomers = async () => {
-      try {
-        const q = query(collection(db, "customers"), orderBy("createdAt", "desc"));
-        const querySnapshot = await getDocs(q);
-        const customers = querySnapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
-        setRecords(customers);
-        setFilteredRecords(customers);
-      } catch (error) {
-        console.error("Error fetching customers: ", error);
-      }
-    };
+  const fetchCustomers = async () => {
+    try {
+      const q = query(collection(db, "customers"), orderBy("createdAt", "desc"));
+      const querySnapshot = await getDocs(q);
+      const customers = querySnapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
+      setRecords(customers);
+      setFilteredRecords(customers);
+    } catch (error) {
+      console.error("Error fetching customers: ", error);
+    }
+  };
 
+  useEffect(() => {
     fetchCustomers();
-  }, []);
+  }, [updateTrigger]);
 
   const columns = [
     {
@@ -74,7 +75,7 @@ const CustomerTable = () => {
         // paddingLeft: "8px", // override the cell padding for data cells
         // paddingRight: "8px",
       },
-    },
+    }, 
   };
 
   const handleEdit = (row) => {

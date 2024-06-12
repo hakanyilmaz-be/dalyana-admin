@@ -12,7 +12,6 @@ import ClientsEditPage from "../pages/ClientsEditPage";
 import EmployeeEditPage from "../pages/EmployeeEditPage";
 import CreateInvoice from "../pages/CreateInvoice";
 import InvoiceEditPage from "../pages/InvoiceEditPage";
-import CreateCustomer from "../pages/CreateCustomer";
 import CreateDevisCommande from "../pages/CreateDevisCommande";
 import Stock from "../pages/Stock";
 import Projets from "../pages/Projets";
@@ -38,7 +37,6 @@ const CustomRoutes = () => {
         </Route>
         <Route path="clients">
         <Route index element={<PrivateRoute><AdminTemplate><Clients /></AdminTemplate></PrivateRoute>}/>
-        <Route path="creer-client" element={<PrivateRoute><AdminTemplate><CreateCustomer/></AdminTemplate></PrivateRoute>}/>
         <Route path=":clientId" element={<PrivateRoute><AdminTemplate><ClientsEditPage/></AdminTemplate></PrivateRoute>}/>
         </Route>
         <Route path="elements-produits" element={<PrivateRoute><AdminTemplate><ElementsProduits /></AdminTemplate></PrivateRoute>} />

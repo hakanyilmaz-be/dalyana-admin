@@ -1,14 +1,21 @@
-import React from 'react'
-import CreateNewCustomer from '../components/create-new-customer/create-new-customer'
-import CustomerTable from '../components/customer-table/customer-table'
+// Clients.js
+import React, { useState } from 'react';
+import CreateNewCustomer from '../components/create-new-customer/create-new-customer';
+import CustomerTable from '../components/customer-table/customer-table';
 
 const Clients = () => {
-  return (
-    <>
-        <CreateNewCustomer/>
-        <CustomerTable/>
-    </>
-  )
-}
+  const [updateTrigger, setUpdateTrigger] = useState(false);
 
-export default Clients
+  const handleUpdateRecords = () => {
+    setUpdateTrigger(prev => !prev);
+  };
+
+  return (
+    <> 
+      <CreateNewCustomer onUpdateRecords={handleUpdateRecords} />
+      <CustomerTable updateTrigger={updateTrigger} />
+    </>
+  );
+};
+
+export default Clients;

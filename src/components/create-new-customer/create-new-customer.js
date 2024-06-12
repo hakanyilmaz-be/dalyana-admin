@@ -8,7 +8,7 @@ import { Form, Button, Spinner, Row, Col, Card } from "react-bootstrap";
 import { db } from '../../../src/firebase'; // Firestore bağlantısı
 import { collection, addDoc, getDocs, query, serverTimestamp } from 'firebase/firestore'; // Firestore işlemleri
 
-const CreateNewCustomer = () => {
+const CreateNewCustomer = ({ onUpdateRecords }) => {
   const [creating, setCreating] = useState(false);
 
   const initialValues = {
@@ -61,6 +61,7 @@ const CreateNewCustomer = () => {
       console.log("Document written with ID: ", docRef.id);
       toast.success("Fiche client créée avec succès");
       formik.resetForm();
+      onUpdateRecords(); // Müşteri listesi güncellemesini tetikleyin
     } catch (error) {
       console.error("Error adding document: ", error);
       toast.error("Une erreur s'est produite lors de la création de la fiche client");
@@ -205,5 +206,5 @@ const CreateNewCustomer = () => {
     </Form>
   );
 };
-
+ 
 export default CreateNewCustomer;
