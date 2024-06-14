@@ -8,7 +8,7 @@ import Employees from "../pages/Employees";
 import Calendrier from "../pages/Calendrier";
 import Missions from "../pages/Missions";
 import Statistiques from "../pages/Statistiques";
-import ClientsEditPage from "../pages/ClientsEditPage";
+import CustomerPage from "../pages/CustomerPage";
 import EmployeeEditPage from "../pages/EmployeeEditPage";
 import CreateInvoice from "../pages/CreateInvoice";
 import InvoiceEditPage from "../pages/InvoiceEditPage";
@@ -37,7 +37,7 @@ const CustomRoutes = () => {
         </Route>
         <Route path="clients">
         <Route index element={<PrivateRoute><AdminTemplate><Clients /></AdminTemplate></PrivateRoute>}/>
-        <Route path=":clientId" element={<PrivateRoute><AdminTemplate><ClientsEditPage/></AdminTemplate></PrivateRoute>}/>
+        <Route path=":clientId" element={<PrivateRoute><AdminTemplate><CustomerPage/></AdminTemplate></PrivateRoute>}/>
         </Route>
         <Route path="elements-produits" element={<PrivateRoute><AdminTemplate><ElementsProduits /></AdminTemplate></PrivateRoute>} />
         <Route path="stock" element={<PrivateRoute><AdminTemplate><Stock /></AdminTemplate></PrivateRoute>} />

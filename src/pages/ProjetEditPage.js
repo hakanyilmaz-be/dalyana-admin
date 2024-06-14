@@ -1,7 +1,7 @@
 import React from 'react';
 import { jsPDF } from "jspdf";
 import 'jspdf-autotable';
-import ClientsEditPage from './ClientsEditPage';
+import CustomerPage from './CustomerPage';
 import ProjetEdit from '../components/projet/projet-edit';
 import Sav from '../components/projet/sav';
 import clientsData from "../assets/data/clients.json";
@@ -851,7 +851,7 @@ terms.terms.forEach((term, index) => {
         <Button onClick={downloadPdf}>
         <FaDownload style={{ marginRight: '5px' }} />Télécharger le PDF</Button>
       </div>
-      <ClientsEditPage showProjectList={false} />
+      <CustomerPage showProjectList={false} />
       <ProjetEdit />
       <div style={{ height: '80px' }}></div>
       <Payment/>

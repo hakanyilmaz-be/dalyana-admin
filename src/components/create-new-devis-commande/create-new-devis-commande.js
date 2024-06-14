@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import "./create-new-devis-commande.css";
 import * as Yup from "yup";
 import { toast } from "react-toastify";
@@ -22,13 +22,10 @@ import electromenagers from "../../assets/data/electromenagers.json";
 import sanitaires from "../../assets/data/sanitaires.json";
 import surfaces from "../../assets/data/surfaces.json";
 import validCodes from "../../assets/data/discountCodes.json";
-//import { createUser } from "../../../api/admin-user-service";
 
 const taxRates = [0, 6, 10, 20, 21];
-// Adım 1: Yardımcı fonksiyon
 const createDiscountRates = (length) => Array.from({ length }, (_, index) => index);
 
-// Adım 2: Fonksiyonu kullanarak dizi oluşturma
 const discountRatesElectromenagers = createDiscountRates(31);
 const discountRatesAccessoires = createDiscountRates(31);
 const discountRatesSanitaires = createDiscountRates(31);
@@ -43,7 +40,6 @@ const calculateSubtotal = (price, quantity) => {
   return price * quantity;
 };
 
-// Discounted Price ve Tax Included Price hesaplama fonksiyonları
 const calculateDiscountedPrice = (subtotal, discountRate) => {
   return subtotal * (1 - discountRate / 100);
 };
@@ -62,7 +58,7 @@ const SearchableSelect = ({
   index,
   values,
   calculateSubtotal,
-  dataType // Additional prop to differentiate data types
+  dataType 
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [showDropdown, setShowDropdown] = useState(false);
@@ -129,7 +125,7 @@ const calculateTotalVATIncludedPriceDivers = (itemsDivers) => {
       0
     );
   }
-  return 0; // Eğer itemsDivers uygun bir dizi değilse, 0 dön
+  return 0; 
 };
 
 
@@ -237,26 +233,12 @@ const CreateNewDevisCommande = () => {
     ),
   });
 
-  /* const onSubmit = async (values) => {
-    setLoading(true);
-    try {
-      await createUser(values);
-      toast("User was created successfully");
-      formik.resetForm();
-    } catch (err) {
-      console.log(err);
-      toast(err.response.data.message);
-    } finally {
-      setLoading(false);
-    }
-  }; */
+  
 
-  //ASAGIDAKI BOS FONK GEREK YOK, HATA VERMEMESI ICIN YAZDIM
   const onSubmit = (values) => {
     console.log("Form values:", values);
     setCreating(true);
     try {
-      // Perform submit actions, e.g., API call
       toast.success("Devis créé avec succès");
     } catch (error) {
       console.error("Error:", error);
@@ -303,17 +285,15 @@ const CreateNewDevisCommande = () => {
           const totalArticles = parseFloat(
             calculateTotalVATIncludedPrice(values.articles) || 0
           );
-          const deliveryFee = parseFloat(values.deliveryFee || 0); // deliveryFee değerini çek ve float'a çevir
-          const montageFee = parseFloat(values.montageFee || 0); // montageFee değerini çek ve float'a çevir
-          let globaldiscount = parseFloat(values.globaldiscount || 0); // Doğrudan indirim miktarı olarak al
+          const deliveryFee = parseFloat(values.deliveryFee || 0); 
+          const montageFee = parseFloat(values.montageFee || 0); 
+          let globaldiscount = parseFloat(values.globaldiscount || 0); 
 
        
-          // Kod geçerli değilse veya globaldiscount değeri girilmemişse, globaldiscount'u 0 olarak kabul et
           if (!isCodeValid || !globaldiscount) {
             globaldiscount = 0;
           }
 
-          // Formun altında gösterilecek genel toplamı hesapla
           const grandTotal =
             totalAccessoires +
             totalElectromenagers +
@@ -338,15 +318,13 @@ const CreateNewDevisCommande = () => {
         const calculateTotalFeeAccessoires = () => {
           return values.itemsAccessoires
             .reduce((total, item) => total + (item.vatIncludedPrice || 0), 0)
-            .toFixed(2); // Convert to a fixed 2 decimal places
+            .toFixed(2); 
         };
 
-        // Check if any item has a tax rate selected
         const isTaxRateSelectedAccessoires = values.itemsAccessoires.some(
           (item) => item.taxRate
         );
 
-        // Calculate the total fee only if tax rate is selected
         const totalFeeAccessoires = isTaxRateSelectedAccessoires
           ? calculateTotalFeeAccessoires()
           : null;
@@ -354,14 +332,12 @@ const CreateNewDevisCommande = () => {
         const calculateTotalFeeElectromenagers = () => {
           return values.itemsElectromenagers
             .reduce((total, item) => total + (item.vatIncludedPrice || 0), 0)
-            .toFixed(2); // Convert to a fixed 2 decimal places
+            .toFixed(2); 
         };
 
-        // Check if any item has a tax rate selected
         const isTaxRateSelectedElectromenagers =
           values.itemsElectromenagers.some((item) => item.taxRate);
 
-        // Calculate the total fee only if tax rate is selected
         const totalFeeElectromenagers = isTaxRateSelectedElectromenagers
           ? calculateTotalFeeElectromenagers()
           : null;
@@ -369,15 +345,13 @@ const CreateNewDevisCommande = () => {
         const calculateTotalFeeSanitaires = () => {
           return values.itemsSanitaires
             .reduce((total, item) => total + (item.vatIncludedPrice || 0), 0)
-            .toFixed(2); // Convert to a fixed 2 decimal places
+            .toFixed(2); 
         };
 
-        // Check if any item has a tax rate selected
         const isTaxRateSelectedSanitaires = values.itemsSanitaires.some(
           (item) => item.taxRate
         );
 
-        // Calculate the total fee only if tax rate is selected
         const totalFeeSanitaires = isTaxRateSelectedSanitaires
           ? calculateTotalFeeSanitaires()
           : null;
@@ -385,15 +359,13 @@ const CreateNewDevisCommande = () => {
         const calculateTotalFeeSurfaces = () => {
           return values.itemsSurfaces
             .reduce((total, item) => total + (item.vatIncludedPrice || 0), 0)
-            .toFixed(2); // Convert to a fixed 2 decimal places
+            .toFixed(2); 
         };
 
-        // Check if any item has a tax rate selected
         const isTaxRateSelectedSurfaces = values.itemsSurfaces.some(
           (item) => item.taxRate
         );
 
-        // Calculate the total fee only if tax rate is selected
         const totalFeeSurfaces = isTaxRateSelectedSurfaces
           ? calculateTotalFeeSurfaces()
           : null;
@@ -403,7 +375,6 @@ const CreateNewDevisCommande = () => {
             const newItemsDivers = [...values.itemsDivers];
             const currentItemsDiver = { ...newItemsDivers[index], ...updatedValues };
 
-            // Vergi oranı undefined veya null değilse ve fiyat bilgisi varsa KDV dahil fiyatı hesapla
             if (
               currentItemsDiver.taxRate !== undefined &&
               currentItemsDiver.taxRate !== null &&
@@ -420,7 +391,6 @@ const CreateNewDevisCommande = () => {
             newItemsDivers[index] = currentItemsDiver;
             setFieldValue("itemsDivers", newItemsDivers);
 
-            // Toplam ve diğer bağlı değerleri güncelle
             calculateGrandTotal();
           };
 
@@ -438,13 +408,10 @@ const CreateNewDevisCommande = () => {
             setFieldValue("totalFeeItemsDivers", totalFeeItemsDivers);
           }
 
-
-
           const updateArticleItem = (index, updatedValues) => {
             const newArticles = [...values.articles];
             const currentArticle = { ...newArticles[index], ...updatedValues };
 
-            // Vergi oranı undefined veya null değilse ve fiyat bilgisi varsa KDV dahil fiyatı hesapla
             if (
               currentArticle.taxRate !== undefined &&
               currentArticle.taxRate !== null &&
@@ -461,7 +428,6 @@ const CreateNewDevisCommande = () => {
             newArticles[index] = currentArticle;
             setFieldValue("articles", newArticles);
 
-            // Toplam ve diğer bağlı değerleri güncelle
             calculateGrandTotal();
           };
 
@@ -495,8 +461,6 @@ const CreateNewDevisCommande = () => {
           setFieldValue("totalFeeSurfaces", totalFeeSurfaces)
         }
 
-     
-       
         calculateGrandTotal()
         return (
           <Form noValidate onSubmit={handleSubmit}>
@@ -523,7 +487,6 @@ const CreateNewDevisCommande = () => {
                       <option value="Devis">Devis</option>
                       <option value="Bon de commande">Bon de commande</option>
                     </Form.Select>
-                    {/* ErrorMessage bileşenini kullanarak hata mesajını göster */}
                     <ErrorMessage
                       name="status"
                       component="div"
@@ -549,7 +512,6 @@ const CreateNewDevisCommande = () => {
                       <option value="etage-4">4</option>
                       <option value="etage 5 ou plus">5 ou plus</option>
                     </Form.Select>
-                    {/* ErrorMessage bileşenini kullanarak hata mesajını göster */}
                     <ErrorMessage
                       name="floor"
                       component="div"
@@ -579,7 +541,6 @@ const CreateNewDevisCommande = () => {
                         Lift nécessaire
                       </option>
                     </Form.Select>
-                    {/* ErrorMessage bileşenini kullanarak hata mesajını göster */}
                     <ErrorMessage
                       name="elevator"
                       component="div"
@@ -648,7 +609,7 @@ const CreateNewDevisCommande = () => {
                                         decimalSeparator="."
                                         decimalScale={2}
                                         fixedDecimalScale={true}
-                                        prefix={"€"} // Para birimi olarak Euro
+                                        prefix={"€"} 
                                         allowNegative={false}
                                         className="form-control"
                                         placeholder="Entrez tarif catalogue"
@@ -685,16 +646,15 @@ const CreateNewDevisCommande = () => {
                                     </Form.Group>
                                   </Col>
 
-                                  {/* İndirim Oranı Seçimi */}
                                   <Col md={2}>
                                     <Form.Group>
                                       <Form.Label>Remise (%)</Form.Label>
                                       <Form.Select
-                                        value={article.discountRate ?? "0"} // Eğer discountRate undefined ise, default olarak '0' kullan
+                                        value={article.discountRate ?? "0"} 
                                         onChange={(e) => {
                                           const newDiscountRate = parseFloat(
                                             e.target.value || 0
-                                          ); // Eğer e.target.value boş ise, 0 kullan
+                                          ); 
                                           const listPrice = parseFloat(
                                             article.furnitureListPrice || 0
                                           );
@@ -704,8 +664,8 @@ const CreateNewDevisCommande = () => {
 
                                           updateArticleItem(index, {
                                             ...article,
-                                            discountRate: newDiscountRate, // Yeni indirim oranı
-                                            price: discountedPrice, // İndirimli fiyat
+                                            discountRate: newDiscountRate, 
+                                            price: discountedPrice, 
                                           });
                                         }}
                                       >
@@ -719,7 +679,6 @@ const CreateNewDevisCommande = () => {
                                     </Form.Group>
                                   </Col>
 
-                                  {/* Tarif Mobilier € - HTVA Input */}
                                   <Col>
                                     <Form.Group>
                                       <Form.Label
@@ -735,7 +694,7 @@ const CreateNewDevisCommande = () => {
                                         decimalSeparator="."
                                         decimalScale={2}
                                         fixedDecimalScale={true}
-                                        prefix="€" // Para birimi olarak Euro
+                                        prefix="€" 
                                         allowNegative={false}
                                         className={`form-control ${
                                           formik.errors.articles &&
@@ -754,7 +713,7 @@ const CreateNewDevisCommande = () => {
                                         name={`articles[${index}].price`}
                                         value={article.price || 0}
                                         readOnly={true}
-                                        displayType="text" // 'input' yerine 'text' olarak ayarladık, çünkü bu alan sadece okunabilir
+                                        displayType="text" 
                                       />
                                       <ErrorMessage
                                         name={`articles[${index}].price`}
@@ -764,7 +723,6 @@ const CreateNewDevisCommande = () => {
                                     </Form.Group>
                                   </Col>
 
-                                  {/* Tax Rate Selection */}
                                   <Col md={2}>
                                     <Form.Group>
                                       <Form.Label>TVA</Form.Label>
@@ -806,7 +764,6 @@ const CreateNewDevisCommande = () => {
                                     </Form.Group>
                                   </Col>
 
-                                  {/* Display VAT Included Price */}
                                   <Col md={2}>
                                     <Form.Group>
                                       <Form.Label className="parent-text">
@@ -854,7 +811,6 @@ const CreateNewDevisCommande = () => {
                                   </Button>
                                 </Col>
                               </Row>
-                              {/* Toplam KDV Dahil Fiyatı Koşullu Olarak Göster */}
                               {values.articles.length > 0 &&
                                 allArticlesHaveTaxRateSelected(
                                   values.articles
@@ -892,7 +848,6 @@ const CreateNewDevisCommande = () => {
                                 key={index}
                                 className="mb-3 align-items-center"
                               >
-                                {/* Product Selection */}
                                 <Col md={2}>
                                   <Form.Group>
                                     <Form.Label>Produit</Form.Label>
@@ -906,7 +861,7 @@ const CreateNewDevisCommande = () => {
                                       index={index}
                                       values={values}
                                       calculateSubtotal={calculateSubtotal}
-                                      dataType="Accessoires" // Specific for accessoires
+                                      dataType="Accessoires" 
                                     />
 
                                     <ErrorMessage
@@ -917,7 +872,6 @@ const CreateNewDevisCommande = () => {
                                   </Form.Group>
                                 </Col>
 
-                                {/* Product Description */}
                                 <Col md={5}>
                                   <Form.Group>
                                     <Form.Label>Designation</Form.Label>
@@ -933,7 +887,6 @@ const CreateNewDevisCommande = () => {
                                   </Form.Group>
                                 </Col>
 
-                                {/* Quantity Input */}
                                 <Col md={1}>
                                   <Form.Group>
                                     <Form.Label>Quantité</Form.Label>
@@ -982,7 +935,6 @@ const CreateNewDevisCommande = () => {
                                     </InputGroup>
                                   </Form.Group>
                                 </Col>
-                                {/* Price Display */}
                                 <Col md={2}>
                                   <Form.Group>
                                     <Form.Label className="parent-text">
@@ -991,7 +943,6 @@ const CreateNewDevisCommande = () => {
                                     <p className="price-text">{`${item.price}€`}</p>
                                   </Form.Group>
                                 </Col>
-                                {/* Subtotal Price Display */}
                                 <Col md={2}>
                                   <Form.Group>
                                     <Form.Label className="parent-text">
@@ -1066,7 +1017,6 @@ const CreateNewDevisCommande = () => {
                                   </Form.Group>
                                 </Col>
 
-                                {/* Tax Rate Selection */}
                                 <Col md={2}>
                                   <Form.Group>
                                     <Form.Label>TVA</Form.Label>
@@ -1117,7 +1067,6 @@ const CreateNewDevisCommande = () => {
                                     />
                                   </Form.Group>
                                 </Col>
-                                {/* VAT Included Price Display */}
                                 <Col md={2}>
                                   <Form.Group>
                                     <Form.Label className="parent-text">
@@ -1130,7 +1079,6 @@ const CreateNewDevisCommande = () => {
                                     </p>
                                   </Form.Group>
                                 </Col>
-                                {/* Remove Item Button */}
                                 <Col xs="auto">
                                   <Button
                                     variant="outline-danger"
@@ -1152,7 +1100,6 @@ const CreateNewDevisCommande = () => {
                                   vatIncludedPrice: 0,
                                   subtotal: 0,
                                 });
-                                //   console.log('Added new product item', values);
                               }}
                             >
                               <AiOutlinePlus /> Ajouter un produit
@@ -1180,7 +1127,6 @@ const CreateNewDevisCommande = () => {
                                 key={index}
                                 className="mb-3 align-items-center"
                               >
-                                {/* Product Selection */}
                                 <Col md={2}>
                                   <Form.Group>
                                     <Form.Label>Produit</Form.Label>
@@ -1205,7 +1151,6 @@ const CreateNewDevisCommande = () => {
                                   </Form.Group>
                                 </Col>
 
-                                {/* Product Description */}
                                 <Col md={5}>
                                   <Form.Group>
                                     <Form.Label>Designation</Form.Label>
@@ -1221,7 +1166,6 @@ const CreateNewDevisCommande = () => {
                                   </Form.Group>
                                 </Col>
 
-                                {/* Quantity Input */}
                                 <Col md={1}>
                                   <Form.Group>
                                     <Form.Label>Quantity</Form.Label>
@@ -1270,7 +1214,6 @@ const CreateNewDevisCommande = () => {
                                     </InputGroup>
                                   </Form.Group>
                                 </Col>
-                                {/* Price Display */}
                                 <Col md={2}>
                                   <Form.Group>
                                     <Form.Label className="parent-text">
@@ -1279,7 +1222,6 @@ const CreateNewDevisCommande = () => {
                                     <p className="price-text">{`${item.price}€`}</p>
                                   </Form.Group>
                                 </Col>
-                                {/* Subtotal Price Display */}
                                 <Col md={2}>
                                   <Form.Group>
                                     <Form.Label className="parent-text">
@@ -1356,7 +1298,6 @@ const CreateNewDevisCommande = () => {
                                   </Form.Group>
                                 </Col>
 
-                                {/* Tax Rate Selection */}
                                 <Col md={2}>
                                   <Form.Group>
                                     <Form.Label>TVA</Form.Label>
@@ -1407,7 +1348,6 @@ const CreateNewDevisCommande = () => {
                                     />
                                   </Form.Group>
                                 </Col>
-                                {/* VAT Included Price Display */}
                                 <Col md={2}>
                                   <Form.Group>
                                     <Form.Label className="parent-text">
@@ -1420,7 +1360,6 @@ const CreateNewDevisCommande = () => {
                                     </p>
                                   </Form.Group>
                                 </Col>
-                                {/* Remove Item Button */}
                                 <Col xs="auto">
                                   <Button
                                     variant="outline-danger"
@@ -1442,7 +1381,6 @@ const CreateNewDevisCommande = () => {
                                   vatIncludedPrice: 0,
                                   subtotal: 0,
                                 });
-                                //   console.log('Added new product item', values);
                               }}
                             >
                               <AiOutlinePlus /> Ajouter un produit
@@ -1473,7 +1411,6 @@ const CreateNewDevisCommande = () => {
                                 key={index}
                                 className="mb-3 align-items-center"
                               >
-                                {/* Product Selection */}
                                 <Col md={2}>
                                   <Form.Group>
                                     <Form.Label>Produit</Form.Label>
@@ -1497,7 +1434,6 @@ const CreateNewDevisCommande = () => {
                                     />
                                   </Form.Group>
                                 </Col>
-                                {/* Product Description */}
                                 <Col md={5}>
                                   <Form.Group>
                                     <Form.Label>Designation</Form.Label>
@@ -1512,7 +1448,6 @@ const CreateNewDevisCommande = () => {
                                     </p>
                                   </Form.Group>
                                 </Col>
-                                {/* Quantity Input */}
                                 <Col md={1}>
                                   <Form.Group>
                                     <Form.Label>Quantity</Form.Label>
@@ -1561,7 +1496,6 @@ const CreateNewDevisCommande = () => {
                                     </InputGroup>
                                   </Form.Group>
                                 </Col>
-                                {/* Price Display */}
                                 <Col md={2}>
                                   <Form.Group>
                                     <Form.Label className="parent-text">
@@ -1570,7 +1504,6 @@ const CreateNewDevisCommande = () => {
                                     <p className="price-text">{`${item.price}€`}</p>
                                   </Form.Group>
                                 </Col>
-                                {/* Subtotal Price Display */}
                                 <Col md={2}>
                                   <Form.Group>
                                     <Form.Label className="parent-text">
@@ -1645,7 +1578,6 @@ const CreateNewDevisCommande = () => {
                                   </Form.Group>
                                 </Col>
 
-                                {/* Tax Rate Selection */}
                                 <Col md={2}>
                                   <Form.Group>
                                     <Form.Label>TVA</Form.Label>
@@ -1696,7 +1628,6 @@ const CreateNewDevisCommande = () => {
                                     />
                                   </Form.Group>
                                 </Col>
-                                {/* VAT Included Price Display */}
                                 <Col md={2}>
                                   <Form.Group>
                                     <Form.Label className="parent-text">
@@ -1709,7 +1640,6 @@ const CreateNewDevisCommande = () => {
                                     </p>
                                   </Form.Group>
                                 </Col>
-                                {/* Remove Item Button */}
                                 <Col xs="auto">
                                   <Button
                                     variant="outline-danger"
@@ -1731,7 +1661,6 @@ const CreateNewDevisCommande = () => {
                                   vatIncludedPrice: 0,
                                   subtotal: 0,
                                 });
-                                //   console.log('Added new product item', values);
                               }}
                             >
                               <AiOutlinePlus /> Ajouter un produit
@@ -1759,7 +1688,6 @@ const CreateNewDevisCommande = () => {
                                 key={index}
                                 className="mb-3 align-items-center"
                               >
-                                {/* Product Selection */}
                                 <Col md={2}>
                                   <Form.Group>
                                     <Form.Label>Produit</Form.Label>
@@ -1783,7 +1711,6 @@ const CreateNewDevisCommande = () => {
                                     />
                                   </Form.Group>
                                 </Col>
-                                {/* Product Description */}
                                 <Col md={5}>
                                   <Form.Group>
                                     <Form.Label>Designation</Form.Label>
@@ -1798,7 +1725,6 @@ const CreateNewDevisCommande = () => {
                                     </p>
                                   </Form.Group>
                                 </Col>
-                                {/* Quantity Input */}
                                 <Col md={1}>
                                   <Form.Group>
                                     <Form.Label>Quantity</Form.Label>
@@ -1847,7 +1773,6 @@ const CreateNewDevisCommande = () => {
                                     </InputGroup>
                                   </Form.Group>
                                 </Col>
-                                {/* Price Display */}
                                 <Col md={2}>
                                   <Form.Group>
                                     <Form.Label className="parent-text">
@@ -1856,7 +1781,6 @@ const CreateNewDevisCommande = () => {
                                     <p className="price-text">{`${item.price}€`}</p>
                                   </Form.Group>
                                 </Col>
-                                {/* Subtotal Price Display */}
                                 <Col md={2}>
                                   <Form.Group>
                                     <Form.Label className="parent-text">
@@ -1931,7 +1855,6 @@ const CreateNewDevisCommande = () => {
                                   </Form.Group>
                                 </Col>
 
-                                {/* Tax Rate Selection */}
                                 <Col md={2}>
                                   <Form.Group>
                                     <Form.Label>TVA</Form.Label>
@@ -1982,7 +1905,6 @@ const CreateNewDevisCommande = () => {
                                     />
                                   </Form.Group>
                                 </Col>
-                                {/* VAT Included Price Display */}
                                 <Col md={2}>
                                   <Form.Group>
                                     <Form.Label className="parent-text">
@@ -1995,7 +1917,6 @@ const CreateNewDevisCommande = () => {
                                     </p>
                                   </Form.Group>
                                 </Col>
-                                {/* Remove Item Button */}
                                 <Col xs="auto">
                                   <Button
                                     variant="outline-danger"
@@ -2017,7 +1938,6 @@ const CreateNewDevisCommande = () => {
                                   vatIncludedPrice: 0,
                                   subtotal: 0,
                                 });
-                                //   console.log('Added new product item', values);
                               }}
                             >
                               <AiOutlinePlus /> Ajouter un produit
@@ -2083,7 +2003,7 @@ const CreateNewDevisCommande = () => {
                                         decimalSeparator="."
                                         decimalScale={2}
                                         fixedDecimalScale={true}
-                                        prefix={"€"} // Para birimi olarak Euro
+                                        prefix={"€"} 
                                         allowNegative={false}
                                         className="form-control"
                                         placeholder="Entrez tarif catalogue"
@@ -2124,11 +2044,11 @@ const CreateNewDevisCommande = () => {
                                     <Form.Group>
                                       <Form.Label>Remise (%)</Form.Label>
                                       <Form.Select
-                                        value={itemsDiver.discountRate ?? "0"} // Eğer discountRate undefined ise, default olarak '0' kullan
+                                        value={itemsDiver.discountRate ?? "0"} 
                                         onChange={(e) => {
                                           const newDiscountRate = parseFloat(
                                             e.target.value || 0
-                                          ); // Eğer e.target.value boş ise, 0 kullan
+                                          ); 
                                           const listPrice = parseFloat(
                                             itemsDiver.diversListPrice || 0
                                           );
@@ -2138,8 +2058,8 @@ const CreateNewDevisCommande = () => {
 
                                           updateDiverItem(index, {
                                             ...itemsDiver,
-                                            discountRate: newDiscountRate, // Yeni indirim oranı
-                                            price: discountedPrice, // İndirimli fiyat
+                                            discountRate: newDiscountRate, 
+                                            price: discountedPrice, 
                                           });
                                         }}
                                       >
@@ -2168,7 +2088,7 @@ const CreateNewDevisCommande = () => {
                                         decimalSeparator="."
                                         decimalScale={2}
                                         fixedDecimalScale={true}
-                                        prefix="€" // Para birimi olarak Euro
+                                        prefix="€" 
                                         allowNegative={false}
                                         className={`form-control ${
                                           formik.errors.itemsDivers &&
@@ -2189,7 +2109,7 @@ const CreateNewDevisCommande = () => {
                                         name={`itemsDivers[${index}].price`}
                                         value={itemsDiver.price || 0}
                                         readOnly={true}
-                                        displayType="text" // 'input' yerine 'text' olarak ayarladık, çünkü bu alan sadece okunabilir
+                                        displayType="text" 
                                       />
                                       <ErrorMessage
                                         name={`itemsDivers[${index}].price`}
@@ -2199,7 +2119,6 @@ const CreateNewDevisCommande = () => {
                                     </Form.Group>
                                   </Col>
 
-                                  {/* Tax Rate Selection */}
                                   <Col md={2}>
                                     <Form.Group>
                                       <Form.Label>TVA</Form.Label>
@@ -2241,7 +2160,6 @@ const CreateNewDevisCommande = () => {
                                     </Form.Group>
                                   </Col>
 
-                                  {/* Display VAT Included Price */}
                                   <Col md={2}>
                                     <Form.Group>
                                       <Form.Label className="parent-text">
@@ -2289,7 +2207,6 @@ const CreateNewDevisCommande = () => {
                                   </Button>
                                 </Col>
                               </Row>
-                              {/* Toplam KDV Dahil Fiyatı Koşullu Olarak Göster */}
                               {values.itemsDivers.length > 0 &&
                                 allArticlesHaveTaxRateSelectedDivers(
                                   values.itemsDivers
@@ -2329,7 +2246,7 @@ const CreateNewDevisCommande = () => {
     decimalSeparator="."
     decimalScale={2}
     fixedDecimalScale={true}
-    prefix={"€"} // Para birimi olarak Euro
+    prefix={"€"} 
     allowNegative={false}
     className={`form-control ${
       formik.errors.deliveryFee && formik.touched.deliveryFee
@@ -2368,7 +2285,7 @@ const CreateNewDevisCommande = () => {
                 decimalSeparator="."
                 decimalScale={2}
                 fixedDecimalScale={true}
-                prefix={"€"} // Para birimi olarak Euro
+                prefix={"€"} 
                 allowNegative={false}
                 className={`form-control ${
                   formik.errors.montageFee && formik.touched.montageFee
@@ -2450,7 +2367,7 @@ const CreateNewDevisCommande = () => {
                   color: "#9f0f0f",
                 }}
               >
-                TOTAL TVAC: {/* €{grandTotal} */}
+                TOTAL TVAC: 
               </Form.Label>
               <NumericFormat
                 value={values.grandTotal}
@@ -2459,7 +2376,7 @@ const CreateNewDevisCommande = () => {
                 decimalSeparator="."
                 decimalScale={2}
                 fixedDecimalScale={true}
-                prefix={"€"} // Para birimi olarak Euro
+                prefix={"€"} 
                 className="form-control"
                 style={{
                   color: "#9f0f0f",
@@ -2471,7 +2388,7 @@ const CreateNewDevisCommande = () => {
             </Form.Group>
 
             <Button type="submit" variant="success">
-              Submit
+            Créer le projet
             </Button>
           </Form>
         );
