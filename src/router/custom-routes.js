@@ -21,12 +21,14 @@ import Login from "../components/Login";
 import PrivateRoute from "../components/PrivateRoute";
 import RoleBasedRoute from "../components/RoleBasedRoute";
 import AdminPanel from "../components/AdminPanel";
+import ResetPassword from "../components/ResetPassword";
 
 const CustomRoutes = () => {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/login" element={<Login />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
         <Route index element={<PrivateRoute><AdminTemplate><Clients /></AdminTemplate></PrivateRoute>} />
         <Route path="projets">
         

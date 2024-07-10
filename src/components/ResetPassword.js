@@ -12,12 +12,12 @@ const ResetPassword = () => {
         e.preventDefault();
         try {
             await sendPasswordResetEmail(auth, email);
-            setMessage('Password reset email sent!');
+            setMessage('Şifre sıfırlama e-postası gönderildi!');
             setError('');
         } catch (error) {
-            setError('Failed to send password reset email.');
+            setError('Şifre sıfırlama e-postası gönderilemedi.');
             setMessage('');
-            console.error('Error resetting password:', error);
+            console.error('Şifre sıfırlama hatası:', error);
         }
     };
 
@@ -35,7 +35,7 @@ const ResetPassword = () => {
                     required
                     className="reset-password-input"
                 />
-                <button type="submit" className="reset-password-button">Envoyer l'email de réinitialisation</button>
+                <button type="submit" className="reset-password-button">Envoyer un e-mail de réinitialisation</button>
             </form>
         </div>
     );

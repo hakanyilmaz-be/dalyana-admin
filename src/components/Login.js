@@ -1,4 +1,3 @@
-// src/components/Login.js
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { auth, googleProvider } from '../firebase';
@@ -10,10 +9,12 @@ const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false); // Şifre gösterme durumu
+    const [errorMessage, setErrorMessage] = useState(''); // Hata mesajı durumu
     const navigate = useNavigate();
 
     const handleLogin = async (e) => {
         e.preventDefault();
+        setErrorMessage(''); // Hata mesajını temizle
         try {
             await setPersistence(auth, browserLocalPersistence);
             const userCredential = await signInWithEmailAndPassword(auth, email, password);
@@ -26,11 +27,12 @@ const Login = () => {
             navigate('/'); // Başarılı girişten sonra yönlendirme
         } catch (error) {
             console.error('Login failed', error);
-            // Hata durumunda bir hata mesajı gösterin
+            setErrorMessage('Email invalide ou mot de passe incorrect'); // Hata mesajını ayarla
         }
     };
 
     const handleGoogleLogin = async () => {
+        setErrorMessage(''); // Hata mesajını temizle
         try {
             await setPersistence(auth, browserLocalPersistence);
             const userCredential = await signInWithPopup(auth, googleProvider);
@@ -43,7 +45,7 @@ const Login = () => {
             navigate('/'); // Başarılı girişten sonra yönlendirme
         } catch (error) {
             console.error('Google login failed', error);
-            // Hata durumunda bir hata mesajı gösterin
+            setErrorMessage('La connexion avec Google a échoué'); // Hata mesajını ayarla
         }
     };
 
@@ -91,6 +93,7 @@ const Login = () => {
                                 </span>
                             </div>
                         </div>
+                        {errorMessage && <p className="error-message">{errorMessage}</p>} {/* Hata mesajını göster */}
                         <div className="login-options">
                             <a href="/reset-password">Mot de passe oublié?</a>
                         </div>
